@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhân Bản JSON</title>
+</head>
+<body>
+    <h1>Nhân lên 10,000 lần và đánh giá tốc độ</h1>
+    <button onclick="processJSON()">Bắt đầu</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function processJSON() {
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = "Đang tải dữ liệu...";
+
+            try {
+                // Tải file JSON gốc
+                const response = await fetch('request1.json');
+                const data = await response.json();
+
+                // Nhân lên 10,000 lần
+                const multiplier = 10000;
+                const largeData = [];
+                for (let i = 0; i < multiplier; i++) {
+                    // Thêm từng bản ghi vào mảng lớn
+                    data.forEach(record => {
+                        // Thêm ID duy nhất cho mỗi bản ghi để phân biệt
+                        const newRecord = { ...record, id: record.id + i * data.length };
+                        largeData.push(newRecord);
+                    });
+                }
+
+                resultElement.innerHTML = "Dữ liệu đã nhân lên. Bắt đầu ghi file...";
+
+                // Chuyển đổi dữ liệu thành chuỗi JSON và ghi file
+                const jsonBlob = new Blob([JSON.stringify(largeData)], { type: 'application/json' });
+                const downloadUrl = URL.createObjectURL(jsonBlob);
+                
+                // Tạo link tải file
+                const downloadLink = document.createElement('a');
+                downloadLink.href = downloadUrl;
+                downloadLink.download = 'large_request.json';
+                downloadLink.click();
+
+                resultElement.innerHTML = "Hoàn tất. Bạn có thể tải file xuống.";
+            } catch (error) {
+                resultElement.innerHTML = "Đã xảy ra lỗi: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

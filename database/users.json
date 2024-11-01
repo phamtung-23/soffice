@@ -1,0 +1,37 @@
+[
+    {
+        "fullname": "Sale 2",
+        "email": "gmminhtien@gmail.com",
+        "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
+        "phone": "1558599761",
+        "role": "sale"
+    },
+    {
+        "fullname": "Oper 1",
+        "email": "oper1@gmail.com",
+        "password": "$2y$10$vB.y.iTL45ZWirlKtpUztubaVPgfIpuK5AnNH0TxWC5ptwkQHtyri",
+        "phone": "1558599761",
+        "role": "operator"
+    },
+    {
+        "fullname": "Leader 1",
+        "email": "leader1@gmail.com",
+        "password": "$2y$10$QbnD\/H\/63uWvvndSsSzP7.I2cIsApkWZMuOEAt8oNHo3zLfOBNGK6",
+        "phone": "111111`",
+        "role": "leader"
+    },
+    {
+        "fullname": "Director",
+        "email": "director@gmail.com",
+        "password": "$2y$10$yzLv3iUdl\/FBLl0tK2jH\/OogtB2zUPxhPedsBG24D0.p9LxWV56PS",
+        "phone": "212121",
+        "role": "director"
+    },
+    {
+        "fullname": "Accountant",
+        "email": "accountant@gmail.com",
+        "password": "$2y$10$dMYaF0enJTwhkMuYTlmGmutLy0P4.TvZaqP2OOLY9vrhMfLXkfJ8m",
+        "phone": "121212",
+        "role": "accountant"
+    }
+]

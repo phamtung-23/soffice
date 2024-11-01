@@ -1,0 +1,140 @@
+[
+    {
+        "instruction_no": 1,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "approved",
+                "time": "2024-10-31 19:06:09"
+            },
+            {
+                "role": "sale",
+                "email": "gmminhtien@gmail.com",
+                "status": "pending",
+                "time": ""
+            },
+            {
+                "role": "director",
+                "email": "",
+                "status": "pending",
+                "time": ""
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 4333,
+                "expense_payee": "OPS",
+                "expense_doc": "\u0111\u00e2fds"
+            }
+        ],
+        "shipper": "Pham THanh Tung",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "customs_manifest_on": "1324",
+        "total_actual": "2346",
+        "total_actual1": "2345",
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "Oper 1",
+        "operator_email": "oper1@gmail.com"
+    },
+    {
+        "instruction_no": 2,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "rejected",
+                "time": "2024-10-31 19:06:21"
+            },
+            {
+                "role": "sale",
+                "email": "gmminhtien@gmail.com",
+                "status": "pending",
+                "time": ""
+            },
+            {
+                "role": "director",
+                "email": "",
+                "status": "pending",
+                "time": ""
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 2345,
+                "expense_payee": "OPS",
+                "expense_doc": "\u0111\u00e2fds"
+            },
+            {
+                "expense_kind": "Phi\u0301 NH TCRD",
+                "expense_amount": 2345,
+                "expense_payee": "OPS",
+                "expense_doc": "\u0111\u00e2aaaaa"
+            }
+        ],
+        "shipper": "Pham THanh Tung",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "customs_manifest_on": "1324",
+        "total_actual": "2345",
+        "total_actual1": "2345",
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "Oper 1",
+        "operator_email": "oper1@gmail.com"
+    },
+    {
+        "instruction_no": 3,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "pending",
+                "time": ""
+            },
+            {
+                "role": "sale",
+                "email": "gmminhtien@gmail.com",
+                "status": "pending",
+                "time": ""
+            },
+            {
+                "role": "director",
+                "email": "",
+                "status": "pending",
+                "time": ""
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 2345,
+                "expense_payee": "OPS",
+                "expense_doc": "\u0111\u00e2fds"
+            },
+            {
+                "expense_kind": "Phi\u0301 NH TCRD",
+                "expense_amount": 2345,
+                "expense_payee": "OPS",
+                "expense_doc": "\u0111\u00e2aaaaa"
+            }
+        ],
+        "shipper": "Pham THanh Tung",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "customs_manifest_on": "1324",
+        "total_actual": "2345",
+        "total_actual1": "2345",
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "Oper 1",
+        "operator_email": "oper1@gmail.com"
+    }
+]
