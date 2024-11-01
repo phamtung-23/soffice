@@ -96,5 +96,12 @@
         "password": "$2y$10$XG4IkB\/JpK2.yqPBvR8TWOoxUHqhYJgigAfPKHy8Y9opdds5yEntm",
         "phone": "7626151933",
         "role": "accountant"
+    },
+    {
+        "fullname": "Pham Thanh Tung",
+        "email": "ptung23082001@gmail.com",
+        "password": "$2y$10$GVDLDh.Y6Ga7FqkQTOWAa.kVGt4lnAM7\/aIy5lwTXb0dOeCqEDKlq",
+        "phone": "6944007336",
+        "role": "operator"
     }
 ]

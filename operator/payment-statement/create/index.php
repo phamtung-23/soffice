@@ -81,7 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'role' => $key,
         'email' => $value,
         'status' => 'pending',
-        'time' => ''
+        'time' => '',
+        'comment' => ''
       ];
     } elseif (!in_array($key, ['expense_kind', 'expense_amount', 'expense_payee', 'expense_doc'])) {
       $data[$key] = is_array($value) ? $value : trim($value);
@@ -95,7 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     'role' => 'director',
     'email' => '',
     'status' => 'pending',
-    'time' => ''
+    'time' => '',
+    'comment' => ''
   ];
   
 

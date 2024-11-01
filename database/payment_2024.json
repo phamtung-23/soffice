@@ -4,21 +4,24 @@
         "approval": [
             {
                 "role": "leader",
-                "email": "leader1@gmail.com",
+                "email": "leader2@gmail.com",
                 "status": "pending",
-                "time": ""
+                "time": "2024-11-01 17:34:35",
+                "comment": ""
             },
             {
                 "role": "sale",
-                "email": "gmminhtien@gmail.com",
+                "email": "sale2@gmail.com",
                 "status": "pending",
-                "time": ""
+                "time": "",
+                "comment": ""
             },
             {
                 "role": "director",
                 "email": "",
                 "status": "pending",
-                "time": ""
+                "time": "",
+                "comment": ""
             }
         ],
         "expenses": [
@@ -40,5 +43,69 @@
         "by": "",
         "operator_name": "Oper 1",
         "operator_email": "oper1@gmail.com"
+    },
+    {
+        "instruction_no": 2,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "approved",
+                "time": "2024-11-01 19:28:21",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "gmminhtien@gmail.com",
+                "status": "approved",
+                "time": "2024-11-01 19:29:04",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 21000,
+                "expense_payee": "OPS",
+                "expense_doc": ""
+            }
+        ],
+        "shipper": "Messi",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "customs_manifest_on": "1234567",
+        "total_actual": "60000000",
+        "total_actual1": "6000000",
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "Pham Thanh Tung",
+        "operator_email": "ptung23082001@gmail.com",
+        "delivery_address": "asdfasdf",
+        "delivery_time": "2024-11-13",
+        "delivery_pct": "asdf",
+        "trucking": "asdfasdf",
+        "trunkingVat": "2222",
+        "trunkingIncl": "",
+        "trunkingExcl": "",
+        "stuffing": "asdfasdf",
+        "StuffingVat": "222",
+        "StuffingIncl": "",
+        "StuffingExcl": "on",
+        "liftOnOff": "asdfasdf",
+        "liftOnOffVat": "222",
+        "liftOnOffIncl": "",
+        "liftOnOffExcl": "on",
+        "chiHo": "asdfasdf",
+        "chiHoVat": "222",
+        "chiHoIncl": "",
+        "chiHoExcl": "on"
     }
 ]

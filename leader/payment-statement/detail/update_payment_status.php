@@ -12,6 +12,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents("php://input"), true);
 $instructionNo = $data['instruction_no'] ?? null;
 $status = $data['approval_status'] ?? null;
+$message = $data['message'] ?? null;
 
 // Check if instruction number and status are provided
 if ($instructionNo === null || $status === null) {
@@ -40,6 +41,7 @@ foreach ($jsonData as &$entry) {
       if ($approval['role'] === 'leader' && $approval['email'] === $_SESSION['user_id']) {
         $approval['status'] = $status;
         $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
+        $approval['comment'] = $message;
         $updated = true;
         break;
       }

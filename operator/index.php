@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in; if not, redirect to login
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
-    echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../../index.php';</script>";
+    echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
     exit();
 }
 

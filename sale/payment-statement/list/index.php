@@ -52,9 +52,14 @@ sort($years);
       return yearSelect.value;
     }
 
+    function formatNumber(num) {
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+
     function handleShowDetail(instructionNo) {
       const year = getSelectedYear();
-      window.location.href = `../detail?instruction_no=${instructionNo}&year=${year}`;
+      window.location.href = `../update?instruction_no=${instructionNo}&year=${year}`;
     }
 
     function getFirstExpenseAmountWithPayee(item, payee) {
@@ -87,7 +92,7 @@ sort($years);
           tableBody.innerHTML = '';
 
           const validRequests = data.filter(request => {
-            return request.approval[0].status === 'pending' && request.approval[0].email === userEmail;
+            return request.approval[1].status === 'pending' && request.approval[0].status === 'approved' && request.approval[1].email === userEmail;
           });
 
           if (validRequests.length === 0) {
@@ -104,7 +109,7 @@ sort($years);
                 request.operator_name,
                 request.shipper,
                 request.customs_manifest_on,
-                getFirstExpenseAmountWithPayee(request, 'OPS'),
+                formatNumber(getFirstExpenseAmountWithPayee(request, 'OPS').toString()),
                 request.approval[0].status,
                 request.approval[1].status,
                 request.approval[2].status,
@@ -128,7 +133,7 @@ sort($years);
                     border-radius: 5px;
                     padding: 5px 10px;
                     cursor: pointer;" 
-                  onclick="handleShowDetail(${request.instruction_no})">Xem chi tiết</button>
+                  onclick="handleShowDetail(${request.instruction_no})">Điền thông tin</button>
               `;
               row.appendChild(actionsCell);
 

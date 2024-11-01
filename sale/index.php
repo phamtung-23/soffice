@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
     echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
     exit();
 }
@@ -67,22 +67,6 @@ function countApprovalsByRoleAndStatus($data, $role, $status) {
     foreach ($data as $item) {
         if (isset($item['approval'])) {
             foreach ($item['approval'] as $approval) {
-                if ($approval['role'] === $role && $approval['status'] === $status) {
-                    $count++;
-                }
-            }
-        }
-    }
-
-    return $count;
-}
-
-function countApprovalsByRoleLeader($data, $role, $status) {
-    $count = 0;
-    
-    foreach ($data as $item) {
-        if (isset($item['approval'])) {
-            foreach ($item['approval'] as $approval) {
                 if ($approval['role'] === $role && $approval['status'] === $status && $approval['email'] === $_SESSION['user_id']) {
                     $count++;
                 }
@@ -93,20 +77,37 @@ function countApprovalsByRoleLeader($data, $role, $status) {
     return $count;
 }
 
-// Calculate counts for request and payment data
-$requestTotal = count($requestData);
-$requestApprovedLeader = getStatusCounts($requestData, 'check_status', 'Phê duyệt');
-$requestApprovedDirector = getStatusCounts($requestData, 'status', 'Phê duyệt');
-$requestRejectedLeader = getStatusCounts($requestData, 'check_status', 'Từ chối');
-$requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
-$requestWaitingLeader = getStatusCounts($requestData, 'check_status');
+function countApprovalsByRoleSale($data, $role, $status){
+    // check role leader must be approved then count role sale
+    $count = 0;
+    foreach ($data as $item) {
+        if (isset($item['approval'])) {
+            foreach ($item['approval'] as $approval) {
+                if ($item['approval'][0]['status'] === 'approved') {
+                    if ($approval['role'] === $role && $approval['status'] === $status && $approval['email'] === $_SESSION['user_id']) {
+                        $count++;
+                    }
+                }
+            }
+        }
+    }
+    return $count;
+}
+
+// // Calculate counts for request and payment data
+// $requestTotal = count($requestData);
+// $requestApprovedLeader = getStatusCounts($requestData, 'check_status', 'Phê duyệt');
+// $requestApprovedDirector = getStatusCounts($requestData, 'status', 'Phê duyệt');
+// $requestRejectedLeader = getStatusCounts($requestData, 'check_status', 'Từ chối');
+// $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
+// $requestWaitingLeader = getStatusCounts($requestData, 'check_status');
 
 $paymentTotal = count($paymentData);
 $paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved');
 $paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
 $paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
 $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
-$paymentWaitingLeader = countApprovalsByRoleLeader($paymentData, 'leader', 'pending');
+$paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending');
 ?>
 
 <!DOCTYPE html>
@@ -264,16 +265,6 @@ $paymentWaitingLeader = countApprovalsByRoleLeader($paymentData, 'leader', 'pend
                 <th>Số phiếu bị Giám đốc từ chối</th>
                 <th>Số phiếu chờ duyệt</th>
                 <th>Link quản lý</th>
-            </tr>
-            <tr>
-                <td>Phiếu tạm ứng</td>
-                <td><?php echo $requestTotal; ?></td>
-                <td><?php echo $requestApprovedLeader; ?></td>
-                <td><?php echo $requestApprovedDirector; ?></td>
-                <td><?php echo $requestRejectedLeader; ?></td>
-                <td><?php echo $requestRejectedDirector; ?></td>
-                <td><?php echo $requestWaitingLeader; ?></td>
-                <td><a href="request_management.php">Quản lý phiếu tạm ứng chờ duyệt</a></td>
             </tr>
             <tr>
                 <td>Phiếu thanh toán</td>
