@@ -554,7 +554,7 @@ async function approveRequest() {
         
         
         // Lấy ID mới từ file id.json
-        const idResponse = await fetch('database/id.json', { cache: "no-store" });
+        const idResponse = await fetch('../database/id.json', { cache: "no-store" });
         const idData = await idResponse.json();
         const currentYear = new Date().getFullYear();
         const newId = idData[currentYear]["id"] + 1;

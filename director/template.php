@@ -16,7 +16,7 @@ use PHPMailer\PHPMailer\Exception;
 
 
 
-$idFile = __DIR__ . '/database/id.json';  // Đảm bảo đường dẫn tới file id.json là đúng
+$idFile ='../database/id.json';  // Đảm bảo đường dẫn tới file id.json là đúng
 $currentYear = date("Y");
 
  // Đọc dữ liệu từ file id.json
@@ -82,7 +82,7 @@ $htmlContent = "
 <html lang='vi'>
 <head>
     <meta charset='UTF-8'>
-    <title>Phiếu Đề Nghị Thanh Toán</title>
+    <title>Phiếu Đề Nghị Tạm Ứng</title>
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
@@ -302,7 +302,7 @@ function sendEmailWithAttachment($filePath, $fileName, $sale_email) {
         $mail->Encoding = 'base64';
         $mail->Subject = '=?UTF-8?B?' . base64_encode($mail->Subject) . '?=';
         // Tiêu đề và nội dung email
-        $mail->Subject = 'Đề nghị thanh toán';
+        $mail->Subject = 'Đề nghị tạm ứng';
         $mail->Body = 'Xin vui lòng xem file đính kèm.';
         $mail->addAttachment($filePath, $fileName); // Đính kèm tệp
 

@@ -370,7 +370,7 @@ select {
 
             <div class="form-group">
                 <label for="unit">Đơn vị (feet):</label>
-                <input type="text" id="unit" placeholder="Đơn vị">
+                <input type="number" id="unit" placeholder="Đơn vị">
             </div>
 
             

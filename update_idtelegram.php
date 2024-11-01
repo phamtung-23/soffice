@@ -1,42 +1,30 @@
 <?php
 session_start();
 
-
-// Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) ){
+// Kiểm tra nếu người dùng đã đăng nhập, nếu không thì chuyển hướng về trang đăng nhập
+if (!isset($_SESSION['user_id'])) {
     echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = 'index.php';</script>";
     exit();
 }
 
+// Lấy thông tin email từ session
+$email = $_SESSION['user_id'];
 
-// Lấy tên đầy đủ từ session
-$fullName = $_SESSION['full_name'];
-$email = $_SESSION['user_id']; // sale_email trùng với user_id
-
-// Xử lý khi người dùng submit form upload ảnh
+// Kiểm tra nếu người dùng gửi yêu cầu cập nhật số điện thoại
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_FILES['signature']) && $_FILES['signature']['error'] === UPLOAD_ERR_OK) {
-        // Đường dẫn lưu file
-        $uploadsDir = 'signatures/';
-        $fileName = md5($email) . '.jpg'; // Đặt tên file theo chuỗi md5 của email
-        $filePath = $uploadsDir . $fileName;
+    $phone = $_POST['phone'];  // Lấy số điện thoại từ form
 
-        // Kiểm tra loại file upload
-        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        $fileType = mime_content_type($_FILES['signature']['tmp_name']);
+    // Đường dẫn tới file user.json
+    $usersFile = 'database/users.json';
+    $userData = json_decode(file_get_contents($usersFile), true);
 
-        if (in_array($fileType, $allowedTypes)) {
-            // Di chuyển file upload đến thư mục 'signatures'
-            if (move_uploaded_file($_FILES['signature']['tmp_name'], $filePath)) {
-                echo "<script>alert('Tải lên chữ ký thành công!');</script>";
-            } else {
-                echo "<script>alert('Có lỗi khi tải lên chữ ký.');</script>";
-            }
-        } else {
-            echo "<script>alert('Chỉ cho phép các định dạng .jpg, .jpeg, .png.');</script>";
-        }
+    // Kiểm tra nếu người dùng tồn tại trong user.json
+    if (isset($userData[$email])) {
+        $userData[$email]['phone'] = $phone;  // Cập nhật số điện thoại
+        file_put_contents($usersFile, json_encode($userData, JSON_PRETTY_PRINT));  // Lưu lại dữ liệu
+        echo "<script>alert('Cập nhật ID Telegram thành công!');</script>";
     } else {
-        echo "<script>alert('Vui lòng chọn một file hình ảnh.');</script>";
+        echo "<script>alert('Người dùng không tồn tại.');</script>";
     }
 }
 ?>
@@ -46,9 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cập nhật chữ ký</title>
+    <title>Cập nhật số ID Telegram</title>
     <style>
-       body {
+        /* CSS của bạn cho trang cập nhật số điện thoại */
+          body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     display: flex;
@@ -194,29 +183,25 @@ button:hover {
     </style>
 </head>
 <body>
-
-
     <div id="content">
-    <div class="menu">
+     <div class="menu">
         <a href="index.php">Home</a>
         <a href="logout.php" class="logout">Đăng xuất</a>
     </div>
-        <h2>Cập nhật hình chữ ký cho <?= htmlspecialchars($email) ?></h2> 
-        <form action="update_signature.php" method="POST" enctype="multipart/form-data">
+      <h2>Cập nhật ID Telegram cho User: <?= htmlspecialchars($email) ?></h2>
+
+
+        <form action="update_phone.php" method="POST">
             <div class="form-group">
-                <label for="signature">Tải lên hình ảnh chữ ký của bạn:</label>
-                <input type="file" name="signature" id="signature" accept="image/*" required>
+                <label for="phone">Số ID Telegram:</label>
+                 <a href="idtelegram.html" target="_blank" style="color: #0088cc; text-decoration: underline; font-size: 14px;">Hướng dẫn lấy ID Telegram</a>
+                <input type="text" name="phone" id="phone" required>
             </div>
 
-            <button type="submit">Cập nhật chữ ký</button>
+            <button type="submit">Cập nhật ID Telegram</button>
         </form>
-
-        <div class="signature-preview">
-            <h3>Chữ ký mẫu</h3>
-            <img src="signatures/sign.png" alt="Chữ ký mẫu">
-        </div>
     </div>
- <div class="footer">
+    <div class="footer">
         <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
     </div>
 </body>

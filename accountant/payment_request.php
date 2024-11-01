@@ -202,7 +202,7 @@ sort($years);
                     const tableBody = document.getElementById('requests-table-body');
                     tableBody.innerHTML = ''; // Xóa nội dung cũ
 
-                    const validRequests = data.filter(request => request.check_status === 'Phê duyệt' & request.payment_status !== 'Chi tiền');
+                    const validRequests = data.filter(request => request.status === 'Phê duyệt' & request.payment_status !== 'Chi tiền');
 
                     if (validRequests.length === 0) {
                         const noRequestsRow = document.createElement('tr');

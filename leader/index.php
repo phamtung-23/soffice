@@ -206,11 +206,12 @@ $paymentWaitingLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'p
 </div>
 
 <div class="menu">
-    <a href="">Home</a>
-    <a href="../pages/phieu-tam-ung">Quản lý phiếu tạm ứng</a>
-    <a href="../payment.php">Quản lý phiếu thanh toán</a>
-    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
-    <a href="../logout.php" class="logout">Đăng xuất</a>
+  <a href="index.php">Home</a>
+        <a href="all_request.php">Danh sách phiếu tạm ứng</a>
+        <a href="all_payment.php">Danh sách phiếu thanh toán</a>
+        <a href="../update_signature.php">Cập nhật hình chữ ký</a>
+        <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+        <a href="../logout.php" class="logout">Đăng xuất</a>
 </div>
 
 <div class="container">

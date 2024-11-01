@@ -587,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </head>
 <body>
      <div class="menu">
-        <a href="">Home</a>
+        <a href="index.php">Home</a>
         <a href="../pages/phieu-tam-ung">Danh sách phiếu tạm ứng đã duyệt</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>

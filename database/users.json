@@ -33,5 +33,68 @@
         "password": "$2y$10$dMYaF0enJTwhkMuYTlmGmutLy0P4.TvZaqP2OOLY9vrhMfLXkfJ8m",
         "phone": "121212",
         "role": "accountant"
+    },
+    {
+        "fullname": "NGUYEN THANH PHONG",
+        "email": "phongops@gmail.com",
+        "password": "$2y$10$n5rq7QxSaHaHrBUQ\/CwvquPwRNo\/2Do7KLrk.jfznA4VDOt22Ix0C",
+        "phone": "0978407448",
+        "role": "operator"
+    },
+    {
+        "fullname": "PHẠM THỊ MY",
+        "email": "logistics06@uni-global.com",
+        "password": "$2y$10$qmhHOZeIG3du7GPTPk.AM.Gl2g1KMSLsJ7azchZmkNm9ek1.oYsGq",
+        "phone": "0362093320",
+        "role": "operator"
+    },
+    {
+        "fullname": "ĐÀM VĂN HIỆP",
+        "email": "hiep@uni-global.com",
+        "password": "$2y$10$C4ZT1S\/OQUkq.j\/dLYn0TunI00eVDhloDAH8AwwYanuaTkPE45AaW",
+        "phone": "7208264555",
+        "role": "leader"
+    },
+    {
+        "fullname": "NGUYEN THANH PHONG",
+        "email": "logistics14@uni-global.com",
+        "password": "$2y$10$2LvZOuBx9F56iPAm1tRi0e4SRHQkGa3fynpS066pftBN.lCTugY2e",
+        "phone": "0978407448",
+        "role": "operator"
+    },
+    {
+        "fullname": "VO THI THU DAO",
+        "email": "logistics24@uni-global.com",
+        "password": "$2y$10$nckKVexuFtF82RdL6FW1Tu547YtdeuEKYIGxjZWLgU88wNeq4C5fy",
+        "phone": "0828488697",
+        "role": "operator"
+    },
+    {
+        "fullname": "Trần Thu Sang",
+        "email": "logistics02@uni-global.com",
+        "password": "$2y$10$B51KPN80.DopkeghYQBbkuuixni3CDP6N9skeW5VUFYMT7x3a7JgO",
+        "phone": "0358677266",
+        "role": "operator"
+    },
+    {
+        "fullname": "NGUYEN THANH HAI",
+        "email": "logistics16@uni-global.com",
+        "password": "$2y$10$OmKDhPy3Yj66pm\/12pz5dORheJEt4Dv\/G8wDiRwMQuEsravFRECfW",
+        "phone": "8083814341",
+        "role": "operator"
+    },
+    {
+        "fullname": "KIEU MY 2K",
+        "email": "logistics12@uni-global.com",
+        "password": "$2y$10$A2ipMt.vLriHzlUSsrSZ.OgLDJZE2\/1QbVHuSSjf8iUqzYM\/73Y7m",
+        "phone": "7252850220",
+        "role": "operator"
+    },
+    {
+        "fullname": "Tong Thi Ngoc Bich",
+        "email": "account@uni-global.com",
+        "password": "$2y$10$XG4IkB\/JpK2.yqPBvR8TWOoxUHqhYJgigAfPKHy8Y9opdds5yEntm",
+        "phone": "7626151933",
+        "role": "accountant"
     }
 ]

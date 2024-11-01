@@ -178,6 +178,7 @@ $paymentWaitingDirector = $paymentTotal - $paymentApprovedLeader - $paymentRejec
     <a href="request.php">Quản lý phiếu tạm ứng</a>
     <a href="payment.php">Quản lý phiếu thanh toán</a>
     <a href="../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
 </div>
 
