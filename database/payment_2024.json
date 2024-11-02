@@ -4,24 +4,21 @@
         "approval": [
             {
                 "role": "leader",
-                "email": "leader2@gmail.com",
+                "email": "leader1@gmail.com",
                 "status": "pending",
-                "time": "2024-11-01 17:34:35",
-                "comment": ""
+                "time": ""
             },
             {
                 "role": "sale",
-                "email": "sale2@gmail.com",
+                "email": "gmminhtien@gmail.com",
                 "status": "pending",
-                "time": "",
-                "comment": ""
+                "time": ""
             },
             {
                 "role": "director",
                 "email": "",
                 "status": "pending",
-                "time": "",
-                "comment": ""
+                "time": ""
             }
         ],
         "expenses": [
@@ -51,14 +48,14 @@
                 "role": "leader",
                 "email": "leader1@gmail.com",
                 "status": "approved",
-                "time": "2024-11-01 19:28:21",
+                "time": "2024-11-02 01:39:27",
                 "comment": ""
             },
             {
                 "role": "sale",
                 "email": "gmminhtien@gmail.com",
                 "status": "approved",
-                "time": "2024-11-01 19:29:04",
+                "time": "2024-11-02 01:40:26",
                 "comment": ""
             },
             {
@@ -72,40 +69,40 @@
         "expenses": [
             {
                 "expense_kind": "Customs + Phi\u0301 NH CSHT",
-                "expense_amount": 21000,
+                "expense_amount": 2100000,
                 "expense_payee": "OPS",
                 "expense_doc": ""
             }
         ],
-        "shipper": "Messi",
+        "shipper": "Tung Test",
         "billTo": "Segina-SOC",
         "volume": "1x40",
         "payment_lo": "555",
-        "customs_manifest_on": "1234567",
-        "total_actual": "60000000",
+        "customs_manifest_on": "1324",
+        "total_actual": "6000000",
         "total_actual1": "6000000",
         "received_back_on": "",
         "by": "",
         "operator_name": "Pham Thanh Tung",
         "operator_email": "ptung23082001@gmail.com",
-        "delivery_address": "asdfasdf",
+        "delivery_address": "Quan 4",
         "delivery_time": "2024-11-13",
-        "delivery_pct": "asdf",
-        "trucking": "asdfasdf",
-        "trunkingVat": "2222",
+        "delivery_pct": "aaa",
+        "trucking": "test",
+        "trunkingVat": "12",
         "trunkingIncl": "",
         "trunkingExcl": "",
-        "stuffing": "asdfasdf",
-        "StuffingVat": "222",
-        "StuffingIncl": "",
-        "StuffingExcl": "on",
-        "liftOnOff": "asdfasdf",
-        "liftOnOffVat": "222",
-        "liftOnOffIncl": "",
-        "liftOnOffExcl": "on",
-        "chiHo": "asdfasdf",
-        "chiHoVat": "222",
-        "chiHoIncl": "",
-        "chiHoExcl": "on"
+        "stuffing": "test",
+        "StuffingVat": "12",
+        "StuffingIncl": "on",
+        "StuffingExcl": "",
+        "liftOnOff": "test",
+        "liftOnOffVat": "12",
+        "liftOnOffIncl": "on",
+        "liftOnOffExcl": "",
+        "chiHo": "test",
+        "chiHoVat": "12",
+        "chiHoIncl": "on",
+        "chiHoExcl": ""
     }
 ]

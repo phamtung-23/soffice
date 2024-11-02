@@ -103,5 +103,19 @@
         "password": "$2y$10$GVDLDh.Y6Ga7FqkQTOWAa.kVGt4lnAM7\/aIy5lwTXb0dOeCqEDKlq",
         "phone": "6944007336",
         "role": "operator"
+    },
+    {
+        "fullname": "Phuong Tien",
+        "email": "logistics08@uni-global.com",
+        "password": "$2y$10$eT8R9n3Vfex\/FL1Z6Xkzre5tQwrDFPRMmaDl\/wgjr4kSKqTd6lT1m",
+        "phone": "7451867623",
+        "role": "operator"
+    },
+    {
+        "fullname": "Võ Thị Bích Trí",
+        "email": "logistics04@uni-global.com",
+        "password": "$2y$10$QGIHsYQe\/CBGRl80Bkpdo.KipxtewpQn9ek.Vjx\/in1LVnn82py2m",
+        "phone": "vothibichtri0705@gmail.com",
+        "role": "operator"
     }
 ]
