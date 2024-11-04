@@ -38,6 +38,7 @@ function getDataFromJson($filePath, $userEmail) {
 // Paths for request and payment files
 $requestFile = "../database/request_$selectedYear.json";
 $paymentFile = "../database/payment_$selectedYear.json";
+$files = glob('../database/request_*.json');
 
 // Read and filter data
 $requestData = getDataFromJson($requestFile, $userEmail);
@@ -212,11 +213,16 @@ $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director
     <form method="POST" action="">
         <label for="year">Chọn năm:</label>
         <select name="year" id="year" onchange="this.form.submit()">
-            <?php for ($i = date('Y'); $i >= date('Y') - 5; $i--): ?>
-                <option value="<?php echo $i; ?>" <?php echo ($i == $selectedYear) ? 'selected' : ''; ?>>
-                    <?php echo $i; ?>
-                </option>
-            <?php endfor; ?>
+             <?php
+                    foreach ($files as $file) {
+                        // Lấy năm từ tên file
+                        preg_match('~request_(\d{4})\.json~', $file, $matches);
+                        if (isset($matches[1])) {
+                            $year = $matches[1];
+                            echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
+                        }
+                    }
+             ?>
         </select>
     </form>
 
@@ -239,7 +245,7 @@ $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director
                 <td><?php echo $requestApprovedDirector; ?></td>
                 <td><?php echo $requestRejectedLeader; ?></td>
                 <td><?php echo $requestRejectedDirector; ?></td>
-                <td><a href="request_management.php">Quản lý phiếu tạm ứng</a></td>
+                <td><a href="all_request.php">Quản lý phiếu tạm ứng</a></td>
             </tr>
             <tr>
                 <td>Phiếu thanh toán</td>

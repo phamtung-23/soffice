@@ -34,13 +34,11 @@ sort($years);
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Accountant Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ Quản lý phiếu tạm ứng chờ nhận hoàn</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        /* Basic styles for layout */
+      
 
         .form-group {
             margin: 15px 0;
@@ -75,8 +73,76 @@ sort($years);
             border: none;
             border-radius: 5px;
         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .menu {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        .menu a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .menu a:hover {
+            background-color: #575757;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .welcome-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .menu a.logout {
+            float: right;
+            background-color: #f44336;
+        }
+
+        .menu a.logout:hover {
+            background-color: #d32f2f;
+        }
+
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
 
         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+          table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
@@ -91,6 +157,8 @@ sort($years);
             text-align: center;
         }
 
+
+       
         #reject-reason-modal {
             display: none;
             margin-top: 20px;
@@ -153,7 +221,6 @@ sort($years);
             font-size: 14px;
             color: #888;
         }
-
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
@@ -528,11 +595,16 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 </head>
 <body>
-     <div class="menu">
-        <a href="index.php">Home</a>
-        <a href="../update_signature.php">Cập nhật hình chữ ký</a>
-        <a href="../logout.php" class="logout">Đăng xuất</a>
-    </div>
+<div class="header">
+    <h1>Quản lý phiếu tạm ứng chờ nhận hoàn</h1>
+</div>
+    <div class="menu">
+    <a href="index.php">Home</a>
+    <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../logout.php" class="logout">Đăng xuất</a>
+</div>
     <div class="container">
         <div class="welcome-message">
             <p>Xin chào, <?php echo $fullName; ?>!</p>

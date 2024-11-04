@@ -256,67 +256,125 @@ select {
             return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
-        function submitRequest() {
-            const fullName = document.getElementById('employee-full-name').value.trim();
-            const customerName = document.getElementById('customer-name').value.trim();
-            const type_item = document.getElementById('type_item').value.trim();
-            const quantity = document.getElementById('quantity').value.trim();
-            const unit = document.getElementById('unit').value.trim();
-            const lotNumber = document.getElementById('lot-number').value.trim();
-            const advanceAmount = document.getElementById('advance-amount').value.replace(/,/g, '').trim(); 
-            const advanceAmountWords = document.getElementById('advance-amount-words').value.trim();
-            const manager = document.getElementById('manager').value;
-            const advancedescription = document.getElementById('advance-description').value.trim();
+      async function submitRequest() {
+    const fullName = document.getElementById('employee-full-name').value.trim();
+    const customerName = document.getElementById('customer-name').value.trim();
+    const type_item = document.getElementById('type_item').value.trim();
+    const quantity = document.getElementById('quantity').value.trim();
+    const unit = document.getElementById('unit').value.trim();
+    const lotNumber = document.getElementById('lot-number').value.trim();
+    const advanceAmount = document.getElementById('advance-amount').value.replace(/,/g, '').trim();
+    const advanceAmountWords = document.getElementById('advance-amount-words').value.trim();
+    const manager = document.getElementById('manager').value;
+    const advancedescription = document.getElementById('advance-description').value.trim();
 
-            if (!fullName || !customerName || !type_item || !quantity || !unit || !lotNumber || !advanceAmount || !advanceAmountWords || !advancedescription) {
-                alert("Vui lòng điền đầy đủ thông tin vào tất cả các trường.");
-                return;
-            }
+    if (!fullName || !customerName || !type_item || !quantity || !unit || !lotNumber || !advanceAmount || !advanceAmountWords || !advancedescription) {
+        alert("Vui lòng điền đầy đủ thông tin vào tất cả các trường.");
+        return;
+    }
 
-            if (isNaN(quantity) || Number(quantity) <= 0) {
-                alert("Vui lòng nhập số lượng hợp lệ.");
-                return;
-            }
+    if (isNaN(quantity) || Number(quantity) <= 0) {
+        alert("Vui lòng nhập số lượng hợp lệ.");
+        return;
+    }
 
-            if (isNaN(advanceAmount) || Number(advanceAmount) <= 0) {
-                alert("Vui lòng nhập số tiền tạm ứng hợp lệ.");
-                return;
-            }
+    if (isNaN(advanceAmount) || Number(advanceAmount) <= 0) {
+        alert("Vui lòng nhập số tiền tạm ứng hợp lệ.");
+        return;
+    }
 
-            const dateTime = new Date().toLocaleString();
-            const email = '<?php echo $email; ?>';
-            fetch('submit_request.php', {
+    const dateTime = new Date().toLocaleString();
+    const email = '<?php echo $email; ?>';
+
+    try {
+        const response = await fetch('submit_request.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                full_name: fullName,
+                customer_name: customerName,
+                operator_email: email,
+                type_item: type_item,
+                quantity: quantity,
+                unit: unit,
+                lot_number: lotNumber,
+                advance_amount: advanceAmount,
+                advance_amount_words: advanceAmountWords,
+                leader_email: manager,
+                advance_description: advancedescription,
+                date_time: dateTime
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            const leader_phone = await getPhoneByEmail(manager); // Retrieve the operator's phone using email
+
+            const telegramMessage = `Đề nghị tạm ứng mới chờ phê duyệt: \n` +
+                
+                `Người đề nghị: ${fullName}\n` +
+                `Số tiền xin tạm ứng: ${advanceAmount} VNĐ\n` +
+                `----------------------\n` +
+                `Số tiền phê duyệt: ${advanceAmountWords} VNĐ\n` +
+                `Nội dung: ${advancedescription}\n` +
+                `Tên khách hàng: ${customerName}\n` +
+                `Số Bill/Booking: ${lotNumber}\n` +
+                `Số lượng: ${quantity}\n` +
+                `Đơn vị: ${unit}` ;
+                
+
+            await fetch('../sendTelegram.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    full_name: fullName,
-                    customer_name: customerName,
-                    operator_email: email,
-                    type_item: type_item,
-                    quantity: quantity,
-                    unit: unit,
-                    lot_number: lotNumber,
-                    advance_amount: advanceAmount,
-                    advance_amount_words: advanceAmountWords,
-                    leader_email: manager,
-                    advance_description: advancedescription,
-                    date_time: dateTime
+                    message: telegramMessage,
+                    id_telegram: leader_phone
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Đơn xin tạm ứng đã được gửi thành công.');
-                    clearForm();
-                } else {
-                    alert('Lỗi khi gửi đơn xin tạm ứng.');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+            });
+
+            alert('Đơn xin tạm ứng đã được gửi thành công.');
+            clearForm();
+        } else {
+            alert('Lỗi khi gửi đơn xin tạm ứng.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function getPhoneByEmail(email) {
+    try {
+        // Tải dữ liệu từ file users.json
+        const response = await fetch('../database/users.json', { cache: "no-store" });
+
+        // Kiểm tra xem phản hồi có hợp lệ hay không
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
 
+        // Chuyển đổi phản hồi thành JSON
+        const users = await response.json();
+
+        // Tìm người dùng theo email
+        const user = users.find(user => user.email === email);
+
+        // Kiểm tra xem có người dùng không
+        if (user) {
+            //console.log("Số điện thoại của người dùng:", user.phone);
+            return user.phone; // Trả về số điện thoại nếu tìm thấy
+        } else {
+            //console.log("Không tìm thấy người dùng với email:", email);
+            return null; // Trả về null nếu không tìm thấy
+        }
+    } catch (error) {
+        console.error("Đã xảy ra lỗi:", error);
+    }
+}
         function clearForm() {
             document.getElementById('customer-name').value = '';
             document.getElementById('quantity').value = '';

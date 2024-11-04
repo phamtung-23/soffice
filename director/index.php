@@ -45,7 +45,6 @@ function getStatusCounts($data, $statusField, $statusValue = null) {
     }));
 }
 
-
 function countApprovalsByRoleAndStatus($data, $role, $status) {
     $count = 0;
     
@@ -85,7 +84,7 @@ $requestApprovedLeader = getStatusCounts($requestData, 'check_status', 'Phê duy
 $requestApprovedDirector = getStatusCounts($requestData, 'status', 'Phê duyệt');
 $requestRejectedLeader = getStatusCounts($requestData, 'check_status', 'Từ chối');
 $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
-$requestWaitingDirector = $requestTotal - $requestApprovedLeader - $requestRejectedLeader;
+$requestWaitingDirector = $requestApprovedLeader - $requestApprovedDirector - $requestRejectedDirector;
 
 $paymentTotal = count($paymentData);
 $paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved');
@@ -208,11 +207,13 @@ $paymentWaitingDirector = countApprovalsByRoleDirector($paymentData, 'director',
 </div>
 
 <div class="menu">
-    <a href="">Home</a>
-    <a href="request.php">Quản lý phiếu tạm ứng</a>
-    <a href="payment.php">Quản lý phiếu thanh toán</a>
+    <a href="index.php">Home</a>
+    <a href="all_request.php">Quản lý phiếu tạm ứng</a>
+    <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="finance.php">Quản lý tài chính</a>
     <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="admin.php">Quản lý account</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
 </div>
 
@@ -243,30 +244,24 @@ $paymentWaitingDirector = countApprovalsByRoleDirector($paymentData, 'director',
         <table>
             <tr>
                 <th>Loại phiếu</th>
-                <th>Tổng số phiếu</th>
                 <th>Số phiếu đã được Leader duyệt</th>
                 <th>Số phiếu đã được GĐ duyệt</th>
-                <th>Số phiếu bị Leader từ chối</th>
                 <th>Số phiếu bị Giám đốc từ chối</th>
                 <th>Số phiếu chờ duyệt GĐ duyệt</th>
                 <th>Link quản lý</th>
             </tr>
             <tr>
                 <td>Phiếu tạm ứng</td>
-                <td><?php echo $requestTotal; ?></td>
                 <td><?php echo $requestApprovedLeader; ?></td>
                 <td><?php echo $requestApprovedDirector; ?></td>
-                <td><?php echo $requestRejectedLeader; ?></td>
                 <td><?php echo $requestRejectedDirector; ?></td>
                 <td><?php echo $requestWaitingDirector; ?></td>
                 <td><a href="request_management.php">Quản lý phiếu tạm ứng chờ duyệt</a></td>
             </tr>
             <tr>
                 <td>Phiếu thanh toán</td>
-                <td><?php echo $paymentTotal; ?></td>
                 <td><?php echo $paymentApprovedLeader; ?></td>
                 <td><?php echo $paymentApprovedDirector; ?></td>
-                <td><?php echo $paymentRejectedLeader; ?></td>
                 <td><?php echo $paymentRejectedDirector; ?></td>
                 <td><?php echo $paymentWaitingDirector; ?></td>
                 <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ duyệt</a></td>

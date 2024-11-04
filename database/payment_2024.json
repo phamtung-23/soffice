@@ -5,155 +5,62 @@
             {
                 "role": "leader",
                 "email": "leader1@gmail.com",
-                "status": "pending",
-                "time": ""
+                "status": "approved",
+                "time": "2024-11-04 08:36:12",
+                "comment": ""
             },
             {
                 "role": "sale",
                 "email": "gmminhtien@gmail.com",
-                "status": "pending",
-                "time": ""
+                "status": "approved",
+                "time": "2024-11-04 08:37:48",
+                "comment": ""
             },
             {
                 "role": "director",
                 "email": "director@gmail.com",
-                "status": "pending",
-                "time": ""
+                "status": "approved",
+                "time": "2024-11-04 08:39:52",
+                "comment": ""
             }
         ],
         "expenses": [
             {
                 "expense_kind": "Customs + Phi\u0301 NH CSHT",
-                "expense_amount": 210000,
+                "expense_amount": 111111,
                 "expense_payee": "OPS",
-                "expense_doc": "test"
+                "expense_doc": ""
             }
         ],
         "shipper": "Pham THanh Tung",
         "billTo": "Segina-SOC",
         "volume": "1x40",
         "payment_lo": "555",
-        "customs_manifest_on": "132456789",
-        "total_actual": "60000000",
-        "total_actual1": "60000000",
+        "customs_manifest_on": "1324",
+        "total_actual": "66,666",
+        "total_actual1": "666,666",
         "received_back_on": "",
         "by": "",
         "operator_name": "Oper 1",
-        "operator_email": "oper1@gmail.com"
-    },
-    {
-        "instruction_no": 2,
-        "approval": [
-            {
-                "role": "leader",
-                "email": "leader1@gmail.com",
-                "status": "approved",
-                "time": "2024-11-02 01:39:27",
-                "comment": ""
-            },
-            {
-                "role": "sale",
-                "email": "gmminhtien@gmail.com",
-                "status": "approved",
-                "time": "2024-11-02 01:40:26",
-                "comment": ""
-            },
-            {
-                "role": "director",
-                "email": "director@gmail.com",
-                "status": "pending",
-                "time": "2024-11-03 16:33:17",
-                "comment": ""
-            }
-        ],
-        "expenses": [
-            {
-                "expense_kind": "Customs + Phi\u0301 NH CSHT",
-                "expense_amount": 2100000,
-                "expense_payee": "OPS",
-                "expense_doc": ""
-            },
-            {
-                "expense_kind": "Customs + Phi\u0301 NH CSHT",
-                "expense_amount": 2100000,
-                "expense_payee": "OPS",
-                "expense_doc": ""
-            }
-        ],
-        "shipper": "Tung Test",
-        "billTo": "Segina-SOC",
-        "volume": "1x40",
-        "payment_lo": "555",
-        "customs_manifest_on": "1324",
-        "total_actual": "6000000",
-        "total_actual1": "6000000",
-        "received_back_on": "",
-        "by": "",
-        "operator_name": "Pham Thanh Tung",
-        "operator_email": "ptung23082001@gmail.com",
+        "operator_email": "oper1@gmail.com",
         "delivery_address": "Quan 4",
-        "delivery_time": "2024-11-13",
-        "delivery_pct": "aaa",
-        "trucking": "trucking",
+        "delivery_time": "2024-11-06",
+        "delivery_pct": "asdf",
+        "trucking": "Trucking",
         "trunkingVat": "12",
         "trunkingIncl": "",
-        "trunkingExcl": "on",
-        "stuffing": "stuffing",
-        "stuffingVat": "12",
-        "stuffingIncl": "on",
-        "stuffingExcl": "on",
-        "liftOnOff": "liftOnOff",
+        "trunkingExcl": "",
+        "stuffing": "Lift",
+        "StuffingVat": "12",
+        "StuffingIncl": "on",
+        "StuffingExcl": "",
+        "liftOnOff": "Lift on\/off",
         "liftOnOffVat": "12",
         "liftOnOffIncl": "on",
         "liftOnOffExcl": "",
-        "chiHo": "chiHo",
+        "chiHo": "Chi h\u00f4\u0323",
         "chiHoVat": "12",
         "chiHoIncl": "on",
         "chiHoExcl": ""
-    },
-    {
-        "instruction_no": 3,
-        "approval": [
-            {
-                "role": "leader",
-                "email": "leader1@gmail.com",
-                "status": "pending",
-                "time": "",
-                "comment": ""
-            },
-            {
-                "role": "sale",
-                "email": "gmminhtien@gmail.com",
-                "status": "pending",
-                "time": "",
-                "comment": ""
-            },
-            {
-                "role": "director",
-                "email": "director@gmail.com",
-                "status": "pending",
-                "time": "",
-                "comment": ""
-            }
-        ],
-        "expenses": [
-            {
-                "expense_kind": "Customs + Phi\u0301 NH CSHT",
-                "expense_amount": 22222,
-                "expense_payee": "OPS",
-                "expense_doc": ""
-            }
-        ],
-        "shipper": "Pham THanh Hung",
-        "billTo": "Segina-SOC",
-        "volume": "1x40",
-        "payment_lo": "555",
-        "customs_manifest_on": "12345",
-        "total_actual": "66666",
-        "total_actual1": "66666",
-        "received_back_on": "",
-        "by": "",
-        "operator_name": "Oper 1",
-        "operator_email": "oper1@gmail.com"
     }
 ]

@@ -110,6 +110,7 @@ if (file_exists($file)) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            font-size: 14px;
         }
 
         table, th, td {
@@ -174,6 +175,7 @@ if (file_exists($file)) {
     .wrap-text {
         white-space: normal;
     }
+
     </style>
     </style>
     
@@ -231,7 +233,7 @@ if (file_exists($file)) {
                         <th>Số lượng (container)</th>
                         <th>Đơn vị (feet)</th>
                         <th>Số tiền xin tạm ứng (VNĐ)</th>
-                        <th>Số tiền được duyệt (VNĐ)</th>h>
+                        <th>Số tiền được duyệt (VNĐ)</th>
                         <th>Nội dung yêu cầu</th>
                         <th>Thời gian gửi yêu cầu</th>
                         <th>Thời gian Leader duyệt</th>
@@ -262,14 +264,14 @@ if (file_exists($file)) {
                             echo "<td>" . number_format($request['advance_amount']) . "</td>";
                             echo "<td>" . (isset($request['approved_amount']) ? number_format($request['approved_amount']) : 'null') . "</td>";
                             echo "<td>" . $request['advance_description'] . "</td>";
-                            echo "<td>" . date("d/m/Y H:i:s", strtotime($request['date_time'])) . "</td>";
-                            echo "<td>" . $request['check_approval_time'] . "</td>";
-                            echo "<td>" . $request['approval_time'] . "</td>";
-                            echo "<td>" . $request['payment_time'] . "</td>";
-                            echo "<td>" . $request['payment_refund_time'] . "</td>";
+                          echo "<td>" . (!empty($request['date_time']) ? date("d/m/Y", strtotime($request['date_time'])) : "") . "</td>";
+                            echo "<td>" . (!empty($request['check_approval_time']) ? date("d/m/Y", strtotime($request['check_approval_time'])) : "") . "</td>";
+                            echo "<td>" . (!empty($request['approval_time']) ? date("d/m/Y", strtotime($request['approval_time'])) : "") . "</td>";
+                            echo "<td>" . (!empty($request['payment_time']) ? date("d/m/Y", strtotime($request['payment_time'])) : "") . "</td>";
+                            echo "<td>" . (!empty($request['payment_refund_time']) ? date("d/m/Y", strtotime($request['payment_refund_time'])) : "") . "</td>";
                               // Only display the link if 'approved_filename' is not empty
     if (!empty($request['approved_filename'])) {
-        echo "<td><a href=\"../director/pdfs/" . $request['approved_filename'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+        echo "<td><a href=\"../database/pdfs/" . $request['approved_filename'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
     } else {
         echo "<td></td>"; // Empty cell if there's no filename
     }

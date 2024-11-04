@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
     echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
     exit();
 }
@@ -28,7 +28,7 @@ if (file_exists($file)) {
 
     // Filter requests to only those matching the operator's email
     $filteredRequests = array_filter($requests, function($request) use ($userEmail) {
-        return $request['leader_email'] === $userEmail;
+        return $request['operator_email'] === $userEmail;
     });
 } else {
     $filteredRequests = [];
@@ -175,7 +175,7 @@ if (file_exists($file)) {
         white-space: normal;
     }
     </style>
-    </style>
+   
     
     <!-- DataTables CSS and jQuery -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
@@ -191,6 +191,8 @@ if (file_exists($file)) {
 
     <div class="menu">
         <a href="index.php">Home</a>
+        <a href="request.php">Tạo phiếu xin tạm ứng</a>
+        <a href="payment.php">Tạo phiếu thanh toán</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>
     </div>
@@ -230,7 +232,7 @@ if (file_exists($file)) {
                         <th>Số lượng (container)</th>
                         <th>Đơn vị (feet)</th>
                         <th>Số tiền xin tạm ứng (VNĐ)</th>
-                        <th>Số tiền được duyệt (VNĐ)</th>h>
+                        <th>Số tiền được duyệt (VNĐ)</th>
                         <th>Nội dung yêu cầu</th>
                         <th>Thời gian gửi yêu cầu</th>
                         <th>Thời gian Leader duyệt</th>
@@ -261,11 +263,11 @@ if (file_exists($file)) {
                             echo "<td>" . number_format($request['advance_amount']) . "</td>";
                             echo "<td>" . (isset($request['approved_amount']) ? number_format($request['approved_amount']) : 'null') . "</td>";
                             echo "<td>" . $request['advance_description'] . "</td>";
-                              echo "<td>" . (!empty($request['date_time']) ? date("d/m/Y", strtotime($request['date_time'])) : "") . "</td>";
-                            echo "<td>" . (!empty($request['check_approval_time']) ? date("d/m/Y", strtotime($request['check_approval_time'])) : "") . "</td>";
-                            echo "<td>" . (!empty($request['approval_time']) ? date("d/m/Y", strtotime($request['approval_time'])) : "") . "</td>";
-                            echo "<td>" . (!empty($request['payment_time']) ? date("d/m/Y", strtotime($request['payment_time'])) : "") . "</td>";
-                            echo "<td>" . (!empty($request['payment_refund_time']) ? date("d/m/Y", strtotime($request['payment_refund_time'])) : "") . "</td>";
+                            echo "<td>" . date("d/m/Y H:i:s", strtotime($request['date_time'])) . "</td>";
+                            echo "<td>" . $request['check_approval_time'] . "</td>";
+                            echo "<td>" . $request['approval_time'] . "</td>";
+                            echo "<td>" . $request['payment_time'] . "</td>";
+                            echo "<td>" . $request['payment_refund_time'] . "</td>";
                               // Only display the link if 'approved_filename' is not empty
     if (!empty($request['approved_filename'])) {
         echo "<td><a href=\"../database/pdfs/" . $request['approved_filename'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
@@ -277,7 +279,7 @@ if (file_exists($file)) {
             $totalAmount += $request['advance_amount'];
                         }
                     } else {
-                        echo "<tr><td colspan='13'>Không có yêu cầu nào.</td></tr>";
+                        echo "<tr><td colspan='15'>Không có yêu cầu nào.</td></tr>";
                     }
                     
                     ?>
@@ -319,16 +321,20 @@ if (file_exists($file)) {
    <script>
     $(document).ready(function() {
         // Initialize DataTable with individual column search
-        var table = $('#requestsTable').DataTable({
-            "language": {
-                "search": "Tìm kiếm nhanh:",
-                "lengthMenu": "Hiển thị _MENU_ phiếu trên mỗi trang",
-                "zeroRecords": "Không tìm thấy phiếu nào",
-                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ phiếu",
-                "infoEmpty": "Hiển thị 0 đến 0 của 0 phiếu",
-                "infoFiltered": "(lọc từ _MAX_ phiếu)"
-            }
-        });
+      var table = $('#requestsTable').DataTable({
+        "language": {
+            "search": "Tìm kiếm nhanh:",
+            "lengthMenu": "Hiển thị _MENU_ phiếu trên mỗi trang",
+            "zeroRecords": "Không tìm thấy phiếu nào",
+            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ phiếu",
+            "infoEmpty": "Hiển thị 0 đến 0 của 0 phiếu",
+            "infoFiltered": "(lọc từ _MAX_ phiếu)"
+        },
+        "pageLength": 10,  // Đặt số hàng mặc định là 10
+        "lengthChange": true, // Cho phép thay đổi số hàng hiển thị
+        "paging": true, // Đảm bảo phân trang được kích hoạt
+    });
+    
 
         // Apply column search on each input field in the header
         $('#requestsTable thead tr:eq(1) th').each(function (i) {
@@ -339,6 +345,7 @@ if (file_exists($file)) {
                 calculateTotal(); // Calculate total after filtering
             });
         });
+        
 
         // Initial total calculation
         calculateTotal();

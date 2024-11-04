@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
     echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
     exit();
 }
@@ -26,9 +26,9 @@ if (file_exists($file)) {
     $jsonData = file_get_contents($file);
     $requests = json_decode($jsonData, true);
 
-    // Filter requests to only those matching the operator's email
+    // Lọc các yêu cầu operator_email trùng với session['user_id']
     $filteredRequests = array_filter($requests, function($request) use ($userEmail) {
-        return $request['leader_email'] === $userEmail;
+        return $request['status'] === "Phê duyệt";
     });
 } else {
     $filteredRequests = [];
@@ -191,6 +191,7 @@ if (file_exists($file)) {
 
     <div class="menu">
         <a href="index.php">Home</a>
+        <a href="all_payment.php">Quản lý phiếu thanh toán</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>
     </div>
@@ -296,19 +297,19 @@ if (file_exists($file)) {
 </tr>
 <br>
 <tr>
-    <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã được nhận (VNĐ):</strong></td>
+    <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã chi (VNĐ):</strong></td>
     <td><strong id="totalReceivedAmount">0</strong></td>
     <td colspan="6"></td> <!-- Empty cells to align with the table structure -->
 </tr>
 <br>
 <tr>
-    <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã hoàn (VNĐ):</strong></td>
+    <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã thu (VNĐ):</strong></td>
     <td><strong id="totalRefundedAmount">0</strong></td>
     <td colspan="6"></td> <!-- Empty cells to align with the table structure -->
 </tr>
 <br>
 <tr>
-    <td colspan="6" style="text-align: right;"><strong>Tổng số tiền nợ (VNĐ):</strong></td>
+    <td colspan="6" style="text-align: right;"><strong>Tổng số tiền nợ cần phải thu (VNĐ):</strong></td>
     <td><strong id="totalDebtAmount" style="color: red;">0</strong></td>
     <td colspan="6"></td> <!-- Empty cells to align with the table structure -->
 </tr>

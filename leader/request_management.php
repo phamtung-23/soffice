@@ -33,14 +33,12 @@ sort($years);
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Leader Dashboard</title>
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản lý phiếu tạm ứng chờ duyệt</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        /* Basic styles for layout */
+      
 
         .form-group {
             margin: 15px 0;
@@ -75,8 +73,76 @@ sort($years);
             border: none;
             border-radius: 5px;
         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .menu {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        .menu a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .menu a:hover {
+            background-color: #575757;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .welcome-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .menu a.logout {
+            float: right;
+            background-color: #f44336;
+        }
+
+        .menu a.logout:hover {
+            background-color: #d32f2f;
+        }
+
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
 
         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+          table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
@@ -91,6 +157,8 @@ sort($years);
             text-align: center;
         }
 
+
+       
         #reject-reason-modal {
             display: none;
             margin-top: 20px;
@@ -153,7 +221,6 @@ sort($years);
             font-size: 14px;
             color: #888;
         }
-
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
@@ -361,6 +428,39 @@ async function getPhoneByEmail(email) {
         console.error("Đã xảy ra lỗi:", error);
     }
 }
+async function getPhoneDirector() {
+    try {
+        // Fetch data from users.json without caching
+        const response = await fetch('../database/users.json', { cache: "no-store" });
+
+        // Check if response is ok
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        // Convert response to JSON
+        const users = await response.json();
+
+        // Ensure users is an array before using .find
+        if (Array.isArray(users)) {
+            // Find user with role "director"
+            const user = users.find(user => user.role === 'director');
+
+            if (user) {
+                return user.phone; // Return phone number if found
+            } else {
+                console.warn("No user with the role 'director' found");
+                return null; // Return null if no director found
+            }
+        } else {
+            console.error("Unexpected data format in users.json");
+            return null;
+        }
+    } catch (error) {
+        console.error("An error occurred:", error);
+    }
+}
+
 
 
         function cancel() {
@@ -570,6 +670,30 @@ async function approveRequest() {
                        id_telegram: operator_phone // Truyền thêm thông tin operator
                     })
                 });
+            const director_phone = await getPhoneDirector(); 
+
+          const telegramMessage_2 = `Yêu cầu tạm ứng mới chờ duyệt**\n` +
+                                    `ID yêu cầu: ${request.id}\n` +
+                                    `Người đề nghị: ${request.full_name}\n`+
+                                    `Số tiền xin tạm ứng: ${advance_amountFormatted}\n`+
+                                    `Số tiền xin tạm ứng bằng chữ: ${request.advance_amount_words}\n`+
+                                    `Tên khách hàng: ${request.customer_name}\n`+
+                                    `Số Bill/Booking: ${request.lot_number}\n`+
+                                    `Người duyệt: ${request.check_approved_by}\n` +
+                                    `Ghi chú: **${approvalNote}**\n` +
+                                    `Thời gian duyệt: ${request.check_approval_time}`;
+                
+
+            await fetch('../sendTelegram.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: telegramMessage_2,
+                    id_telegram: director_phone
+                })
+            });
             alert('Đã phê duyệt thành công!!!');
             cancel(); // Thực hiện hành động hủy nếu cần
         }
@@ -585,10 +709,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     </script>
 </head>
+
 <body>
+<div class="header">
+    <h1>Quản lý phiếu tạm ứng chờ duyệt</h1>
+</div>
      <div class="menu">
         <a href="index.php">Home</a>
-        <a href="../pages/phieu-tam-ung">Danh sách phiếu tạm ứng đã duyệt</a>
+        <a href="all_request.php">Danh sách phiếu tạm ứng</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>
     </div>

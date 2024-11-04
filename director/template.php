@@ -243,7 +243,8 @@ $htmlContent = "
 ";
 
 // Tạo thư mục lưu PDF nếu chưa tồn tại
-$pdfDir = __DIR__ . '/pdfs/';
+//$pdfDir = __DIR__ . '/pdfs/';
+$pdfDir = '../database/pdfs/';
 if (!is_dir($pdfDir)) {
     mkdir($pdfDir, 0777, true);
 }
@@ -267,7 +268,7 @@ try {
     // Trả về đường dẫn file PDF
     echo json_encode([
         'success' => true,
-        'pdfUrl' => 'pdfs/' . $pdfFileName
+        'pdfUrl' => 'database/pdfs/' . $pdfFileName
     ]);
 } catch (\Mpdf\MpdfException $e) {
     // Xử lý lỗi mPDF
