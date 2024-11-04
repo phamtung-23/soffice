@@ -2,7 +2,7 @@
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -51,6 +51,24 @@ if ($instructionNo !== null) {
         }
       }
 
+      // get sale data
+      $saleUserData = null;
+      foreach ($jsonDataUser as $user) {
+        if ($user['role'] == 'sale' && $user['email'] == $entry['approval'][1]['email']) {
+          $saleUserData = $user;
+          break;
+        }
+      }
+
+      // get leader data
+      $directorData = null;
+      foreach ($jsonDataUser as $user) {
+        if ($user['role'] == 'director' && $user['email'] == $entry['approval'][2]['email']) {
+          $directorData = $user;
+          break;
+        }
+      }
+
       break;
     }
   }
@@ -81,6 +99,38 @@ if ($instructionNo !== null) {
             <input type="text" class="form-control" id="instructionNo" name="instructionNo" required>
           </div>
         </div> -->
+      </div>
+      <div>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="NguoiDeNghi" class="col-sm-2 col-form-label">Người đề nghị:</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="NguoiDeNghi" placeholder="" name="NguoiDeNghi" required disabled value="<?= $data['shipper'] ?>">
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="thuocBoPhan" class="col-sm-2 col-form-label">Thuộc bộ phận:</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="thuocBoPhan" placeholder="" name="thuocBoPhan" required disabled value="GN">
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="soTien" class="col-sm-2 col-form-label">Số tiền:</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="soTien" placeholder="" name="soTien" required disabled value="<?= $data['volume'] ?>">
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="soTienBangChu" class="col-sm-2 col-form-label">Số tiền bằng chữ:</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="soTienBangChu" placeholder="" name="soTienBangChu" required disabled value="<?= $data['volume'] ?>">
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="payment_lo" class="col-sm-2 col-form-label">Nội dung thanh toán:</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required disabled value="<?php echo $data['shipper']."/".$data['volume']."/".$data['customs_manifest_on']." ".$data['payment_lo'] ?>">
+          </div>
+        </div>
       </div>
 
       <!-- I. SALES INFORMATION -->
@@ -133,6 +183,128 @@ if ($instructionNo !== null) {
       </div>
 
       <div>
+        <h6>II. PICK UP/DELIVERY INFORMATION:</h6>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="delivery_address" name="delivery_address" required value="<?= $data['delivery_address'] ?>" disabled>
+          </div>
+        </div>
+
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" required value="<?= $data['delivery_time'] ?>" disabled>
+          </div>
+
+          <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="" name="delivery_pct" required value="<?= $data['delivery_pct'] ?>" disabled>
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="trucking" placeholder="" name="trucking" required value="<?= $data['trucking'] ?>" disabled>
+          </div>
+          <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
+          <div class="col-sm-2">
+            <div class="input-group">
+              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="trunkingVat" required value="<?= $data['trunkingVat'] ?>" disabled>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="trunkingIncl" name="trunkingIncl" disabled <?= $data['trunkingIncl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="trunkingIncl">
+              INCL
+            </label>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="trunkingExcl" name="trunkingExcl" disabled <?= $data['trunkingExcl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="trunkingExcl">
+              EXCL
+            </label>
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="stuffing" placeholder="" name="stuffing" required value="<?= $data['stuffing'] ?>" disabled>
+          </div>
+          <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
+          <div class="col-sm-2">
+            <div class="input-group">
+              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required value="<?= $data['stuffingVat'] ?>" disabled>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl" disabled <?= $data['stuffingIncl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="stuffingIncl">
+              INCL
+            </label>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="stuffingExcl" name="stuffingExcl" disabled <?= $data['stuffingExcl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="stuffingExcl">
+              EXCL
+            </label>
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="liftOnOff" placeholder="" name="liftOnOff" required value="<?= $data['liftOnOff'] ?>" disabled>
+          </div>
+          <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
+          <div class="col-sm-2">
+            <div class="input-group">
+              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="liftOnOffVat" required value="<?= $data['liftOnOffVat'] ?>" disabled>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="liftOnOffIncl" name="liftOnOffIncl" disabled <?= $data['liftOnOffIncl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="liftOnOffIncl">
+              INCL
+            </label>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="liftOnOffExcl" name="liftOnOffExcl" disabled <?= $data['liftOnOffExcl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="liftOnOffExcl">
+              EXCL
+            </label>
+          </div>
+        </div>
+        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="chiHo" placeholder="" name="chiHo" required value="<?= $data['chiHo'] ?>" disabled>
+          </div>
+          <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
+          <div class="col-sm-2">
+            <div class="input-group">
+              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="chiHoVat" required value="<?= $data['chiHoVat'] ?>" disabled>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="chiHoIncl" name="chiHoIncl" disabled <?= $data['chiHoIncl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="chiHoIncl">
+              INCL
+            </label>
+          </div>
+          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
+            <input class="form-check-input" type="checkbox" id="chiHoExcl" name="chiHoExcl" disabled <?= $data['chiHoExcl'] == 'on' ? 'checked' : ''; ?>>
+            <label class="form-check-label" for="chiHoExcl">
+              EXCL
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div>
         <h6>III. OPERATION INFORMATION</h6>
 
         <div class="row mb-3 mt-3 ps-4">
@@ -148,6 +320,7 @@ if ($instructionNo !== null) {
         </div>
 
         <!-- Expense Table Section -->
+        <h6>EXPENSE</h6>
         <table class="table table-bordered mb-4">
           <thead>
             <tr>
@@ -199,6 +372,26 @@ if ($instructionNo !== null) {
 
           </tbody>
         </table>
+
+
+        <h6>DOCUMENTS REVERT/h6>
+
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="operatorName" class="col-sm-1 col-form-label">Salesman:</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $leaderData['fullname'] ?>">
+          </div>
+
+          <label for="customs_manifest_on" class="col-sm-1 col-form-label">Date:</label>
+          <div class="col-sm-2">
+            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $data['approval'][0]['time'] ?>">
+          </div>
+
+          <label for="customs_manifest_on" class="col-sm-2 col-form-label">Approved by:</label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $saleUserData['fullname'] ?>">
+          </div>
+        </div>
       </div>
 
       <!-- Submission Button -->
@@ -241,7 +434,7 @@ if ($instructionNo !== null) {
   <script>
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
-    const leaderData = <?= json_encode($leaderData) ?>;
+    const directorData = <?= json_encode($directorData) ?>;
 
     const exampleModal = document.getElementById('exampleModal')
     if (exampleModal) {
@@ -359,17 +552,17 @@ if ($instructionNo !== null) {
             // Tạo nội dung tin nhắn để gửi
             let telegramMessage = '';
             if (status === 'approved') {
-              telegramMessage = `**Yêu cầu đã được Leader phê duyệt!**\n` +
+              telegramMessage = `**Yêu cầu đã được Giám đốc phê duyệt!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
                 `Người đề nghị: ${itemData.operator_name}\n` +
                 `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
                 `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người phê duyệt:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+                `Người phê duyệt:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
                 `Thời gian phê duyệt: ${itemData.approval[0].time}`;
             } else {
-              telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
+              telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
                 `Người đề nghị: ${itemData.operator_name}\n` +
                 `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
@@ -377,12 +570,12 @@ if ($instructionNo !== null) {
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Lý do: **${message}**\n` +
-                `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+                `Người từ chối:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
                 `Thời gian từ chối: ${itemData.approval[0].time}`;
             }
 
             // Gửi tin nhắn đến Telegram
-            await fetch('../../../sendTelegram.php', {
+            const res = await fetch('../../../sendTelegram.php', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -392,6 +585,15 @@ if ($instructionNo !== null) {
                 id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
               })
             });
+
+            // export pdf
+            if (res.status === 200 && data.data) {
+              await fetchTemplateAndFill({
+                ...data.data,
+                amount: formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString()),
+                amountWords: convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS')),  
+              }); // Gọi hàm fill template+
+            }
 
             alert("Approval status updated successfully!");
             window.location.href = '../../index.php';
@@ -403,6 +605,38 @@ if ($instructionNo !== null) {
           console.error('Error:', error);
           alert("An error occurred. Please try again.");
         });
+    }
+
+    async function fetchTemplateAndFill(request) {
+      const pdfUrl = 'export_pdf.php'; // Đường dẫn đến file export_pdf.php
+      console.log('Request:', request);
+
+      try {
+        // Sử dụng fetch để gửi dữ liệu yêu cầu
+        const response = await fetch(pdfUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(request)
+        });
+
+      } catch (error) {
+        console.error('Lỗi khi tạo PDF:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDetail(); // Gọi hàm loadRequests khi trang được tải
+    });
+
+    function loadDetail() {
+      const soTienDocument = document.getElementById('soTien');
+      const soTienBangChu = document.getElementById('soTienBangChu');
+      const amount = formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString());
+      const amountWords = convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'));
+      soTienDocument.value = `${amount} VND`;
+      soTienBangChu.value = amountWords;
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

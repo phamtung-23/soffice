@@ -45,6 +45,40 @@ function getStatusCounts($data, $statusField, $statusValue = null) {
     }));
 }
 
+
+function countApprovalsByRoleAndStatus($data, $role, $status) {
+    $count = 0;
+    
+    foreach ($data as $item) {
+        if (isset($item['approval'])) {
+            foreach ($item['approval'] as $approval) {
+                if ($approval['role'] === $role && $approval['status'] === $status) {
+                    $count++;
+                }
+            }
+        }
+    }
+
+    return $count;
+}
+
+function countApprovalsByRoleDirector($data, $role, $status){
+    // check role leader must be approved then count role sale
+    $count = 0;
+    foreach ($data as $item) {
+        if (isset($item['approval'])) {
+            foreach ($item['approval'] as $approval) {
+                if ($item['approval'][0]['status'] === 'approved' && $item['approval'][1]['status'] === 'approved') {
+                    if ($approval['role'] === $role && $approval['status'] === $status) {
+                        $count++;
+                    }
+                }
+            }
+        }
+    }
+    return $count;
+}
+
 // Calculate counts for request and payment data
 $requestTotal = count($requestData);
 $requestApprovedLeader = getStatusCounts($requestData, 'check_status', 'Phê duyệt');
@@ -54,11 +88,11 @@ $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối'
 $requestWaitingDirector = $requestTotal - $requestApprovedLeader - $requestRejectedLeader;
 
 $paymentTotal = count($paymentData);
-$paymentApprovedLeader = getStatusCounts($paymentData, 'leader_status', 'approved');
-$paymentApprovedDirector = getStatusCounts($paymentData, 'director_status', 'approved');
-$paymentRejectedLeader = getStatusCounts($paymentData, 'leader_status', 'rejected');
-$paymentRejectedDirector = getStatusCounts($paymentData, 'director_status', 'rejected');
-$paymentWaitingDirector = $paymentTotal - $paymentApprovedLeader - $paymentRejectedLeader;
+$paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved');
+$paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
+$paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
+$paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
+$paymentWaitingDirector = countApprovalsByRoleDirector($paymentData, 'director', 'pending');
 ?>
 
 <!DOCTYPE html>
@@ -235,7 +269,7 @@ $paymentWaitingDirector = $paymentTotal - $paymentApprovedLeader - $paymentRejec
                 <td><?php echo $paymentRejectedLeader; ?></td>
                 <td><?php echo $paymentRejectedDirector; ?></td>
                 <td><?php echo $paymentWaitingDirector; ?></td>
-                <td><a href="payment_management.php">Quản lý phiếu thanh toán chờ duyệt</a></td>
+                <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ duyệt</a></td>
             </tr>
         </table>
     </div>

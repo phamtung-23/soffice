@@ -48,6 +48,8 @@ function toggleExpenseFields(currentInput, otherInputName) {
   const otherInput = tableRow.querySelector(`input[name="${otherInputName}"]`);
   
   if (currentInput.value) {
+    const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+    currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
     otherInput.disabled = true;
   } else {
     otherInput.disabled = false;
@@ -64,4 +66,13 @@ function deleteRow(button) {
   Array.from(tableBody.rows).forEach((row, index) => {
     row.cells[0].textContent = index + 1;
   });
+}
+
+function updateAmountText(currentInput) {
+  const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+  currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+}
+
+function formatNumber(num) {
+  return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

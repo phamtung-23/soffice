@@ -37,6 +37,24 @@ $currentYear = date('Y');
 
 // Define the path to the JSON file for the current year
 $filePath = "../../../database/payment_$currentYear.json";
+$filePathUser = '../../../database/users.json';
+
+if (file_exists($filePathUser)) {
+  $jsonUserData = json_decode(file_get_contents($filePathUser), true);
+  if (!empty($jsonUserData)) {
+    // get leader data
+    $directorData = null;
+    foreach ($jsonUserData as $user) {
+      if ($user['role'] == 'director') {
+        $directorData = $user;
+        break;
+      }
+    }
+  }
+} else {
+  $jsonUserData = [];
+}
+
 
 // Initialize existing data array
 $existingData = [];
@@ -64,9 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Collect expense information in the required format
   if (isset($_POST['expense_kind']) && (isset($_POST['expense_amount']) || isset($_POST['expense_amount1'])) && isset($_POST['expense_payee']) && isset($_POST['expense_doc'])) {
     for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
+      $expenseAmount = isset($_POST['expense_amount']) ? $_POST['expense_amount'][$i] : $_POST['expense_amount1'][$i];
+      // Remove commas and convert to float
+      $expenseAmount = (float)str_replace(',', '', $expenseAmount);
+
       $expense = [
         'expense_kind' => $_POST['expense_kind'][$i],
-        'expense_amount' => isset($_POST['expense_amount']) ? (float)$_POST['expense_amount'][$i] : (float)$_POST['expense_amount1'][$i],  // Ensure it's stored as a number
+        'expense_amount' => $expenseAmount,  // Ensure it's stored as a number
         'expense_payee' => $_POST['expense_payee'][$i],
         'expense_doc' => $_POST['expense_doc'][$i]
       ];
@@ -94,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $data['operator_email'] = $email;
   $data['approval'][] = [
     'role' => 'director',
-    'email' => '',
+    'email' => $directorData['email'],
     'status' => 'pending',
     'time' => '',
     'comment' => ''
@@ -179,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <select class="form-select" aria-label="Default select example" name="leader" required>
                   <?php
                   foreach ($leaders as $leader) {
-                    echo "<option value='$leader[email]'>$leader[fullname]</option>";
+                    echo "<option value='$leader[email]'>$leader[fullname] - $leader[email]</option>";
                   }
                   ?>
                 </select>
@@ -193,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <select class="form-select" aria-label="Default select example" name="sale" required>
                   <?php
                   foreach ($sales as $sale) {
-                    echo "<option value='$sale[email]'>$sale[fullname]</option>";
+                    echo "<option value='$sale[email]'>$sale[fullname] - $sale[email]</option>";
                   }
                   ?>
                 </select>
@@ -367,8 +389,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               <tr>
                 <td>1</td>
                 <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-                <td><input type="number" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount1[]')"></td>
-                <td><input type="number" name="expense_amount1[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount[]')"></td>
+                <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount1[]')"></td>
+                <td><input type="text" name="expense_amount1[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount[]')"></td>
                 <td><input type="text" name="expense_payee[]" class="form-control" required></td>
                 <td><input type="text" name="expense_doc[]" class="form-control"></td>
                 <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
@@ -383,8 +405,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </tr>
               <tr>
                 <td colspan="2" class="text-end">TOTAL</td>
-                <td><input type="number" name="total_actual" class="form-control" required></td>
-                <td><input type="number" name="total_actual1" class="form-control" required></td>
+                <td><input type="text" id="total_actual" name="total_actual" class="form-control" required oninput="updateAmountText(this)"></td>
+                <td><input type="text" id="total_actual1" name="total_actual1" class="form-control" required oninput="updateAmountText(this)"></td>
                 <td>
                   RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on">
                 </td>
