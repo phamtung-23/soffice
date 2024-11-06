@@ -13,6 +13,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 $instructionNo = $data['instruction_no'] ?? null;
 $status = $data['approval_status'] ?? null;
 $message = $data['message'] ?? null;
+$amount = $data['amount'] ?? null;
 
 // Check if instruction number and status are provided
 if ($instructionNo === null || $status === null) {
@@ -37,6 +38,12 @@ $jsonData = json_decode(file_get_contents($filePath), true);
 $updated = false;
 foreach ($jsonData as &$entry) {
   if ($entry['instruction_no'] == $instructionNo) {
+    $entry['amount'] = $amount;
+
+    $month = date('m'); // Lấy tháng hiện tại
+    $year = date('Y');  // Lấy năm hiện tại
+    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $instructionNo . '_time_' . $month . '_' . $year . '.pdf';
+    $entry['file_path'] = $pdfFileName;
     foreach ($entry['approval'] as &$approval) {
       if ($approval['role'] === 'director' && $approval['email'] === $_SESSION['user_id']) {
         $approval['status'] = $status;

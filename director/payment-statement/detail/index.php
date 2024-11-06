@@ -116,19 +116,19 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="soTien" class="col-sm-2 col-form-label">Số tiền:</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="soTien" placeholder="" name="soTien" required disabled value="<?= $data['volume'] ?>">
+            <input type="text" class="form-control" id="soTien" placeholder="Ex:1,000,000" name="soTien" required oninput="updateAmountText(this)">
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="soTienBangChu" class="col-sm-2 col-form-label">Số tiền bằng chữ:</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="soTienBangChu" placeholder="" name="soTienBangChu" required disabled value="<?= $data['volume'] ?>">
+            <input type="text" class="form-control" id="soTienBangChu" placeholder="" name="soTienBangChu" required disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="payment_lo" class="col-sm-2 col-form-label">Nội dung thanh toán:</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required disabled value="<?php echo $data['shipper']."/".$data['volume']."/".$data['customs_manifest_on']." ".$data['payment_lo'] ?>">
+            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required disabled value="<?php echo $data['shipper'] . "/" . $data['volume'] . "/" . $data['customs_manifest_on'] . " " . $data['payment_lo'] ?>">
           </div>
         </div>
       </div>
@@ -332,7 +332,7 @@ if ($instructionNo !== null) {
             </tr>
             <tr>
               <th>Actual</th>
-              <th>Actual</th>
+              <th>Số hóa đơn</th>
             </tr>
           </thead>
           <tbody class="tableBody">
@@ -342,12 +342,8 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="number" class="form-control" required disabled value="<?= $expense['expense_amount'] ? $expense['expense_amount'] : null ?>"></td>
-                <td><input type="number" class="form-control" required disabled value="<?php if (isset($data['expense_amount1'])) {
-                                                                                          echo $data['expense_amount1'];
-                                                                                        } else {
-                                                                                          echo null;
-                                                                                        } ?>"></td>
+                <td><input type="text" class="form-control" required id="expenses_amount" disabled value="<?= $expense['expense_amount'] ?>"></td>
+                <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
               </tr>
@@ -359,8 +355,8 @@ if ($instructionNo !== null) {
           <tfoot>
             <tr>
               <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="number" name="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" disabled></td>
-              <td><input type="number" name="total_actual1" class="form-control" required value="<?= $data['total_actual1'] ?>" disabled></td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" disabled></td>
+              <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
@@ -376,22 +372,22 @@ if ($instructionNo !== null) {
 
         <h6>DOCUMENTS REVERT/h6>
 
-        <div class="row mb-3 mt-3 ps-4">
-          <label for="operatorName" class="col-sm-1 col-form-label">Salesman:</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $leaderData['fullname'] ?>">
-          </div>
+          <div class="row mb-3 mt-3 ps-4">
+            <label for="operatorName" class="col-sm-1 col-form-label">Salesman:</label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $leaderData['fullname'] ?>">
+            </div>
 
-          <label for="customs_manifest_on" class="col-sm-1 col-form-label">Date:</label>
-          <div class="col-sm-2">
-            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $data['approval'][0]['time'] ?>">
-          </div>
+            <label for="customs_manifest_on" class="col-sm-1 col-form-label">Date:</label>
+            <div class="col-sm-2">
+              <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $data['approval'][0]['time'] ?>">
+            </div>
 
-          <label for="customs_manifest_on" class="col-sm-2 col-form-label">Approved by:</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $saleUserData['fullname'] ?>">
+            <label for="customs_manifest_on" class="col-sm-2 col-form-label">Approved by:</label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $saleUserData['fullname'] ?>">
+            </div>
           </div>
-        </div>
       </div>
 
       <!-- Submission Button -->
@@ -435,6 +431,27 @@ if ($instructionNo !== null) {
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const directorData = <?= json_encode($directorData) ?>;
+
+    const expensesAmount = document.getElementById('expenses_amount');
+    const expensesAmountValue = expensesAmount.value;
+    expensesAmount.value = formatNumber(expensesAmountValue);
+
+    const totalActual = document.getElementById('total_actual');
+    const totalActualValue = totalActual.value;
+    totalActual.value = formatNumber(totalActualValue);
+
+    function updateAmountText(currentInput) {
+      const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+      // check if not a number
+      if (isNaN(advanceAmount)) {
+        alert('Vui lòng nhập số');
+        currentInput.value = '';
+        return;
+      }
+      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+      const advanceAmountText = convertNumberToTextVND(advanceAmount);
+      document.getElementById('soTienBangChu').value = advanceAmountText;
+    }
 
     const exampleModal = document.getElementById('exampleModal')
     if (exampleModal) {
@@ -538,6 +555,12 @@ if ($instructionNo !== null) {
         message: message
       };
 
+      if (status === 'approved') {
+        const amountString = document.getElementById('soTien').value.replace(/,/g, '');
+        const amount = parseInt(amountString);
+        updateData.amount = amount;
+      }
+
       // Send data to the server using fetch
       fetch('update_payment_status.php', {
           method: 'POST',
@@ -555,8 +578,8 @@ if ($instructionNo !== null) {
               telegramMessage = `**Yêu cầu đã được Giám đốc phê duyệt!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
                 `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
+                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Người phê duyệt:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
@@ -565,8 +588,8 @@ if ($instructionNo !== null) {
               telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
                 `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
+                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Lý do: **${message}**\n` +
@@ -590,8 +613,8 @@ if ($instructionNo !== null) {
             if (res.status === 200 && data.data) {
               await fetchTemplateAndFill({
                 ...data.data,
-                amount: formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString()),
-                amountWords: convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS')),  
+                amount: formatNumber((data.data.amount).toString()),
+                amountWords: convertNumberToTextVND(data.data.amount),
               }); // Gọi hàm fill template+
             }
 
@@ -626,18 +649,18 @@ if ($instructionNo !== null) {
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      loadDetail(); // Gọi hàm loadRequests khi trang được tải
-    });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //   loadDetail(); // Gọi hàm loadRequests khi trang được tải
+    // });
 
-    function loadDetail() {
-      const soTienDocument = document.getElementById('soTien');
-      const soTienBangChu = document.getElementById('soTienBangChu');
-      const amount = formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString());
-      const amountWords = convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'));
-      soTienDocument.value = `${amount} VND`;
-      soTienBangChu.value = amountWords;
-    }
+    // function loadDetail() {
+    //   const soTienDocument = document.getElementById('soTien');
+    //   const soTienBangChu = document.getElementById('soTienBangChu');
+    //   const amount = formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString());
+    //   const amountWords = convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'));
+    //   soTienDocument.value = `${amount} VND`;
+    //   soTienBangChu.value = amountWords;
+    // }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

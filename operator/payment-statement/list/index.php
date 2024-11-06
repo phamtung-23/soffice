@@ -1,213 +1,394 @@
 <?php
 session_start();
 
-// Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id'])) {
-  echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../../../index.php';</script>";
+// Check if the user is logged in; if not, redirect to login
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
+  echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
 
-
-// Lấy tên đầy đủ từ session
+// Retrieve full name from session
 $fullName = $_SESSION['full_name'];
-$userEmail = $_SESSION['user_id'];
-$userRole = $_SESSION['role'];
+$userEmail = $_SESSION['user_id']; // operator_email matches user_id
 
-// Lấy năm hiện tại
-$currentYear = date("Y");
-// Đọc các năm từ tệp JSON trong thư mục
-$years = [];
-foreach (glob('../../../database/payment_*.json') as $filename) {
-  // Lấy năm từ tên tệp
-  if (preg_match('/payment_(\d{4})\.json/', basename($filename), $matches)) {
-    $years[] = $matches[1]; // Thêm năm vào mảng
-  }
+// Read JSON files in the directory
+$files = glob('../../../database/payment_*.json');
+$selectedYear = date('Y');
+
+// If a year is selected, update the year
+if (isset($_POST['year'])) {
+  $selectedYear = $_POST['year'];
 }
 
-// Xóa trùng lặp và sắp xếp các năm
-$years = array_unique($years);
-sort($years);
+// Read data from the selected JSON file
+$file = "../../../database/payment_$selectedYear.json";
 
+if (file_exists($file)) {
+  $jsonData = file_get_contents($file);
+  $requests = json_decode($jsonData, true);
 
+  // Filter requests to only those matching the operator's email
+  $filteredRequests = array_filter($requests, function ($request) use ($userEmail) {
+    return $request['operator_email'] === $userEmail;
+  });
+} else {
+  $filteredRequests = [];
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
   <meta charset="UTF-8">
-  <title>Accountant Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script>
-    let userEmail = ('<?php echo $userEmail; ?>');
-    let userRole = ('<?php echo $userRole; ?>');
-    let currentRequest = null;
-    // Hàm để lấy năm từ dropdown
-    function getSelectedYear() {
-      const yearSelect = document.getElementById('year-select');
-      return yearSelect.value;
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang chủ quản lý phiếu thanh toán</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    function getFirstExpenseAmountWithPayee(item, payee) {
-      if (item.expenses && item.expenses.length > 0) { // Check if expenses exist and are non-empty
-        const expense = item.expenses.find(exp => exp.expense_payee === payee);
-        if (expense) {
-          return expense.expense_amount;
-        }
-      }
-      return ''; // Return null if no matching expense is found
-    }
-    // Tải yêu cầu dựa trên năm đã chọn
-    function loadRequests() {
-      const year = getSelectedYear();
-      // const operatorFilter = document.getElementById('operator-filter').value.toLowerCase();
-      // const customerFilter = document.getElementById('customer-filter').value.toLowerCase();
-      // const dateFilter = document.getElementById('date-filter').value;
-
-      fetch(`../../../database/payment_${year}.json`, {
-          cache: "no-store"
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          const tableBody = document.getElementById('requests-table-body');
-          tableBody.innerHTML = '';
-
-          const validRequests = data.filter(request => {
-            return request.operator_email === userEmail;
-          });
-
-          if (validRequests.length === 0) {
-            const noRequestsRow = document.createElement('tr');
-            noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
-            tableBody.appendChild(noRequestsRow);
-          } else {
-            validRequests.forEach(request => {
-              const row = document.createElement('tr');
-              row.setAttribute('id', 'request-row-' + request.id);
-              console.log(request);
-              const cells = [
-                request.instruction_no,
-                request.operator_name,
-                request.shipper,
-                request.customs_manifest_on,
-                getFirstExpenseAmountWithPayee(request, 'OPS'),
-                request.approval[0].status,
-                request.approval[1].status,
-                request.approval[2].status,
-                request.approved_filename ? `<a href="../../director/pdfs/${request.approved_filename}" target="_blank">Xem Phiếu</a>` : ''
-              ];
-
-              cells.forEach(cell => {
-                const cellElement = document.createElement('td');
-                if (String(cell).includes('<a')) {
-                  cellElement.innerHTML = cell;
-                } else {
-                  cellElement.textContent = cell;
-                }
-                row.appendChild(cellElement);
-              });
-
-              tableBody.appendChild(row);
-            });
-          }
-
-          document.getElementById('requests').style.display = 'block';
-        })
-        .catch(error => {
-          console.error('Error loading requests:', error.message);
-        });
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
     }
 
-    function updateYear() {
-      loadRequests(); // Tải lại yêu cầu khi năm được chọn
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-      loadRequests(); // Gọi hàm loadRequests khi trang được tải
-    });
-  </script>
+    .menu {
+      background-color: #333;
+      overflow: hidden;
+    }
+
+    .menu a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .menu a:hover {
+      background-color: #575757;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .welcome-message {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .menu a.logout {
+      float: right;
+      background-color: #f44336;
+    }
+
+    .menu a.logout:hover {
+      background-color: #d32f2f;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      overflow-x: auto;
+      /* Enable horizontal scrolling */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      white-space: nowrap;
+      /* Prevent text from wrapping */
+    }
+
+    th {
+      font-size: 6px;
+      /* Adjust this value as needed */
+      background-color: #f2f2f2;
+      padding: 6px;
+      text-align: left;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      margin: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      /* Forces table columns to fit evenly */
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+      font-size: 0.85em;
+      min-width: 100px;
+      /* Adjust based on content */
+      word-wrap: break-word;
+      word-break: break-all;
+      /* Ensures long words break within cell */
+      white-space: normal;
+      /* Allows text wrapping */
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    /* Optional: Wrapping long text within cells */
+    .wrap-text {
+      white-space: normal;
+    }
+  </style>
+
+
+  <!-- DataTables CSS and jQuery -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
 </head>
 
 <body>
+
   <div class="header">
-    <h1>Trang chủ</h1>
+    <h1>Quản lý phiếu Thanh toán</h1>
   </div>
+
   <div class="menu">
-    <a href="../../../<?php echo $userRole; ?>">Home</a>
-    <?php
-    if ($userRole == 'operator') {
-      echo '<a href="../../request.php">Tạo phiếu xin tạm ứng</a>';
-    }
-    ?>
+    <a href="../../../index.php">Home</a>
+    <a href="../../../operator/request.php">Tạo phiếu xin tạm ứng</a>
     <a href="../create">Tạo phiếu thanh toán</a>
     <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../../../logout.php" class="logout">Đăng xuất</a>
   </div>
+
   <div class="container">
     <div class="welcome-message">
       <p>Xin chào, <?php echo $fullName; ?>!</p>
     </div>
 
-    <!-- Thêm Dropdown chọn năm -->
-    <div class="form-group">
-      <label for="year-select">Chọn năm:</label>
-      <select id="year-select" onchange="updateYear()">
-        <?php
-        // Tạo các tùy chọn cho năm từ mảng $years
-        foreach ($years as $year) {
-          echo "<option value=\"$year\" " . ($year == $currentYear ? 'selected' : '') . ">$year</option>";
-        }
-        ?>
-      </select>
-    </div>
+    <div class="content">
+      <h2>Danh sách các phiếu đề nghị thanh toán</h2>
 
-    <!-- Filter Fields -->
-    <!-- <div class="filters">
-      <div class="filter-name-container">
-        <label for="operator-filter">Họ tên Operator:</label>
-        <input type="text" id="operator-filter" oninput="loadRequests()">
+      <!-- Year Selection -->
+      <form method="POST">
+        <label for="year">Chọn năm:</label>
+        <select id="year" name="year" onchange="this.form.submit()">
+          <?php
+          foreach ($files as $file) {
+            preg_match('~request_(\d{4})\.json~', $file, $matches);
+            if (isset($matches[1])) {
+              $year = $matches[1];
+              echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
+            }
+          }
+          ?>
+        </select>
+      </form>
 
-        <label for="customer-filter">Tên Khách hàng:</label>
-        <input type="text" id="customer-filter" oninput="loadRequests()">
-      </div>
-
-      <div class="filter-date-container">
-        <label for="date-filter">Ngày duyệt:</label>
-        <input type="date" id="date-filter" oninput="loadRequests()">
-      </div>
-    </div> -->
-
-    <!-- Requests table -->
-    <div id="requests">
-      <h2>Danh sách các phiếu thanh toán</h2>
-      <table>
+      <!-- Data Table -->
+      <table id="requestsTable" class="display">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Họ tên Operator</th>
-            <th>Tên Khách hàng</th>
-            <th>Số tờ khai</th>
-            <th>Số tiền</th>
-            <th>Leader</th>
-            <th>Sale</th>
-            <th>Director</th>
-            <th>Attachment</th>
+            <th>Họ tên operator</th>
+            <th>Khách hàng</th>
+            <th>Số tờ khai</th>
+            <th>Số tiền thanh toán (VNĐ)</th>
+            <th>Thời gian gửi yêu cầu</th>
+            <th>Thời gian Leader duyệt</th>
+            <th>Thời gian Sale duyệt</th>
+            <th>Thời gian Giám đốc duyệt</th>
+            <th>Trạng thái</th>
+            <th>Phiếu đã duyệt</th>
+          </tr>
+          <tr>
+            <!-- Add search inputs for each column -->
+            <?php for ($i = 0; $i < 11; $i++): ?>
+              <th><input type="text" placeholder="Tìm kiếm" /></th>
+            <?php endfor; ?>
           </tr>
         </thead>
-        <tbody id="requests-table-body"></tbody>
+        <tbody>
+          <?php
+          $totalAmount = 0; // Initialize total amount
+          if (!empty($filteredRequests)) {
+            foreach ($filteredRequests as $request) {
+              echo "<tr>";
+              echo "<td>" . $request['instruction_no'] . "</td>";
+              echo "<td>" . $request['operator_name'] . "</td>";
+              echo "<td>" . $request['shipper'] . "</td>";
+              echo "<td>" . $request['customs_manifest_on'] . "</td>";
+              echo "<td>" . (!empty($request['amount']) ? number_format($request['amount']) : "") . "</td>";
+              echo "<td>" . (!empty($request['created_at']) ? date("d/m/Y", strtotime($request['created_at'])) : "") . "</td>";
+              echo "<td>" . (!empty($request['approval'][0]['time']) ? date("d/m/Y", strtotime($request['approval'][0]['time'])) : "") . "</td>";
+              echo "<td>" . (!empty($request['approval'][1]['time']) ? date("d/m/Y", strtotime($request['approval'][1]['time'])) : "") . "</td>";
+              echo "<td>" . (!empty($request['approval'][2]['time']) ? date("d/m/Y", strtotime($request['approval'][2]['time'])) : "") . "</td>";
+              if ($request['approval'][2]['status'] === 'approved') {
+                echo "<td style=\"color: green;\">Đã duyệt</td>";
+              } else if ($request['approval'][2]['status'] === 'rejected') {
+                echo "<td style=\"color: red;\">Từ chối</td>";
+              } else {
+                echo "<td>Chờ duyệt</td>";
+              }
+              if (!empty($request['file_path'])) {
+                echo "<td><a href=\"../../../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+              } else {
+                echo "<td></td>"; // Empty cell if there's no filename
+              }
+              echo "</tr>";
+              // Add to total amount
+              $totalAmount = !empty($request['amount']) ? $totalAmount + $request['amount'] : $totalAmount;
+            }
+          } else {
+            echo "<tr><td colspan='15'>Không có yêu cầu nào.</td></tr>";
+          }
+
+          ?>
+        </tbody>
       </table>
+      <tr>
+        <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã được duyệt (VNĐ):</strong></td>
+        <td><strong id="totalAmount">0</strong></td>
+        <td colspan="6"></td> <!-- Empty cells to align with the table structure -->
+      </tr>
+      <!-- <br>
+            <tr>
+                <td colspan="6" style="text-align: right;"><strong>Tổng số tiền được duyệt (VNĐ):</strong></td>
+                <td><strong id="totalApprovedAmount">0</strong></td>
+                <td colspan="6"></td> <!-- Empty cells to align with the table structure 
+            </tr>
+            <br>
+            <tr>
+                <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã được nhận (VNĐ):</strong></td>
+                <td><strong id="totalReceivedAmount">0</strong></td>
+                <td colspan="6"></td> <!-- Empty cells to align with the table structure
+            </tr>
+            <br>
+            <tr>
+                <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã hoàn (VNĐ):</strong></td>
+                <td><strong id="totalRefundedAmount">0</strong></td>
+                <td colspan="6"></td> <!-- Empty cells to align with the table structure
+            </tr>
+            <br>
+            <tr>
+                <td colspan="6" style="text-align: right;"><strong>Tổng số tiền nợ (VNĐ):</strong></td>
+                <td><strong id="totalDebtAmount" style="color: red;">0</strong></td>
+                <td colspan="6"></td> <!-- Empty cells to align with the table structure
+            </tr> -->
     </div>
 
   </div>
+
+  <script>
+    $(document).ready(function() {
+      // Initialize DataTable with individual column search
+      var table = $('#requestsTable').DataTable({
+        "language": {
+          "search": "Tìm kiếm nhanh:",
+          "lengthMenu": "Hiển thị _MENU_ phiếu trên mỗi trang",
+          "zeroRecords": "Không tìm thấy phiếu nào",
+          "info": "Hiển thị _START_ đến _END_ của _TOTAL_ phiếu",
+          "infoEmpty": "Hiển thị 0 đến 0 của 0 phiếu",
+          "infoFiltered": "(lọc từ _MAX_ phiếu)"
+        }
+      });
+
+
+      // Apply column search on each input field in the header
+      $('#requestsTable thead tr:eq(1) th').each(function(i) {
+        $('input', this).on('keyup change', function() {
+          if (table.column(i).search() !== this.value) {
+            table.column(i).search(this.value).draw();
+          }
+          calculateTotal(); // Calculate total after filtering
+        });
+      });
+
+
+      // Initial total calculation
+      calculateTotal();
+    });
+
+    function calculateTotal() {
+      let table = document.getElementById('requestsTable');
+      let tr = table.getElementsByTagName('tr');
+      let totalAmount = 0; // Total requested amount
+      let totalApprovedAmount = 0; // Total approved amount
+      let totalReceivedAmount = 0; // Total received amount
+      let totalRefundedAmount = 0; // Total refunded amount
+
+      for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
+        if (tr[i].style.display !== 'none') { // Only consider visible rows
+          // Get the "Số tiền xin tạm ứng (VNĐ)" column
+          let amountCell1 = tr[i].getElementsByTagName('td')[4]; // Adjust index for "Số tiền xin tạm ứng (VNĐ)"
+          console.log(amountCell1);
+          if (amountCell1) {
+            let amount = parseFloat(amountCell1.innerText.replace(/,/g, '')); // Remove commas for parsing
+            totalAmount += isNaN(amount) ? 0 : amount; // Ensure valid number
+          }
+        }
+      }
+      // Calculate total outstanding amount (số tiền nợ)
+      let totalDebtAmount = totalReceivedAmount - totalRefundedAmount;
+
+      // Update the total amount display
+      document.getElementById('totalAmount').innerText = totalAmount.toLocaleString(); // Format for display
+    }
+  </script>
+
   <div class="footer">
     <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
   </div>

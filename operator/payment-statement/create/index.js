@@ -30,12 +30,12 @@ function addRow() {
   // Define new cells and input fields for the row
   newRow.innerHTML = `
     <td>${rowCount}</td>
-    <td><input required type="text" name="expense_kind[]" class="form-control"></td>
-    <td><input type="number" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount1[]')"></td>
-    <td><input type="number" name="expense_amount1[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount[]')"></td>
-    <td><input required type="text" name="expense_payee[]" class="form-control"></td>
-    <td><input type="text" name="expense_doc[]" class="form-control"></td>
-    <td class="align-middle"><button type="button" onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
+    <td><input type="text" name="expense_kind[]" class="form-control" required></td>
+                <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
+                <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+                <td><input type="text" name="expense_doc[]" class="form-control"></td>
+                <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
   `;
 
   // Append the new row to the table
@@ -43,16 +43,12 @@ function addRow() {
 }
 
 // Function to toggle 'disabled' status for corresponding expense fields
-function toggleExpenseFields(currentInput, otherInputName) {
+function toggleExpenseFields(currentInput) {
   const tableRow = currentInput.closest('tr'); // Locate the current row
-  const otherInput = tableRow.querySelector(`input[name="${otherInputName}"]`);
   
   if (currentInput.value) {
     const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
     currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-    otherInput.disabled = true;
-  } else {
-    otherInput.disabled = false;
   }
 }
 

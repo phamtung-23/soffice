@@ -57,10 +57,10 @@ foreach ($jsonDataUser as $user) {
   }
 }
 // get leader data
-$directorData = null;
+$leaderData = null;
 foreach ($jsonDataUser as $user) {
-  if ($user['role'] == 'director' && $user['email'] == $request['approval'][2]['email']) {
-    $directorData = $user;
+  if ($user['role'] == 'leader' && $user['email'] == $request['approval'][0]['email']) {
+    $leaderData = $user;
     break;
   }
 }
@@ -258,7 +258,7 @@ $htmlContent = "
       </tr>
       <tr>
         <td style='with: 25%; text-align: center;'>
-          <img src='$leader_signature_path' alt='Chữ ký Người đề nghị' style='width: 150px; height: auto;'>
+          <img src='$operator_signature_path' alt='Chữ ký Người đề nghị' style='width: 150px; height: auto;'>
         </td>
         <td style='with: 25%; text-align: center;'>
           <img src='$leader_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
@@ -266,7 +266,9 @@ $htmlContent = "
         <td style='with: 25%; text-align: center;'>
           <img src='$sale_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
         </td>
-        <td style='with: 25%; text-align: center;'></td>
+        <td style='with: 25%; text-align: center;'>
+          <img src='$director_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
+        </td>
       </tr>
     </table>
 
@@ -489,7 +491,7 @@ $htmlContent = "
           </tr>
           <tr>
             <th>Actual</th>
-            <th>Actual</th>
+            <th>Số hóa đơn</th>
           </tr>
         </thead>
         <tbody>
@@ -498,7 +500,7 @@ $htmlContent = "
             <tr>
               <td colspan='2'>TOTAL</td>
               <td><span>{$request['total_actual']}</span></td>
-              <td><span>{$request['total_actual1']}</span></td>
+              <td></td>
               <td>
                 RECEIVED BACK ON: <span>{$request['received_back_on']}</span>
               </td>
@@ -528,7 +530,7 @@ $htmlContent = "
           <td>
             <div class='form-group'>
                 <label for='proposer'>Approved by:</label>
-                <span>{$directorData['fullname']}</span>
+                <span>{$leaderData['fullname']}</span>
             </div>
           </td>
         </tr>
@@ -555,9 +557,8 @@ try {
   // Optional: force page breaks if you need
   $mpdf->SetAutoPageBreak(true, 10);
   $mpdf->WriteHTML($htmlContent);
-  $month = date('m'); // Lấy tháng hiện tại
-  $year = date('Y');  // Lấy năm hiện tại
-  $pdfFileName = 'Phieu de nghi thanh toan_id_' . $request['instruction_no'] . '_time_' . $month . '_' . $year . '.pdf';
+
+  $pdfFileName = $request['file_path'];
   $pdfPath = $pdfDir . $pdfFileName;
 
   $mpdf->Output($pdfPath, 'F'); // Lưu file PDF

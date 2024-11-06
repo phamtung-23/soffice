@@ -80,15 +80,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $data['expenses'] = [];
 
   // Collect expense information in the required format
-  if (isset($_POST['expense_kind']) && (isset($_POST['expense_amount']) || isset($_POST['expense_amount1'])) && isset($_POST['expense_payee']) && isset($_POST['expense_doc'])) {
+  if (isset($_POST['expense_kind']) && isset($_POST['expense_amount']) && isset($_POST['so_hoa_don']) && isset($_POST['expense_payee']) && isset($_POST['expense_doc'])) {
     for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-      $expenseAmount = isset($_POST['expense_amount']) ? $_POST['expense_amount'][$i] : $_POST['expense_amount1'][$i];
+      $expenseAmount = $_POST['expense_amount'][$i];
       // Remove commas and convert to float
       $expenseAmount = (float)str_replace(',', '', $expenseAmount);
 
       $expense = [
         'expense_kind' => $_POST['expense_kind'][$i],
         'expense_amount' => $expenseAmount,  // Ensure it's stored as a number
+        'so_hoa_don' => $_POST['so_hoa_don'][$i],
         'expense_payee' => $_POST['expense_payee'][$i],
         'expense_doc' => $_POST['expense_doc'][$i]
       ];
@@ -106,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'time' => '',
         'comment' => ''
       ];
-    } elseif (!in_array($key, ['expense_kind', 'expense_amount', 'expense_payee', 'expense_doc'])) {
+    } elseif (!in_array($key, ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc'])) {
       $data[$key] = is_array($value) ? $value : trim($value);
     }
   }
@@ -121,6 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     'time' => '',
     'comment' => ''
   ];
+  $data['total_actual'] = (float)str_replace(',', '', $data['total_actual']);
+  $data['created_at'] = date('Y-m-d H:i:s');
+
   
 
   // Append the new data to the existing data array
@@ -173,25 +177,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           <div class="row mb-3 mt-3 ps-4">
             <label for="shipper" class="col-sm-2 col-form-label">Shipper</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required>
+              <input type="text" class="form-control" id="shipper" placeholder="Ex: Nguyen Van A" name="shipper" required>
             </div>
           </div>
           <div class="row mb-3 mt-3 ps-4">
             <label for="billTo" class="col-sm-2 col-form-label">Bill To</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required>
+              <input type="text" class="form-control" id="billTo" placeholder="Ex: 1x40" name="billTo" required>
             </div>
           </div>
           <div class="row mb-3 mt-3 ps-4">
             <label for="volume" class="col-sm-2 col-form-label">Volume</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="volume" placeholder="" name="volume" required>
+              <input type="text" class="form-control" id="volume" placeholder="Ex: xxxx-SOC" name="volume" required>
             </div>
           </div>
           <div class="row mb-3 mt-3 ps-4">
             <label for="payment_lo" class="col-sm-2 col-form-label">Lô</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required>
+              <input type="text" class="form-control" id="payment_lo" placeholder="Ex: 1222" name="payment_lo" required>
+            </div>
+          </div>
+          <div class="row mb-3 mt-3 ps-4">
+            <label for="loai_hinh" class="col-sm-2 col-form-label">Chọn loại hình</label>
+            <div class="col-sm-10">
+              <div class="dropdown">
+                <select class="form-select" aria-label="Default select example" name="loai_hinh" required>
+                  <option value="">Chọn loại hình</option>
+                  <option value="nhap">Nhập</option>
+                  <option value="xuat">Xuất</option>
+                </select>
+              </div>
             </div>
           </div>
           <div class="row mb-3 mt-3 ps-4">
@@ -278,22 +294,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="col-sm-3">
               <input type="text" class="form-control" id="stuffing" placeholder="" name="stuffing" required>
             </div>
-            <label for="StuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
+            <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="StuffingVat" required>
+                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required>
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="StuffingIncl" name="StuffingIncl">
-              <label class="form-check-label" for="StuffingIncl">
+              <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl">
+              <label class="form-check-label" for="stuffingIncl">
                 INCL
               </label>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="StuffingExcl" name="StuffingExcl">
-              <label class="form-check-label" for="StuffingExcl">
+              <input class="form-check-input" type="checkbox" id="stuffingExcl" name="stuffingExcl">
+              <label class="form-check-label" for="stuffingExcl">
                 EXCL
               </label>
             </div>
@@ -365,7 +381,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <label for="customs_manifest_on" class="col-sm-2 col-form-label">Customs manifest no</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required>
+              <input type="text" class="form-control" id="customs_manifest_on" placeholder="Ex: 12345678" name="customs_manifest_on" required>
             </div>
           </div>
 
@@ -382,15 +398,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </tr>
               <tr>
                 <th>Actual</th>
-                <th>Actual</th>
+                <th>Số hóa đơn</th>
               </tr>
             </thead>
             <tbody class="tableBody">
               <tr>
                 <td>1</td>
                 <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-                <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount1[]')"></td>
-                <td><input type="text" name="expense_amount1[]" class="form-control" required oninput="toggleExpenseFields(this, 'expense_amount[]')"></td>
+                <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
                 <td><input type="text" name="expense_payee[]" class="form-control" required></td>
                 <td><input type="text" name="expense_doc[]" class="form-control"></td>
                 <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
@@ -406,7 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               <tr>
                 <td colspan="2" class="text-end">TOTAL</td>
                 <td><input type="text" id="total_actual" name="total_actual" class="form-control" required oninput="updateAmountText(this)"></td>
-                <td><input type="text" id="total_actual1" name="total_actual1" class="form-control" required oninput="updateAmountText(this)"></td>
+                <td></td>
                 <td>
                   RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on">
                 </td>
