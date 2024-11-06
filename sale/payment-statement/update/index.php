@@ -185,22 +185,22 @@ if ($instructionNo !== null) {
             <div class="col-sm-3">
               <input type="text" class="form-control" id="stuffing" placeholder="Ex: Name Stuffing ..." name="stuffing" required>
             </div>
-            <label for="StuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
+            <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="StuffingVat" required>
+                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required>
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="StuffingIncl" name="StuffingIncl">
-              <label class="form-check-label" for="StuffingIncl">
+              <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl">
+              <label class="form-check-label" for="stuffingIncl">
                 INCL
               </label>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="StuffingExcl" name="StuffingExcl">
-              <label class="form-check-label" for="StuffingExcl">
+              <input class="form-check-input" type="checkbox" id="stuffingExcl" name="stuffingExcl">
+              <label class="form-check-label" for="stuffingExcl">
                 EXCL
               </label>
             </div>

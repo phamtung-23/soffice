@@ -52,8 +52,15 @@ foreach ($jsonData as &$entry) {
 
 if ($updated) {
   // Save the updated JSON data back to the file
+  foreach ($jsonData as &$entry) {
+    if ($entry['instruction_no'] == $instructionNo) {
+      $updatedData = $entry;
+      break;
+    }
+  }
+  // Save the updated JSON data back to the file
   file_put_contents($filePath, json_encode($jsonData, JSON_PRETTY_PRINT));
-  echo json_encode(['success' => true, 'message' => 'Status updated successfully']);
+  echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $updatedData]);
 } else {
   echo json_encode(['success' => false, 'message' => 'Approval entry not found or already updated']);
 }

@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -12,7 +12,7 @@ $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
 
 // Read JSON files in the directory
-$files = glob('../../../database/payment_*.json');
+$files = glob('../database/payment_*.json');
 $selectedYear = date('Y');
 
 // If a year is selected, update the year
@@ -21,7 +21,7 @@ if (isset($_POST['year'])) {
 }
 
 // Read data from the selected JSON file
-$file = "../../../database/payment_$selectedYear.json";
+$file = "../database/payment_$selectedYear.json";
 
 if (file_exists($file)) {
   $jsonData = file_get_contents($file);
@@ -29,13 +29,12 @@ if (file_exists($file)) {
 
   // Filter requests to only those matching the operator's email
   $filteredRequests = array_filter($requests, function ($request) use ($userEmail) {
-    return $request['operator_email'] === $userEmail;
+    return $request['approval'][1]['email'] === $userEmail;
   });
 } else {
   $filteredRequests = [];
 }
 
-// Get status of approval
 function getApprovalStatus($item) {
   $hasPending = false;
 
@@ -50,6 +49,7 @@ function getApprovalStatus($item) {
 
   return $hasPending ? "Chờ duyệt" : "Đã duyệt";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -222,12 +222,12 @@ function getApprovalStatus($item) {
   </div>
 
   <div class="menu">
-    <a href="../../../index.php">Home</a>
-    <a href="../../../operator/request.php">Tạo phiếu xin tạm ứng</a>
-    <a href="../create">Tạo phiếu thanh toán</a>
-    <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
-    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
-    <a href="../../../logout.php" class="logout">Đăng xuất</a>
+    <a href="./index.php">Home</a>
+    <a href="all_request.php">Danh sách phiếu tạm ứng</a>
+    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
+    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../logout.php" class="logout">Đăng xuất</a>
   </div>
 
   <div class="container">
@@ -267,7 +267,7 @@ function getApprovalStatus($item) {
             <th>Thời gian Leader duyệt</th>
             <th>Thời gian Sale duyệt</th>
             <th>Thời gian Giám đốc duyệt</th>
-            <th>Thời gian Kế toán duyệt</th>
+            <th>Thời gian kế toán duyệt</th>
             <th>Trạng thái</th>
             <th>Phiếu đã duyệt</th>
           </tr>
@@ -296,11 +296,7 @@ function getApprovalStatus($item) {
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
               echo "<td>".getApprovalStatus($request)."</td>";
               if (!empty($request['file_path'])) {
-                if ($request['approval'][3]['status'] === 'approved') {
-                  echo "<td><a href=\"../../../accountant/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
-                }else{
-                  echo "<td><a href=\"../../../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
-                }
+                echo "<td><a href=\"../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
               }

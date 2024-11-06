@@ -52,6 +52,10 @@ sort($years);
       return yearSelect.value;
     }
 
+    function formatNumber(num) {
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     function handleShowDetail(instructionNo) {
       const year = getSelectedYear();
       window.location.href = `../detail?instruction_no=${instructionNo}&year=${year}`;
@@ -87,7 +91,8 @@ sort($years);
           tableBody.innerHTML = '';
 
           const validRequests = data.filter(request => {
-            return request.approval[0].status === 'pending' && request.approval[0].email === userEmail;
+            console.log(request); 
+            return request.approval[1].status === 'approved' && request.approval[0].status === 'approved' && request.approval[2].status === 'approved' && request.approval[3].status === 'pending';
           });
 
           if (validRequests.length === 0) {
@@ -104,10 +109,11 @@ sort($years);
                 request.operator_name,
                 request.shipper,
                 request.customs_manifest_on,
-                getFirstExpenseAmountWithPayee(request, 'OPS'),
+                formatNumber(getFirstExpenseAmountWithPayee(request, 'OPS').toString()),
                 request.approval[0].status,
                 request.approval[1].status,
                 request.approval[2].status,
+                `<a href=\"../../../director/payment-statement/detail/pdfs/${request.file_path}\" target=\"_blank\">Xem Phiếu</a>`
               ];
 
               cells.forEach(cell => {
@@ -158,11 +164,14 @@ sort($years);
     <h1>Trang chủ</h1>
   </div>
   <div class="menu">
-    <a href="../../index.php">Home</a>
-    <a href="../../all_request.php">Danh sách phiếu tạm ứng</a>
-    <a href="../../all_payment.php">Danh sách phiếu thanh toán</a>
+    <a href="../../../<?php echo $userRole; ?>">Home</a>
+    <?php
+    if ($userRole == 'operator') {
+      echo '<a href="../../../operator/request.php">Tạo phiếu xin tạm ứng</a>';
+    }
+    ?>
+    <a href="">Danh sách phiếu tạm ứng đã duyệt</a>
     <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
-    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../../../logout.php" class="logout">Đăng xuất</a>
   </div>
   <div class="container">
@@ -213,6 +222,7 @@ sort($years);
             <th>Leader</th>
             <th>Sale</th>
             <th>Director</th>
+            <th>Phiếu thanh toán</th>
             <th>Action</th>
           </tr>
         </thead>

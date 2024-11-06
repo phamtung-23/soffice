@@ -2,7 +2,7 @@
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -116,7 +116,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="soTien" class="col-sm-2 col-form-label">Số tiền:</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="soTien" placeholder="Ex:1,000,000" name="soTien" required oninput="updateAmountText(this)">
+            <input type="text" class="form-control" id="soTien" name="soTien" required disabled value="<?= $data['amount'] ?>">
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
@@ -440,6 +440,13 @@ if ($instructionNo !== null) {
     const totalActualValue = totalActual.value;
     totalActual.value = formatNumber(totalActualValue);
 
+    const soTienDoc = document.getElementById('soTien');
+    const advanceAmount = soTienDoc.value;
+    soTienDoc.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    const advanceAmountText = convertNumberToTextVND(advanceAmount);
+    document.getElementById('soTienBangChu').value = advanceAmountText;
+
+
     function updateAmountText(currentInput) {
       const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
       // check if not a number
@@ -555,12 +562,6 @@ if ($instructionNo !== null) {
         message: message
       };
 
-      if (status === 'approved') {
-        const amountString = document.getElementById('soTien').value.replace(/,/g, '');
-        const amount = parseInt(amountString);
-        updateData.amount = amount;
-      }
-
       // Send data to the server using fetch
       fetch('update_payment_status.php', {
           method: 'POST',
@@ -575,17 +576,17 @@ if ($instructionNo !== null) {
             // Tạo nội dung tin nhắn để gửi
             let telegramMessage = '';
             if (status === 'approved') {
-              telegramMessage = `**Yêu cầu đã được Giám đốc phê duyệt!**\n` +
+              telegramMessage = `**Yêu cầu đã được Kế toán phê duyệt!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
                 `Người đề nghị: ${itemData.operator_name}\n` +
                 `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
                 `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người phê duyệt:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
-                `Thời gian phê duyệt: ${itemData.approval[0].time}`;
+                `Người phê duyệt:  <?php echo $fullName; ?> - <?php echo $email; ?>` +
+                `Thời gian phê duyệt: ${data.data.approval[3].time}`;
             } else {
-              telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
+              telegramMessage = `**Yêu cầu đã bị Kế toán từ chối!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
                 `Người đề nghị: ${itemData.operator_name}\n` +
                 `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
@@ -593,8 +594,8 @@ if ($instructionNo !== null) {
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Lý do: **${message}**\n` +
-                `Người từ chối:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
-                `Thời gian từ chối: ${itemData.approval[0].time}`;
+                `Người từ chối:  <?php echo $fullName; ?> - <?php echo $email; ?>\n` +
+                `Thời gian từ chối: ${data.data.approval[3].time}`;
             }
 
             // Gửi tin nhắn đến Telegram

@@ -3,13 +3,13 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-require '../../vendor/autoload.php'; // Đảm bảo đường dẫn tới mPDF chính xác
+require '../../../director/vendor/autoload.php'; // Đảm bảo đường dẫn tới mPDF chính xác
 
 
 // Include PHPMailer's classes
-require '../../mailer/src/Exception.php';
-require '../../mailer/src/PHPMailer.php';
-require '../../mailer/src/SMTP.php';
+require '../../../director/mailer/src/Exception.php';
+require '../../../director/mailer/src/PHPMailer.php';
+require '../../../director/mailer/src/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -84,12 +84,14 @@ if (count($request['expenses']) > 0) {
   for ($i = 0; $i < count($request['expenses']); $i++) {
     $item = $request['expenses'][$i];
     $index = $i + 1;
+    $amount = isset($item['expense_amount']) ? $item['expense_amount'] : '';
+    $amount1 = isset($item['expense_amount1']) ? $item['expense_amount1'] : '';
     $rowsTable = $rowsTable."
     <tr>
       <td class='line-item'>{$index}</td>
       <td class='line-item'>{$item['expense_kind']}</td>
-      <td class='line-item'>{$item['expense_amount']}</td>
-      <td class='line-item'>{$item['so_hoa_don']}</td>
+      <td class='line-item'>$amount</td>
+      <td class='line-item'>$amount1</td>
       <td class='line-item'>{$item['expense_payee']}</td>
       <td class='line-item'>{$item['expense_doc']}</td>
     </tr>
@@ -107,11 +109,13 @@ $operator_email_md5 = md5($request['operator_email']);
 $leader_email_md5 = md5($request['approval'][0]['email']);
 $sale_email_md5 = md5($request['approval'][1]['email']);
 $director_email_md5 = md5($request['approval'][2]['email']);
+$accountant_email_md5 = md5($request['approval'][3]['email']);
 
 $operator_signature_path = "/soffice/signatures/" . $operator_email_md5 . ".jpg";
 $leader_signature_path = "/soffice/signatures/" . $leader_email_md5 . ".jpg";
 $sale_signature_path = "/soffice/signatures/" . $sale_email_md5 . ".jpg";
 $director_signature_path = "/soffice/signatures/" . $director_email_md5 . ".jpg";
+$accountant_signature_path = "/soffice/signatures/" . $accountant_email_md5 . ".jpg";
 
 
 
@@ -262,7 +266,9 @@ $htmlContent = "
         <td style='with: 25%; text-align: center;'>
           <img src='$leader_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
         </td>
-        <td style='with: 25%; text-align: center;'></td>
+        <td style='with: 25%; text-align: center;'>
+          <img src='$accountant_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
+        </td>
         <td style='with: 25%; text-align: center;'>
           <img src='$director_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
         </td>
@@ -576,45 +582,4 @@ try {
     'success' => false,
     'message' => 'Lỗi khi tạo PDF: ' . $e->getMessage()
   ]);
-}
-
-
-
-
-
-function sendEmailWithAttachment($filePath, $fileName, $sale_email)
-{
-  $mail = new PHPMailer();
-  try {
-    //$mail->SMTPDebug = 2; 
-    //$mail->Debugoutput = 'html';
-    // Cấu hình server SMTP
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com'; // Thay bằng SMTP host của bạn
-    $mail->SMTPAuth = true;
-    $mail->Username = 'nguyenlonggm2021@gmail.com'; // Thay bằng email của bạn
-    $mail->Password = 'hnuozppidlbfkmlm'; // Thay bằng mật khẩu email của bạn
-    $mail->SMTPSecure = 'tls'; // Có thể thử với SSL nếu cần
-    $mail->Port = 587; // Sử dụng cổng TLS 587
-
-    // Người gửi và người nhận
-    $mail->setFrom('vip@cloud.info.vn', 'Voffice');
-    $mail->addAddress($sale_email); // Địa chỉ người nhận
-    $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'base64';
-    $mail->Subject = '=?UTF-8?B?' . base64_encode($mail->Subject) . '?=';
-    // Tiêu đề và nội dung email
-    $mail->Subject = 'Đề nghị tạm ứng';
-    $mail->Body = 'Xin vui lòng xem file đính kèm.';
-    $mail->addAttachment($filePath, $fileName); // Đính kèm tệp
-
-    // Gửi email
-    if (!$mail->send()) {
-      echo "Không thể gửi email. Lỗi: {$mail->ErrorInfo}";
-    } else {
-      echo "Email đã được gửi thành công!";
-    }
-  } catch (Exception $e) {
-    echo "Không thể gửi email. Lỗi: {$mail->ErrorInfo}";
-  }
 }

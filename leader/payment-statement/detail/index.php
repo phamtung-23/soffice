@@ -371,7 +371,7 @@ if ($instructionNo !== null) {
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Người phê duyệt:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
-                `Thời gian phê duyệt: ${itemData.approval[0].time}`;
+                `Thời gian phê duyệt: ${data.data.approval[0].time}`;
             } else {
               telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
                 `ID yêu cầu: ${itemData.instruction_no}\n` +
@@ -382,7 +382,7 @@ if ($instructionNo !== null) {
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Lý do: **${message}**\n` +
                 `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
-                `Thời gian từ chối: ${itemData.approval[0].time}`;
+                `Thời gian từ chối: ${data.data.approval[0].time}`;
             }
 
             // Gửi tin nhắn đến Telegram

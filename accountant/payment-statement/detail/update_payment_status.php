@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit();
 }
@@ -13,24 +13,12 @@ $data = json_decode(file_get_contents("php://input"), true);
 $instructionNo = $data['instruction_no'] ?? null;
 $status = $data['approval_status'] ?? null;
 $message = $data['message'] ?? null;
-$amount = $data['amount'] ?? null;
 
 // Check if instruction number and status are provided
 if ($instructionNo === null || $status === null) {
   echo json_encode(['success' => false, 'message' => 'Invalid data']);
   exit();
 }
-
-$idFile ='../../../database/id_payment.json';  // Đảm bảo đường dẫn tới file id.json là đúng
-$currentYear = date("Y");
-
- // Đọc dữ liệu từ file id.json
- $jsonDataIdPayment = file_get_contents($idFile);
- $dataIdPayment = json_decode($jsonDataIdPayment, true);
- $newIdPayment = $dataIdPayment[$currentYear]["id"] + 1;
- $dataIdPayment[$currentYear]["id"] = $newIdPayment;
- // Cập nhật lại file id.json với giá trị ID mới
-file_put_contents($idFile, json_encode($dataIdPayment));
 
 // Define file path
 $year = date('Y');
@@ -49,14 +37,14 @@ $jsonData = json_decode(file_get_contents($filePath), true);
 $updated = false;
 foreach ($jsonData as &$entry) {
   if ($entry['instruction_no'] == $instructionNo) {
-    $entry['amount'] = $amount;
 
     $month = date('m'); // Lấy tháng hiện tại
     $year = date('Y');  // Lấy năm hiện tại
-    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $newIdPayment . '_time_' . $month . '_' . $year . '.pdf';
+    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $instructionNo . '_time_' . $month . '_' . $year . '.pdf';
     $entry['file_path'] = $pdfFileName;
     foreach ($entry['approval'] as &$approval) {
-      if ($approval['role'] === 'director' && $approval['email'] === $_SESSION['user_id']) {
+      if ($approval['role'] === 'accountant') {
+        $approval['email'] = $_SESSION['user_id'];
         $approval['status'] = $status;
         $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
         $approval['comment'] = $message;

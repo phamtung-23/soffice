@@ -122,6 +122,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     'time' => '',
     'comment' => ''
   ];
+  $data['approval'][] = [
+    'role' => 'accountant',
+    'email' => '',
+    'status' => 'pending',
+    'time' => '',
+    'comment' => ''
+  ];
   $data['total_actual'] = (float)str_replace(',', '', $data['total_actual']);
   $data['created_at'] = date('Y-m-d H:i:s');
 

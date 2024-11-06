@@ -45,6 +45,22 @@ function getStatusCounts($data, $statusField, $statusValue = null) {
     }));
 }
 
+function countApprovalsByRoleAndStatus($data, $role, $status) {
+    $count = 0;
+    
+    foreach ($data as $item) {
+        if (isset($item['approval'])) {
+            foreach ($item['approval'] as $approval) {
+                if ($approval['role'] === $role && $approval['status'] === $status) {
+                    $count++;
+                }
+            }
+        }
+    }
+
+    return $count;
+}
+
 // Calculate counts for request and payment data
 $requestApprovedDirector = getStatusCounts($requestData, 'status', 'Phê duyệt');
 $requestPaid= getStatusCounts($requestData, 'payment_status', 'Chi tiền');
@@ -52,9 +68,8 @@ $requestWaitingPay= $requestApprovedDirector - $requestPaid;
 $requestRefunded= getStatusCounts($requestData, 'payment_refund_status', 'Đã hoàn tiền');
 $requestWaitingRefund= $requestPaid - $requestRefunded;
 
-
-$paymentApprovedDirector = getStatusCounts($paymentData, 'status', 'Phê duyệt');
-$paymentPaid= getStatusCounts($paymentData, 'payment_status', 'Chi tiền');
+$paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
+$paymentPaid= countApprovalsByRoleAndStatus($paymentData, 'accountant', 'approved');
 $paymentWaitingPay= $paymentApprovedDirector - $paymentPaid;
 
 ?>
@@ -234,7 +249,7 @@ $paymentWaitingPay= $paymentApprovedDirector - $paymentPaid;
                 <td>Null</td>
                 <td><?php echo $paymentWaitingPay; ?></td>
                 <td>Null</td>
-                <td><a href="payment_payment.php">Quản lý phiếu thanh toán chờ chi</a></td>
+                <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ chi</a></td>
                  
             </tr>
         </table>
