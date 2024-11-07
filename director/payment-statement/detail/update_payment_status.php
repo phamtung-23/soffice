@@ -21,16 +21,6 @@ if ($instructionNo === null || $status === null) {
   exit();
 }
 
-$idFile ='../../../database/id_payment.json';  // Đảm bảo đường dẫn tới file id.json là đúng
-$currentYear = date("Y");
-
- // Đọc dữ liệu từ file id.json
- $jsonDataIdPayment = file_get_contents($idFile);
- $dataIdPayment = json_decode($jsonDataIdPayment, true);
- $newIdPayment = $dataIdPayment[$currentYear]["id"] + 1;
- $dataIdPayment[$currentYear]["id"] = $newIdPayment;
- // Cập nhật lại file id.json với giá trị ID mới
-file_put_contents($idFile, json_encode($dataIdPayment));
 
 // Define file path
 $year = date('Y');
@@ -53,7 +43,7 @@ foreach ($jsonData as &$entry) {
 
     $month = date('m'); // Lấy tháng hiện tại
     $year = date('Y');  // Lấy năm hiện tại
-    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $newIdPayment . '_time_' . $month . '_' . $year . '.pdf';
+    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
     $entry['file_path'] = $pdfFileName;
     foreach ($entry['approval'] as &$approval) {
       if ($approval['role'] === 'director' && $approval['email'] === $_SESSION['user_id']) {

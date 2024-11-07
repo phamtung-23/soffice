@@ -19,6 +19,16 @@ if (!file_exists($userFile)) {
   die("File users.json không tồn tại.");
 }
 
+$idFile ='../../../database/id_payment.json';  // Đảm bảo đường dẫn tới file id.json là đúng
+$currentYear = date("Y");
+// Đọc dữ liệu từ file id.json
+$jsonDataIdPayment = file_get_contents($idFile);
+$dataIdPayment = json_decode($jsonDataIdPayment, true);
+$newIdPayment = $dataIdPayment[$currentYear]["id"] + 1;
+$dataIdPayment[$currentYear]["id"] = $newIdPayment;
+// Cập nhật lại file id.json với giá trị ID mới
+file_put_contents($idFile, json_encode($dataIdPayment));
+
 $usersData = file_get_contents($userFile);
 $users = json_decode($usersData, true);
 
@@ -131,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   ];
   $data['total_actual'] = (float)str_replace(',', '', $data['total_actual']);
   $data['created_at'] = date('Y-m-d H:i:s');
-
+  $data['id'] = $newIdPayment;
   
 
   // Append the new data to the existing data array

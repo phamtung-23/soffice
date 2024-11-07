@@ -151,5 +151,135 @@
         "stuffingExcl": "",
         "amount": 1233333,
         "file_path": "Phieu de nghi thanh toan_id_2_time_11_2024.pdf"
+    },
+    {
+        "instruction_no": 3,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "gmminhtien@gmail.com",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "director@gmail.com",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "accountant",
+                "email": "",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 22222,
+                "so_hoa_don": "HD001",
+                "expense_payee": "OPS",
+                "expense_doc": ""
+            }
+        ],
+        "shipper": "Neymar",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "loai_hinh": "nhap",
+        "customs_manifest_on": "1234456",
+        "total_actual": 60000000,
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "PH\u1ea0M THANH T\u00d9NG",
+        "operator_email": "ptung23082001@gmail.com",
+        "created_at": "2024-11-07 02:48:44"
+    },
+    {
+        "instruction_no": 4,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "approved",
+                "time": "2024-11-07 02:52:40",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "gmminhtien@gmail.com",
+                "status": "approved",
+                "time": "2024-11-07 02:53:33",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "director@gmail.com",
+                "status": "approved",
+                "time": "2024-11-07 02:54:11",
+                "comment": ""
+            },
+            {
+                "role": "accountant",
+                "email": "",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 22222,
+                "so_hoa_don": "HD001",
+                "expense_payee": "OPS",
+                "expense_doc": ""
+            }
+        ],
+        "shipper": "Pham THanh Tung",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "loai_hinh": "xuat",
+        "customs_manifest_on": "2435",
+        "total_actual": 6000000,
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "PH\u1ea0M THANH T\u00d9NG",
+        "operator_email": "ptung23082001@gmail.com",
+        "created_at": "2024-11-07 02:51:41",
+        "id": 8,
+        "delivery_address": "Quan 4",
+        "delivery_time": "2024-11-07",
+        "delivery_pct": "1324",
+        "trucking": "Trucking",
+        "trunkingVat": "12",
+        "trunkingIncl": "",
+        "trunkingExcl": "",
+        "stuffing": "customs",
+        "stuffingVat": "12",
+        "stuffingIncl": "on",
+        "stuffingExcl": "",
+        "liftOnOff": "Lift on\/off",
+        "liftOnOffVat": "12",
+        "liftOnOffIncl": "on",
+        "liftOnOffExcl": "",
+        "chiHo": "Chi h\u00f4\u0323",
+        "chiHoVat": "12",
+        "chiHoIncl": "on",
+        "chiHoExcl": "",
+        "amount": 1000000,
+        "file_path": "Phieu de nghi thanh toan_id_8_time_11_2024.pdf"
     }
 ]
