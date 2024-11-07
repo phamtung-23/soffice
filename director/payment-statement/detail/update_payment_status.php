@@ -46,7 +46,8 @@ foreach ($jsonData as &$entry) {
     $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
     $entry['file_path'] = $pdfFileName;
     foreach ($entry['approval'] as &$approval) {
-      if ($approval['role'] === 'director' && $approval['email'] === $_SESSION['user_id']) {
+      if ($approval['role'] === 'director') {
+        $approval['email'] = $_SESSION['user_id'];
         $approval['status'] = $status;
         $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
         $approval['comment'] = $message;

@@ -92,7 +92,7 @@ sort($years);
 
           if (validRequests.length === 0) {
             const noRequestsRow = document.createElement('tr');
-            noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
+            noRequestsRow.innerHTML = '<td colspan=9">Không có yêu cầu nào để hiển thị.</td>';
             tableBody.appendChild(noRequestsRow);
           } else {
             validRequests.forEach(request => {

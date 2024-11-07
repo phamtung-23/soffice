@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $data['operator_email'] = $email;
   $data['approval'][] = [
     'role' => 'director',
-    'email' => $directorData['email'],
+    'email' => '',
     'status' => 'pending',
     'time' => '',
     'comment' => ''

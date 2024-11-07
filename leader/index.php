@@ -101,12 +101,12 @@ $requestRejectedLeader = getStatusCounts($requestData, 'check_status', 'Từ ch�
 $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
 $requestWaitingLeader = getStatusCounts($requestData, 'check_status');
 
-$paymentTotal = count($paymentData);
-$paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved');
-$paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
-$paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
-$paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
-$paymentWaitingLeader = countApprovalsByRoleLeader($paymentData, 'leader', 'pending');
+$paymentTotal = isset($paymentData) ? count($paymentData) : 0;
+$paymentApprovedLeader =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved') : 0;
+$paymentApprovedDirector =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'director', 'approved') : 0;
+$paymentRejectedLeader =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected') : 0;
+$paymentRejectedDirector =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected') : 0;
+$paymentWaitingLeader =  isset($paymentData) ? countApprovalsByRoleLeader($paymentData, 'leader', 'pending') : 0;
 ?>
 
 <!DOCTYPE html>

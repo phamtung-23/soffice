@@ -1,7 +1,7 @@
 {
     "0": {
-        "fullname": "Sale 1",
-        "email": "sale1@gmail.com",
+        "fullname": "Sale 2",
+        "email": "gmminhtien@gmail.com",
         "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
         "phone": "1558599761",
         "role": "sale"
@@ -21,10 +21,10 @@
         "role": "leader"
     },
     "3": {
-        "fullname": "NGUYEN MINH TU",
-        "email": "tu.nm@uni-global.com",
-        "password": "$2y$10$v7UmpeUIbmQmOLeCB0eqp.Bog84NXNkJGYKja0N\/\/L7xDI\/TO3\/Pu",
-        "phone": "5681478252",
+        "fullname": "Director",
+        "email": "director@gmail.com",
+        "password": "$2y$10$yzLv3iUdl\/FBLl0tK2jH\/OogtB2zUPxhPedsBG24D0.p9LxWV56PS",
+        "phone": "1558599761",
         "role": "director"
     },
     "4": {
@@ -35,87 +35,80 @@
         "role": "accountant"
     },
     "6": {
-        "fullname": "PHẠM THỊ MY",
+        "fullname": "PH\u1ea0M TH\u1eca MY",
         "email": "logistics06@uni-global.com",
         "password": "$2y$10$qmhHOZeIG3du7GPTPk.AM.Gl2g1KMSLsJ7azchZmkNm9ek1.oYsGq",
-        "phone": "7287207375",
+        "phone": "0362093320",
         "role": "operator"
     },
     "7": {
-        "fullname": "ĐÀM VĂN HIỆP",
+        "fullname": "\u0110\u00c0M V\u0102N HI\u1ec6P",
         "email": "hiep@uni-global.com",
         "password": "$2y$10$C4ZT1S\/OQUkq.j\/dLYn0TunI00eVDhloDAH8AwwYanuaTkPE45AaW",
         "phone": "7208264555",
         "role": "leader"
     },
     "8": {
-        "fullname": "NGUYỄN THANH PHONG",
+        "fullname": "NGUY\u1ec4N THANH PHONG",
         "email": "logistics14@uni-global.com",
         "password": "$2y$10$2LvZOuBx9F56iPAm1tRi0e4SRHQkGa3fynpS066pftBN.lCTugY2e",
         "phone": "0978407448",
         "role": "operator"
     },
     "9": {
-        "fullname": "VÕ THỊ THU ĐÀO",
+        "fullname": "V\u00d5 TH\u1eca THU \u0110\u00c0O",
         "email": "logistics24@uni-global.com",
         "password": "$2y$10$nckKVexuFtF82RdL6FW1Tu547YtdeuEKYIGxjZWLgU88wNeq4C5fy",
         "phone": "0828488697",
         "role": "operator"
     },
     "10": {
-        "fullname": "TRẦN THU SANG",
+        "fullname": "TR\u1ea6N THU SANG",
         "email": "logistics02@uni-global.com",
         "password": "$2y$10$B51KPN80.DopkeghYQBbkuuixni3CDP6N9skeW5VUFYMT7x3a7JgO",
         "phone": "7403085192",
         "role": "operator"
     },
     "11": {
-        "fullname": "NGUYỄN THANH HẢI",
+        "fullname": "NGUY\u1ec4N THANH H\u1ea2I",
         "email": "logistics16@uni-global.com",
         "password": "$2y$10$OmKDhPy3Yj66pm\/12pz5dORheJEt4Dv\/G8wDiRwMQuEsravFRECfW",
         "phone": "8083814341",
         "role": "operator"
     },
     "12": {
-        "fullname": "NGUYỄN THỊ KIỀU MY",
+        "fullname": "NGUY\u1ec4N TH\u1eca KI\u1ec0U MY",
         "email": "logistics12@uni-global.com",
         "password": "$2y$10$A2ipMt.vLriHzlUSsrSZ.OgLDJZE2\/1QbVHuSSjf8iUqzYM\/73Y7m",
         "phone": "7252850220",
         "role": "operator"
     },
     "13": {
-        "fullname": "TỐNG THỊ NGỌC BÍCH",
+        "fullname": "T\u1ed0NG TH\u1eca NG\u1eccC B\u00cdCH",
         "email": "account@uni-global.com",
         "password": "$2y$10$XG4IkB\/JpK2.yqPBvR8TWOoxUHqhYJgigAfPKHy8Y9opdds5yEntm",
         "phone": "7626151933",
         "role": "accountant"
     },
     "14": {
-        "fullname": "PHẠM THANH TÙNG",
+        "fullname": "PH\u1ea0M THANH T\u00d9NG",
         "email": "ptung23082001@gmail.com",
         "password": "$2y$10$GVDLDh.Y6Ga7FqkQTOWAa.kVGt4lnAM7\/aIy5lwTXb0dOeCqEDKlq",
         "phone": "6944007336",
         "role": "operator"
     },
     "15": {
-        "fullname": "PHƯƠNG THỊ MỸ TIÊN",
+        "fullname": "PH\u01af\u01a0NG TH\u1eca M\u1ef8 TI\u00caN",
         "email": "logistics08@uni-global.com",
         "password": "$2y$10$eT8R9n3Vfex\/FL1Z6Xkzre5tQwrDFPRMmaDl\/wgjr4kSKqTd6lT1m",
         "phone": "7451867623",
         "role": "operator"
     },
     "16": {
-        "fullname": "VÕ THỊ BÍCH TRÍ",
+        "fullname": "V\u00d5 TH\u1eca B\u00cdCH TR\u00cd",
         "email": "logistics04@uni-global.com",
         "password": "$2y$10$QGIHsYQe\/CBGRl80Bkpdo.KipxtewpQn9ek.Vjx\/in1LVnn82py2m",
         "phone": "vothibichtri0705@gmail.com",
         "role": "operator"
-    },
-    "17": {
-       "fullname": "Director1",
-        "email": "director@gmail.com",
-        "password": "$2y$10$yzLv3iUdl\/FBLl0tK2jH\/OogtB2zUPxhPedsBG24D0.p9LxWV56PS",
-        "phone": "1558599761",
-        "role": "director"
     }
 }

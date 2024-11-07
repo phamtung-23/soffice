@@ -63,7 +63,7 @@ if ($instructionNo !== null) {
       // get leader data
       $directorData = null;
       foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'director' && $user['email'] == $entry['approval'][2]['email']) {
+        if ($user['role'] == 'director' && $user['email'] == $_SESSION['user_id']) {
           $directorData = $user;
           break;
         }
@@ -573,6 +573,7 @@ if ($instructionNo !== null) {
         .then(async data => {
           if (data.success) {
             // Tạo nội dung tin nhắn để gửi
+            console.log('data', data);
             let telegramMessage = '';
             if (status === 'approved') {
               telegramMessage = `**Yêu cầu đã được Giám đốc phê duyệt!**\n` +
@@ -582,7 +583,7 @@ if ($instructionNo !== null) {
                 `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người phê duyệt:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
+                `Người phê duyệt:  ${directorData.fullname} - ${data.data.approval[2].email}\n` +
                 `Thời gian phê duyệt: ${itemData.approval[0].time}`;
             } else {
               telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
@@ -593,7 +594,7 @@ if ($instructionNo !== null) {
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
                 `Lý do: **${message}**\n` +
-                `Người từ chối:  ${directorData.fullname} - ${itemData.approval[2].email}\n` +
+                `Người từ chối:  ${directorData.fullname} - ${data.data.approval[2].email}\n` +
                 `Thời gian từ chối: ${itemData.approval[0].time}`;
             }
 
