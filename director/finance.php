@@ -80,7 +80,7 @@ if (file_exists($file)) {
             $summaryData[$operator]['returned_count']++;
             $summaryData[$operator]['total_returned_amount'] += $request['approved_amount'] ?? 0;
         }
-         $summaryData[$operator]['total_debt']=$summaryData[$operator]['total_paid_amount']-$summaryData[$operator]['total_returned_amount'] ;
+        $summaryData[$operator]['total_debt'] = $summaryData[$operator]['total_paid_amount'] - $summaryData[$operator]['total_returned_amount'];
     }
 
     // Calculate totals
@@ -101,12 +101,13 @@ if (file_exists($file)) {
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang chủ quản lý phiếu xin tạm ứng</title>
     <style>
-       * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -167,31 +168,38 @@ if (file_exists($file)) {
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
-            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-x: auto;
+            /* Enable horizontal scrolling */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            overflow-x: auto;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: left;
-            white-space: nowrap; /* Prevent text from wrapping */
+            white-space: nowrap;
+            /* Prevent text from wrapping */
         }
 
-       th {
-        font-size: 6px; /* Adjust this value as needed */
-        background-color: #f2f2f2;
-        padding: 6px;
-        text-align: left;
-    }
+        th {
+            font-size: 6px;
+            /* Adjust this value as needed */
+            background-color: #f2f2f2;
+            padding: 6px;
+            text-align: left;
+        }
 
         input[type="text"] {
             width: 100%;
@@ -200,48 +208,52 @@ if (file_exists($file)) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        
+
         .footer {
             text-align: center;
             margin-top: 40px;
             font-size: 14px;
             color: #888;
-        }.table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        max-width: 100%;
-        margin: auto;
-    }
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed; /* Forces table columns to fit evenly */
-    }
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+            margin: auto;
+        }
 
-    th, td {
-        padding: 8px;
-        text-align: left;
-        border: 1px solid #ddd;
-        font-size: 0.85em;
-        min-width: 100px; /* Adjust based on content */
-        word-wrap: break-word;
-        word-break: break-all; /* Ensures long words break within cell */
-        white-space: normal; /* Allows text wrapping */
-    }
 
-    th {
-        background-color: #f2f2f2;
-    }
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 0.85em;
+            min-width: 100px;
+            /* Adjust based on content */
+            word-wrap: break-word;
+            word-break: break-all;
+            /* Ensures long words break within cell */
+            white-space: normal;
+            /* Allows text wrapping */
+        }
 
-    /* Optional: Wrapping long text within cells */
-    .wrap-text {
-        white-space: normal;
-    }
-      .update-fund-form {
-            display: none; /* Hidden by default */
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Optional: Wrapping long text within cells */
+        .wrap-text {
+            white-space: normal;
+        }
+
+        .update-fund-form {
+            display: none;
+            /* Hidden by default */
             margin-top: 10px;
         }
+
         input[type="text"].fund-input {
             width: 100%;
             padding: 8px;
@@ -249,40 +261,196 @@ if (file_exists($file)) {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
+        /* Hamburger icon (hidden by default) */
+        .hamburger {
+            display: none;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            padding: 1px 20px;
+        }
+
+        /* Basic responsive adjustments */
+        @media (max-width: 768px) {
+
+            /* Header and menu adjustments */
+            .header {
+                padding: 20px;
+                font-size: 1.5em;
+            }
+
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .menu a {
+                float: none;
+                display: block;
+                text-align: left;
+                padding: 10px;
+            }
+
+            .menu a.logout {
+                float: none;
+                background-color: #f44336;
+                text-align: center;
+            }
+
+            /* Container adjustments */
+            .container {
+                padding: 10px;
+            }
+
+            .welcome-message {
+                font-size: 18px;
+                text-align: center;
+            }
+
+            /* Content adjustments */
+            .content {
+                padding: 10px;
+                margin-top: 15px;
+            }
+
+            /* Table adjustments */
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table,
+            th,
+            td {
+                font-size: 0.9em;
+            }
+
+            .menu a {
+                display: none;
+                /* Hide menu links */
+            }
+
+            .menu a.logout {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+                /* Show hamburger icon */
+            }
+
+            .menu.responsive a {
+                float: none;
+                /* Make links stack vertically */
+                display: block;
+                text-align: left;
+            }
+
+            .menu.responsive .logout {
+                float: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            /* Smaller screens (mobile) */
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .menu a {
+                font-size: 0.9em;
+            }
+
+            .welcome-message {
+                font-size: 16px;
+            }
+
+            table,
+            th,
+            td {
+                font-size: 0.9em;
+                padding: 6px;
+            }
+
+            .content h2 {
+                font-size: 1em;
+            }
+
+            .footer {
+                font-size: 12px;
+            }
+
+            .menu a {
+                display: none;
+                /* Hide menu links */
+            }
+
+            .menu a.logout {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+                /* Show hamburger icon */
+            }
+
+            .menu.responsive a {
+                float: none;
+                /* Make links stack vertically */
+                display: block;
+                text-align: left;
+            }
+
+            .menu.responsive .logout {
+                float: none;
+            }
+        }
     </style>
-     <script>
+    <script>
         // Function to format number with commas
         function formatNumberWithCommas(input) {
-    // Remove any existing commas
-    let value = input.value.replace(/,/g, '');
+            // Remove any existing commas
+            let value = input.value.replace(/,/g, '');
 
-    // Format with commas every three digits
-    input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
+            // Format with commas every three digits
+            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
         // Toggle the update form display
         function toggleUpdateForm() {
             const form = document.querySelector('.update-fund-form');
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
+        // Toggle the responsive class to show/hide the menu
+        function toggleMenu() {
+            var menu = document.querySelector('.menu');
+            menu.classList.toggle('responsive');
+        }
     </script>
 </head>
+
 <body>
-   <div class="header">
+    <div class="header">
         <h1>Quản lý Tài chính</h1>
     </div>
 
     <div class="menu">
+        <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
         <a href="index.php">Home</a>
+        <a href="all_request.php">Quản lý phiếu tạm ứng</a>
         <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+        <a href="finance.php">Quản lý tài chính</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
+        <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+        <a href="admin.php">Quản lý account</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>
     </div>
     <div class="content">
-      <div class="welcome-message">
-        <p>Xin chào, <?php echo $fullName; ?>!</p>
-    </div>
-       <!-- Display summary -->
-  <form method="POST">
+        <div class="welcome-message">
+            <p>Xin chào, <?php echo $fullName; ?>!</p>
+        </div>
+        <!-- Display summary -->
+        <form method="POST">
             <label for="year">Chọn năm:</label>
             <select id="year" name="year" onchange="this.form.submit()">
                 <?php
@@ -295,24 +463,24 @@ if (file_exists($file)) {
                 }
                 ?>
             </select>
-           
+
         </form>
         <h3>Tổng kết:</h3>
-            <p>Tổng tiền quỹ: <?php echo number_format($totalFund); ?> VNĐ 
+        <p>Tổng tiền quỹ: <?php echo number_format($totalFund); ?> VNĐ
         <p>Tổng tiền đã chi: <?php echo number_format($totalPaidAmount); ?> VNĐ</p>
         <p>Tổng tiền đã thu: <?php echo number_format($totalReturnedAmount); ?> VNĐ</p>
-                <?php
-$remainingAmount = $totalPaidAmount - $totalReturnedAmount;
-?>
+        <?php
+        $remainingAmount = $totalPaidAmount - $totalReturnedAmount;
+        ?>
 
-<p>Số tiền còn lại cần phải thu: 
-    <span style="color: <?php echo $remainingAmount > 0 ? 'red' : 'black'; ?>;">
-        <?php echo number_format($remainingAmount); ?> VNĐ
-    </span>
-</p>
+        <p>Số tiền còn lại cần phải thu:
+            <span style="color: <?php echo $remainingAmount > 0 ? 'red' : 'black'; ?>;">
+                <?php echo number_format($remainingAmount); ?> VNĐ
+            </span>
+        </p>
         <p>Số tiền còn lại: <?php echo number_format($remainingAmount); ?> VNĐ</p>
         <h2>Tổng hợp tạm ứng theo từng operator</h2>
-      
+
 
         <table>
             <thead>
@@ -339,7 +507,7 @@ $remainingAmount = $totalPaidAmount - $totalReturnedAmount;
                         echo "<td>" . number_format($data['total_approved_amount']) . "</td>";
                         echo "<td>" . number_format($data['total_paid_amount']) . "</td>";
                         echo "<td>" . number_format($data['total_returned_amount']) . "</td>";
-                         echo "<td style='color:" . ($data['total_debt'] > 0 ? "red" : "black") . ";'>" . number_format($data['total_debt']) . "</td>";
+                        echo "<td style='color:" . ($data['total_debt'] > 0 ? "red" : "black") . ";'>" . number_format($data['total_debt']) . "</td>";
                         echo "</tr>";
                     }
                 } else {
@@ -349,8 +517,9 @@ $remainingAmount = $totalPaidAmount - $totalReturnedAmount;
             </tbody>
         </table>
 
-     
-        
+
+
     </div>
 </body>
+
 </html>

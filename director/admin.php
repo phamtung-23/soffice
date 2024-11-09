@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'], $_POST['role
 // Handle user deletion
 if (isset($_GET['delete'])) {
     $userEmailToDelete = $_GET['delete'];
-    $users = array_filter($users, function($user) use ($userEmailToDelete) {
+    $users = array_filter($users, function ($user) use ($userEmailToDelete) {
         return $user['email'] !== $userEmailToDelete;
     });
 
@@ -75,6 +75,7 @@ if (isset($_GET['edit'])) {
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -148,20 +149,31 @@ if (isset($_GET['edit'])) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            overflow-x: auto;
+            background-color: white;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: left;
+            white-space: nowrap;
         }
 
         th {
+            font-size: 6px;
+            /* Adjust this value as needed */
             background-color: #f2f2f2;
+            padding: 6px;
+            text-align: left;
         }
+
 
         input[type="text"] {
             width: 100%;
@@ -178,7 +190,8 @@ if (isset($_GET['edit'])) {
             color: #888;
         }
 
-        .update-btn, .delete-btn {
+        .update-btn,
+        .delete-btn {
             cursor: pointer;
             padding: 4px 8px;
             color: white;
@@ -206,20 +219,174 @@ if (isset($_GET['edit'])) {
         .role-counts {
             margin-bottom: 20px;
         }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Hamburger icon (hidden by default) */
+        .hamburger {
+            display: none;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            padding: 1px 20px;
+        }
+
+        /* Basic responsive adjustments */
+        @media (max-width: 768px) {
+
+            /* Header and menu adjustments */
+            .header {
+                padding: 20px;
+                font-size: 1.5em;
+            }
+
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .menu a {
+                float: none;
+                display: block;
+                text-align: left;
+                padding: 10px;
+            }
+
+            .menu a.logout {
+                float: none;
+                background-color: #f44336;
+                text-align: center;
+            }
+
+            /* Container adjustments */
+            .container {
+                padding: 10px;
+            }
+
+            .welcome-message {
+                font-size: 18px;
+                text-align: center;
+            }
+
+            /* Content adjustments */
+            .content {
+                padding: 10px;
+                margin-top: 15px;
+            }
+
+            /* Table adjustments */
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table,
+            th,
+            td {
+                font-size: 0.9em;
+            }
+
+            .menu a {
+                display: none;
+                /* Hide menu links */
+            }
+
+            .menu a.logout {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+                /* Show hamburger icon */
+            }
+
+            .menu.responsive a {
+                float: none;
+                /* Make links stack vertically */
+                display: block;
+                text-align: left;
+            }
+
+            .menu.responsive .logout {
+                float: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            /* Smaller screens (mobile) */
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .menu a {
+                font-size: 0.9em;
+            }
+
+            .welcome-message {
+                font-size: 16px;
+            }
+
+            table,
+            th,
+            td {
+                font-size: 0.9em;
+                padding: 6px;
+            }
+
+            .content h2 {
+                font-size: 1em;
+            }
+
+            .footer {
+                font-size: 12px;
+            }
+
+            .menu a {
+                display: none;
+                /* Hide menu links */
+            }
+
+            .menu a.logout {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+                /* Show hamburger icon */
+            }
+
+            .menu.responsive a {
+                float: none;
+                /* Make links stack vertically */
+                display: block;
+                text-align: left;
+            }
+
+            .menu.responsive .logout {
+                float: none;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>Quản lý Tài khoản</h1>
     </div>
 
     <div class="menu">
+        <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
         <a href="index.php">Home</a>
         <a href="all_request.php">Quản lý phiếu tạm ứng</a>
         <a href="all_payment.php">Quản lý phiếu thanh toán</a>
         <a href="finance.php">Quản lý tài chính</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+        <a href="admin.php">Quản lý account</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>
     </div>
 
@@ -233,24 +400,24 @@ if (isset($_GET['edit'])) {
 
         <h2>Danh sách tài khoản</h2>
         <table>
-        <?php if ($editingUser): ?>
-            <h2>Cập nhật thông tin cho <?php echo htmlspecialchars($editingUser['fullname']); ?></h2>
-            <form method="POST" action="">
-                <input type="hidden" name="email" value="<?php echo htmlspecialchars($editingUser['email']); ?>">
-                <label for="fullname">Tên:</label>
-                <input type="text" name="fullname" id="fullname" value="<?php echo htmlspecialchars($editingUser['fullname']); ?>" required>
-                
-                <label for="role">Chọn chức danh:</label>
-                <select name="role" id="role" required>
-                    <option value="sale" <?php if ($editingUser['role'] == 'sale') echo 'selected'; ?>>Sale</option>
-                    <option value="operator" <?php if ($editingUser['role'] == 'operator') echo 'selected'; ?>>Operator</option>
-                    <option value="leader" <?php if ($editingUser['role'] == 'leader') echo 'selected'; ?>>Leader</option>
-                    <option value="accountant" <?php if ($editingUser['role'] == 'accountant') echo 'selected'; ?>>Accountant</option>
-                    <!-- Add more roles as needed -->
-                </select>
-                <button type="submit" class="update-btn">Cập nhật</button>
-            </form>
-        <?php endif; ?>
+            <?php if ($editingUser): ?>
+                <h2>Cập nhật thông tin cho <?php echo htmlspecialchars($editingUser['fullname']); ?></h2>
+                <form method="POST" action="">
+                    <input type="hidden" name="email" value="<?php echo htmlspecialchars($editingUser['email']); ?>">
+                    <label for="fullname">Tên:</label>
+                    <input type="text" name="fullname" id="fullname" value="<?php echo htmlspecialchars($editingUser['fullname']); ?>" required>
+
+                    <label for="role">Chọn chức danh:</label>
+                    <select name="role" id="role" required>
+                        <option value="sale" <?php if ($editingUser['role'] == 'sale') echo 'selected'; ?>>Sale</option>
+                        <option value="operator" <?php if ($editingUser['role'] == 'operator') echo 'selected'; ?>>Operator</option>
+                        <option value="leader" <?php if ($editingUser['role'] == 'leader') echo 'selected'; ?>>Leader</option>
+                        <option value="accountant" <?php if ($editingUser['role'] == 'accountant') echo 'selected'; ?>>Accountant</option>
+                        <!-- Add more roles as needed -->
+                    </select>
+                    <button type="submit" class="update-btn">Cập nhật</button>
+                </form>
+            <?php endif; ?>
             <thead>
                 <tr>
                     <th>Name</th>
@@ -279,7 +446,7 @@ if (isset($_GET['edit'])) {
                                 Chưa có chữ ký
                             <?php endif; ?>
                         </td>
-                        <td>
+                        <td class="action-btn">
                             <a href="admin.php?edit=<?php echo urlencode($user['email']); ?>" class="update-btn">Update</a>
                             <a href="admin.php?delete=<?php echo urlencode($user['email']); ?>" class="delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này không?');">Delete</a>
                         </td>
@@ -287,7 +454,15 @@ if (isset($_GET['edit'])) {
                 <?php endforeach; ?>
             </tbody>
         </table>
-        
+
     </div>
+    <script>
+        // Toggle the responsive class to show/hide the menu
+        function toggleMenu() {
+            var menu = document.querySelector('.menu');
+            menu.classList.toggle('responsive');
+        }
+    </script>
 </body>
+
 </html>

@@ -52,6 +52,12 @@ sort($years);
       return yearSelect.value;
     }
 
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
+
     function formatNumber(num) {
       return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -91,7 +97,7 @@ sort($years);
           tableBody.innerHTML = '';
 
           const validRequests = data.filter(request => {
-            console.log(request); 
+            console.log(request);
             return request.approval[1].status === 'approved' && request.approval[0].status === 'approved' && request.approval[2].status === 'pending';
           });
 
@@ -163,14 +169,14 @@ sort($years);
     <h1>Trang chủ</h1>
   </div>
   <div class="menu">
-    <a href="../../../<?php echo $userRole; ?>">Home</a>
-    <?php
-    if ($userRole == 'operator') {
-      echo '<a href="../../../operator/request.php">Tạo phiếu xin tạm ứng</a>';
-    }
-    ?>
-    <a href="">Danh sách phiếu tạm ứng đã duyệt</a>
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <a href="../../index.php">Home</a>
+    <a href="../../all_request.php">Quản lý phiếu tạm ứng</a>
+    <a href="../../all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="../../finance.php">Quản lý tài chính</a>
     <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../../admin.php">Quản lý account</a>
     <a href="../../../logout.php" class="logout">Đăng xuất</a>
   </div>
   <div class="container">

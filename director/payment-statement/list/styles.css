@@ -15,7 +15,7 @@ body {
 }
 
 .header {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 10px 20px;
   text-align: center;
@@ -42,7 +42,7 @@ button {
 }
 
 .submit-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
@@ -59,9 +59,12 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  overflow-x: auto;
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid #ddd;
 }
 
@@ -148,20 +151,19 @@ th {
   margin-bottom: 20px;
 }
 
-.filter-name-container{
+.filter-name-container {
   display: flex;
   justify-content: start;
   align-items: center;
   gap: 10px;
 }
 
-.filter-date-container{
+.filter-date-container {
   display: flex;
   justify-content: start;
   align-items: center;
   gap: 10px;
 }
-
 
 #operator-filter {
   width: 200px;
@@ -199,7 +201,7 @@ th {
 }
 
 #btn-approve {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
@@ -214,4 +216,131 @@ th {
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+ /* Hamburger icon (hidden by default) */
+ .hamburger {
+  display: none;
+  float: right;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+  padding: 1px 20px;
+}
+
+/* Basic responsive adjustments */
+@media (max-width: 768px) {
+  /* Header and menu adjustments */
+  .header {
+    padding: 20px;
+    font-size: 1.5em;
+  }
+
+  .header h1 {
+    font-size: 1.2em;
+  }
+
+  .menu a {
+    float: none;
+    display: block;
+    text-align: left;
+    padding: 10px;
+  }
+
+  .menu a.logout {
+    float: none;
+    background-color: #f44336;
+    text-align: center;
+  }
+
+  /* Container adjustments */
+  .container {
+    padding: 10px;
+  }
+
+  .welcome-message {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Content adjustments */
+  .content {
+    padding: 10px;
+    margin-top: 15px;
+  }
+
+  /* Table adjustments */
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  table,
+  th,
+  td {
+    font-size: 0.9em;
+  }
+  .menu a {
+    display: none; /* Hide menu links */
+  }
+  .menu a.logout {
+    display: none;
+  }
+  .hamburger {
+    display: block; /* Show hamburger icon */
+  }
+  .menu.responsive a {
+    float: none; /* Make links stack vertically */
+    display: block;
+    text-align: left;
+  }
+  .menu.responsive .logout {
+    float: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Smaller screens (mobile) */
+  .header h1 {
+    font-size: 1.2em;
+  }
+
+  .menu a {
+    font-size: 0.9em;
+  }
+
+  .welcome-message {
+    font-size: 16px;
+  }
+
+  table,
+  th,
+  td {
+    font-size: 0.9em;
+    padding: 6px;
+  }
+
+  .content h2 {
+    font-size: 1em;
+  }
+
+  .footer {
+    font-size: 12px;
+  }
+  .menu a {
+    display: none; /* Hide menu links */
+  }
+  .menu a.logout {
+    display: none;
+  }
+  .hamburger {
+    display: block; /* Show hamburger icon */
+  }
+  .menu.responsive a {
+    float: none; /* Make links stack vertically */
+    display: block;
+    text-align: left;
+  }
+  .menu.responsive .logout {
+    float: none;
+  }
 }

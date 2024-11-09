@@ -33,16 +33,17 @@ if (file_exists($file)) {
   $filteredRequests = [];
 }
 
-function getApprovalStatus($item) {
+function getApprovalStatus($item)
+{
   $hasPending = false;
 
   foreach ($item['approval'] as $approval) {
-      if ($approval['status'] === "rejected") {
-          return "Từ chối";
-      }
-      if ($approval['status'] === "pending") {
-          $hasPending = true;
-      }
+    if ($approval['status'] === "rejected") {
+      return "Từ chối";
+    }
+    if ($approval['status'] === "pending") {
+      $hasPending = true;
+    }
   }
 
   return $hasPending ? "Chờ duyệt" : "Đã duyệt";
@@ -127,6 +128,7 @@ function getApprovalStatus($item) {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      overflow-x: auto;
     }
 
     table,
@@ -173,13 +175,6 @@ function getApprovalStatus($item) {
       margin: auto;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      /* Forces table columns to fit evenly */
-    }
-
     th,
     td {
       padding: 8px;
@@ -203,6 +198,151 @@ function getApprovalStatus($item) {
     .wrap-text {
       white-space: normal;
     }
+
+    /* Hamburger icon (hidden by default) */
+    .hamburger {
+      display: none;
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      padding: 1px 20px;
+    }
+
+    /* Basic responsive adjustments */
+    @media (max-width: 768px) {
+
+      /* Header and menu adjustments */
+      .header {
+        padding: 20px;
+        font-size: 1.5em;
+      }
+
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu a {
+        float: none;
+        display: block;
+        text-align: left;
+        padding: 10px;
+      }
+
+      .menu a.logout {
+        float: none;
+        background-color: #f44336;
+        text-align: center;
+      }
+
+      /* Container adjustments */
+      .container {
+        padding: 10px;
+      }
+
+      .welcome-message {
+        font-size: 18px;
+        text-align: center;
+      }
+
+      /* Content adjustments */
+      .content {
+        padding: 10px;
+        margin-top: 15px;
+      }
+
+      /* Table adjustments */
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.8em;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      /* Smaller screens (mobile) */
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu a {
+        font-size: 0.9em;
+      }
+
+      .welcome-message {
+        font-size: 16px;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.9em;
+        padding: 6px;
+      }
+
+      .content h2 {
+        font-size: 1em;
+      }
+
+      .footer {
+        font-size: 12px;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
   </style>
 
 
@@ -220,11 +360,14 @@ function getApprovalStatus($item) {
   </div>
 
   <div class="menu">
-    <a href="./index.php">Home</a>
-    <a href="all_request.php">Danh sách phiếu tạm ứng</a>
-    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <a href="index.php">Home</a>
+    <a href="all_request.php">Quản lý phiếu tạm ứng</a>
+    <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="finance.php">Quản lý tài chính</a>
     <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="admin.php">Quản lý account</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
   </div>
 
@@ -242,7 +385,7 @@ function getApprovalStatus($item) {
         <select id="year" name="year" onchange="this.form.submit()">
           <?php
           foreach ($files as $file) {
-            preg_match('~request_(\d{4})\.json~', $file, $matches);
+            preg_match('~payment_(\d{4})\.json~', $file, $matches);
             if (isset($matches[1])) {
               $year = $matches[1];
               echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
@@ -292,7 +435,7 @@ function getApprovalStatus($item) {
               echo "<td>" . (!empty($request['approval'][1]['time']) ? date("d/m/Y", strtotime($request['approval'][1]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][2]['time']) ? date("d/m/Y", strtotime($request['approval'][2]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
-              echo "<td>".getApprovalStatus($request)."</td>";
+              echo "<td>" . getApprovalStatus($request) . "</td>";
               if (!empty($request['file_path'])) {
                 echo "<td><a href=\"../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
               } else {
@@ -356,7 +499,6 @@ function getApprovalStatus($item) {
         }
       });
 
-
       // Apply column search on each input field in the header
       $('#requestsTable thead tr:eq(1) th').each(function(i) {
         $('input', this).on('keyup change', function() {
@@ -371,6 +513,12 @@ function getApprovalStatus($item) {
       // Initial total calculation
       calculateTotal();
     });
+
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
 
     function calculateTotal() {
       let table = document.getElementById('requestsTable');
