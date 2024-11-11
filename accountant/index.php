@@ -15,7 +15,8 @@ $userEmail = $_SESSION['user_id']; // operator_email matches user_id
 $selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
 
 // Function to read and filter data from JSON files
-function getDataFromJson($filePath) {
+function getDataFromJson($filePath)
+{
     if (file_exists($filePath)) {
         $jsonData = file_get_contents($filePath);
         return json_decode($jsonData, true); // Trả về tất cả dữ liệu mà không lọc
@@ -33,8 +34,9 @@ $paymentData = getDataFromJson($paymentFile, $userEmail);
 
 // Function to get counts based on status
 
-function getStatusCounts($data, $statusField, $statusValue = null) {
-    return count(array_filter($data, function($item) use ($statusField, $statusValue) {
+function getStatusCounts($data, $statusField, $statusValue = null)
+{
+    return count(array_filter($data, function ($item) use ($statusField, $statusValue) {
         if ($statusValue === null) {
             // Trường hợp cần đếm số phiếu đang chờ (check_status chưa có thông tin)
             return !isset($item[$statusField]) || $item[$statusField] === '';
@@ -45,9 +47,10 @@ function getStatusCounts($data, $statusField, $statusValue = null) {
     }));
 }
 
-function countApprovalsByRoleAndStatus($data, $role, $status) {
+function countApprovalsByRoleAndStatus($data, $role, $status)
+{
     $count = 0;
-    
+
     foreach ($data as $item) {
         if (isset($item['approval'])) {
             foreach ($item['approval'] as $approval) {
@@ -63,19 +66,20 @@ function countApprovalsByRoleAndStatus($data, $role, $status) {
 
 // Calculate counts for request and payment data
 $requestApprovedDirector = getStatusCounts($requestData, 'status', 'Phê duyệt');
-$requestPaid= getStatusCounts($requestData, 'payment_status', 'Chi tiền');
-$requestWaitingPay= $requestApprovedDirector - $requestPaid;
-$requestRefunded= getStatusCounts($requestData, 'payment_refund_status', 'Đã hoàn tiền');
-$requestWaitingRefund= $requestPaid - $requestRefunded;
+$requestPaid = getStatusCounts($requestData, 'payment_status', 'Chi tiền');
+$requestWaitingPay = $requestApprovedDirector - $requestPaid;
+$requestRefunded = getStatusCounts($requestData, 'payment_refund_status', 'Đã hoàn tiền');
+$requestWaitingRefund = $requestPaid - $requestRefunded;
 
 $paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
-$paymentPaid= countApprovalsByRoleAndStatus($paymentData, 'accountant', 'approved');
-$paymentWaitingPay= $paymentApprovedDirector - $paymentPaid;
+$paymentPaid = countApprovalsByRoleAndStatus($paymentData, 'accountant', 'approved');
+$paymentWaitingPay = $paymentApprovedDirector - $paymentPaid;
 
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -100,9 +104,20 @@ $paymentWaitingPay= $paymentApprovedDirector - $paymentPaid;
             text-align: center;
         }
 
+        
         .menu {
             background-color: #333;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .icon {
+            padding: 10px 20px;
+        }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
         }
 
         .menu a {
@@ -151,11 +166,14 @@ $paymentWaitingPay= $paymentApprovedDirector - $paymentPaid;
             margin-top: 20px;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
 
-        th, td {
+        th,
+        td {
             padding: 8px;
             text-align: left;
         }
@@ -171,94 +189,263 @@ $paymentWaitingPay= $paymentApprovedDirector - $paymentPaid;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        
+
         .footer {
             text-align: center;
             margin-top: 40px;
             font-size: 14px;
             color: #888;
         }
+
+        /* Hamburger icon (hidden by default) */
+        .hamburger {
+            display: none;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        /* Basic responsive adjustments */
+        @media (max-width: 950px) {
+
+            /* Header and menu adjustments */
+            .header {
+                padding: 20px;
+                font-size: 1.5em;
+            }
+
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
+
+            .menu a {
+                float: none;
+                display: block;
+                text-align: left;
+                padding: 10px;
+            }
+
+            .menu a.logout {
+                float: none;
+                background-color: #f44336;
+                text-align: center;
+            }
+
+            /* Container adjustments */
+            .container {
+                padding: 10px;
+            }
+
+            .welcome-message {
+                font-size: 18px;
+                text-align: center;
+            }
+
+            /* Content adjustments */
+            .content {
+                padding: 10px;
+                margin-top: 15px;
+            }
+
+            /* Table adjustments */
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table,
+            th,
+            td {
+                font-size: 0.9em;
+            }
+
+            .menu a {
+                display: none;
+                /* Hide menu links */
+            }
+
+            .menu a.logout {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+                /* Show hamburger icon */
+            }
+
+            .menu.responsive a {
+                float: none;
+                /* Make links stack vertically */
+                display: block;
+                text-align: left;
+            }
+
+            .menu.responsive .logout {
+                float: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            /* Smaller screens (mobile) */
+            .header h1 {
+                font-size: 1.2em;
+            }
+
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
+
+            .menu a {
+                font-size: 0.9em;
+            }
+
+            .welcome-message {
+                font-size: 16px;
+            }
+
+            table,
+            th,
+            td {
+                font-size: 0.9em;
+                padding: 6px;
+            }
+
+            .content h2 {
+                font-size: 1em;
+            }
+
+            .footer {
+                font-size: 12px;
+            }
+
+            .menu a {
+                display: none;
+                /* Hide menu links */
+            }
+
+            .menu a.logout {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+                /* Show hamburger icon */
+            }
+
+            .menu.responsive a {
+                float: none;
+                /* Make links stack vertically */
+                display: block;
+                text-align: left;
+            }
+
+            .menu.responsive .logout {
+                float: none;
+            }
+        }
     </style>
 </head>
+
 <body>
 
-<div class="header">
-    <h1>Accountant Dashboard</h1>
-</div>
-
-<div class="menu">
-    <a href="">Home</a>
-    <a href="all_request.php">Quản lý phiếu tạm ứng</a>
-    <a href="all_payment.php">Quản lý phiếu thanh toán</a>
-    <a href="finance.php">Quản lý tài chính</a>
-    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
-    <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
-    <a href="../logout.php" class="logout">Đăng xuất</a>
-</div>
-
-<div class="container">
-    <div class="welcome-message">
-        <p>Xin chào, <?php echo $fullName; ?>!</p>
+    <div class="header">
+        <h1>Accountant Dashboard</h1>
     </div>
 
-    <!-- Year Selection Form -->
-    <form method="POST" action="">
-        <label for="year">Chọn năm:</label>
-        <select name="year" id="year" onchange="this.form.submit()">
-             <?php
-                    foreach ($files as $file) {
-                        // Lấy năm từ tên file
-                        preg_match('~request_(\d{4})\.json~', $file, $matches);
-                        if (isset($matches[1])) {
-                            $year = $matches[1];
-                            echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
-                        }
+    <div class="menu">
+        <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+        <div class='icon'>
+            <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+        </div>
+        <a href="index.php">Home</a>
+        <a href="all_request.php">Quản lý phiếu tạm ứng</a>
+        <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+        <a href="finance.php">Quản lý tài chính</a>
+        <a href="../update_signature.php">Cập nhật hình chữ ký</a>
+        <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+        <a href="../logout.php" class="logout">Đăng xuất</a>
+    </div>
+
+    <div class="container">
+        <div class="welcome-message">
+            <p>Xin chào, <?php echo $fullName; ?>!</p>
+        </div>
+
+        <!-- Year Selection Form -->
+        <form method="POST" action="">
+            <label for="year">Chọn năm:</label>
+            <select name="year" id="year" onchange="this.form.submit()">
+                <?php
+                foreach ($files as $file) {
+                    // Lấy năm từ tên file
+                    preg_match('~request_(\d{4})\.json~', $file, $matches);
+                    if (isset($matches[1])) {
+                        $year = $matches[1];
+                        echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
                     }
-             ?>
-        </select>
-    </form>
+                }
+                ?>
+            </select>
+        </form>
 
-    <!-- Management Table -->
-    <div class="content">
-        <table>
-            <tr>
-                <th>Loại phiếu</th>
-                <th>Tổng số phiếu đã được GĐ duyệt</th>
-                <th>Số phiếu đã chi tiền</th>
-                <th>Số phiếu đã hoàn tiền</th>
-                <th>Số phiếu chờ chi tiền</th>
-                <th>Số phiếu chờ hoàn tiền</th>
-                <th>Link quản lý phiếu chờ chi</th>
-                <th>Link quản lý phiếu chờ hoàn</th>
-            </tr>
+        <!-- Management Table -->
+        <div class="content">
+            <table>
+                <tr>
+                    <th>Loại phiếu</th>
+                    <th>Tổng số phiếu đã được GĐ duyệt</th>
+                    <th>Số phiếu đã chi tiền</th>
+                    <th>Số phiếu đã hoàn tiền</th>
+                    <th>Số phiếu chờ chi tiền</th>
+                    <th>Số phiếu chờ hoàn tiền</th>
+                    <th>Link quản lý phiếu chờ chi</th>
+                    <th>Link quản lý phiếu chờ hoàn</th>
+                </tr>
 
-            <tr>
-                <td>Phiếu tạm ứng</td>
-                <td><?php echo $requestApprovedDirector; ?></td>
-                <td><?php echo $requestPaid; ?></td>
-                <td><?php echo $requestRefunded; ?></td>
-                <td><?php echo $requestWaitingPay; ?></td>
-                <td><?php echo $requestWaitingRefund; ?></td>
-                <td><a href="payment_request.php">Quản lý phiếu tạm ứng chờ chi</a></td>
-                <td><a href="refund_request.php">Quản lý phiếu tạm ứng chờ hoàn</a></td>
-            </tr>
-           <tr>
-                <td>Phiếu thanh toán</td>
-                <td><?php echo $paymentApprovedDirector; ?></td>
-                <td><?php echo $paymentPaid; ?></td>
-                <td>Null</td>
-                <td><?php echo $paymentWaitingPay; ?></td>
-                <td>Null</td>
-                <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ chi</a></td>
-                 
-            </tr>
-        </table>
+                <tr>
+                    <td>Phiếu tạm ứng</td>
+                    <td><?php echo $requestApprovedDirector; ?></td>
+                    <td><?php echo $requestPaid; ?></td>
+                    <td><?php echo $requestRefunded; ?></td>
+                    <td><?php echo $requestWaitingPay; ?></td>
+                    <td><?php echo $requestWaitingRefund; ?></td>
+                    <td><a href="payment_request.php">Quản lý phiếu tạm ứng chờ chi</a></td>
+                    <td><a href="refund_request.php">Quản lý phiếu tạm ứng chờ hoàn</a></td>
+                </tr>
+                <tr>
+                    <td>Phiếu thanh toán</td>
+                    <td><?php echo $paymentApprovedDirector; ?></td>
+                    <td><?php echo $paymentPaid; ?></td>
+                    <td>Null</td>
+                    <td><?php echo $paymentWaitingPay; ?></td>
+                    <td>Null</td>
+                    <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ chi</a></td>
+
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
+        </div>
     </div>
-
-    <div class="footer">
-        <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
-    </div>
-</div>
-
+    <script>
+        // Toggle the responsive class to show/hide the menu
+        function toggleMenu() {
+            var menu = document.querySelector('.menu');
+            menu.classList.toggle('responsive');
+        }
+    </script>
 </body>
+
 </html>

@@ -64,6 +64,18 @@ if (file_exists($file)) {
         .menu {
             background-color: #333;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .icon {
+            padding: 10px 20px;
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
         }
 
         .menu a {
@@ -112,7 +124,6 @@ if (file_exists($file)) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            overflow-x: auto;
         }
 
         table,
@@ -159,6 +170,13 @@ if (file_exists($file)) {
             margin: auto;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            /* Forces table columns to fit evenly */
+        }
+
         th,
         td {
             padding: 8px;
@@ -183,18 +201,18 @@ if (file_exists($file)) {
             white-space: normal;
         }
 
-         /* Hamburger icon (hidden by default) */
-         .hamburger {
+        /* Hamburger icon (hidden by default) */
+        .hamburger {
             display: none;
             float: right;
             font-size: 28px;
             cursor: pointer;
             color: white;
-            padding: 1px 20px;
+            padding: 10px 20px;
         }
 
         /* Basic responsive adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 950px) {
 
             /* Header and menu adjustments */
             .header {
@@ -202,8 +220,14 @@ if (file_exists($file)) {
                 font-size: 1.5em;
             }
 
-            .header h1{
+            .header h1 {
                 font-size: 1.2em;
+            }
+
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
             }
 
             .menu a {
@@ -240,26 +264,39 @@ if (file_exists($file)) {
                 overflow-x: auto;
             }
 
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: auto;
+            }
+
             table,
             th,
             td {
                 font-size: 0.9em;
             }
 
-            .menu a { 
-                display: none; /* Hide menu links */
+            .menu a {
+                display: none;
+                /* Hide menu links */
             }
+
             .menu a.logout {
                 display: none;
             }
+
             .hamburger {
-                display: block; /* Show hamburger icon */
+                display: block;
+                /* Show hamburger icon */
             }
+
             .menu.responsive a {
-                float: none; /* Make links stack vertically */
+                float: none;
+                /* Make links stack vertically */
                 display: block;
                 text-align: left;
             }
+
             .menu.responsive .logout {
                 float: none;
             }
@@ -267,20 +304,33 @@ if (file_exists($file)) {
 
         @media (max-width: 480px) {
 
-            .menu a { 
-                display: none; /* Hide menu links */
+            .menu a {
+                display: none;
+                /* Hide menu links */
             }
+
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
+
             .menu a.logout {
                 display: none;
             }
+
             .hamburger {
-                display: block; /* Show hamburger icon */
+                display: block;
+                /* Show hamburger icon */
             }
+
             .menu.responsive a {
-                float: none; /* Make links stack vertically */
+                float: none;
+                /* Make links stack vertically */
                 display: block;
                 text-align: left;
             }
+
             .menu.responsive .logout {
                 float: none;
             }
@@ -296,6 +346,12 @@ if (file_exists($file)) {
 
             .welcome-message {
                 font-size: 16px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: auto;
             }
 
             table,
@@ -330,6 +386,9 @@ if (file_exists($file)) {
 
     <div class="menu">
         <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+        <div class='icon'>
+            <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+        </div>
         <a href="index.php">Home</a>
         <a href="all_request.php">Quản lý phiếu tạm ứng</a>
         <a href="all_payment.php">Quản lý phiếu thanh toán</a>
@@ -489,8 +548,8 @@ if (file_exists($file)) {
             calculateTotal();
         });
 
-         // Toggle the responsive class to show/hide the menu
-         function toggleMenu() {
+        // Toggle the responsive class to show/hide the menu
+        function toggleMenu() {
             var menu = document.querySelector('.menu');
             menu.classList.toggle('responsive');
         }

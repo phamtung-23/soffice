@@ -30,7 +30,7 @@
 }
 
 //end 992px
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 950px) {
 
     .signup-content, .signin-content {
         @include flex-direction(column);

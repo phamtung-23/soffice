@@ -35,16 +35,17 @@ if (file_exists($file)) {
   $filteredRequests = [];
 }
 
-function getApprovalStatus($item) {
+function getApprovalStatus($item)
+{
   $hasPending = false;
 
   foreach ($item['approval'] as $approval) {
-      if ($approval['status'] === "rejected") {
-          return "Từ chối";
-      }
-      if ($approval['status'] === "pending") {
-          $hasPending = true;
-      }
+    if ($approval['status'] === "rejected") {
+      return "Từ chối";
+    }
+    if ($approval['status'] === "pending") {
+      $hasPending = true;
+    }
   }
 
   return $hasPending ? "Chờ duyệt" : "Đã duyệt";
@@ -78,9 +79,22 @@ function getApprovalStatus($item) {
       text-align: center;
     }
 
+
     .menu {
       background-color: #333;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .icon {
+      padding: 10px 20px;
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
     }
 
     .menu a {
@@ -205,6 +219,175 @@ function getApprovalStatus($item) {
     .wrap-text {
       white-space: normal;
     }
+
+    /* Hamburger icon (hidden by default) */
+    .hamburger {
+      display: none;
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    /* Basic responsive adjustments */
+    @media (max-width: 950px) {
+
+      /* Header and menu adjustments */
+      .header {
+        padding: 20px;
+        font-size: 1.5em;
+      }
+
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu a {
+        float: none;
+        display: block;
+        text-align: left;
+        padding: 10px;
+      }
+
+      .menu a.logout {
+        float: none;
+        background-color: #f44336;
+        text-align: center;
+      }
+
+      /* Container adjustments */
+      .container {
+        padding: 10px;
+      }
+
+      .welcome-message {
+        font-size: 18px;
+        text-align: center;
+      }
+
+      /* Content adjustments */
+      .content {
+        padding: 10px;
+        margin-top: 15px;
+      }
+
+      /* Table adjustments */
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.9em;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      /* Smaller screens (mobile) */
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        font-size: 0.9em;
+      }
+
+      .welcome-message {
+        font-size: 16px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.9em;
+        padding: 6px;
+      }
+
+      .content h2 {
+        font-size: 1em;
+      }
+
+      .footer {
+        font-size: 12px;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
   </style>
 
 
@@ -222,6 +405,10 @@ function getApprovalStatus($item) {
   </div>
 
   <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
     <a href="./index.php">Home</a>
     <a href="all_request.php">Danh sách phiếu tạm ứng</a>
     <a href="all_payment.php">Danh sách phiếu thanh toán</a>
@@ -294,7 +481,7 @@ function getApprovalStatus($item) {
               echo "<td>" . (!empty($request['approval'][1]['time']) ? date("d/m/Y", strtotime($request['approval'][1]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][2]['time']) ? date("d/m/Y", strtotime($request['approval'][2]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
-              echo "<td>".getApprovalStatus($request)."</td>";
+              echo "<td>" . getApprovalStatus($request) . "</td>";
               if (!empty($request['file_path'])) {
                 echo "<td><a href=\"../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
               } else {
@@ -373,6 +560,12 @@ function getApprovalStatus($item) {
       // Initial total calculation
       calculateTotal();
     });
+
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
 
     function calculateTotal() {
       let table = document.getElementById('requestsTable');

@@ -36,16 +36,17 @@ if (file_exists($file)) {
 }
 
 // Get status of approval
-function getApprovalStatus($item) {
+function getApprovalStatus($item)
+{
   $hasPending = false;
 
   foreach ($item['approval'] as $approval) {
-      if ($approval['status'] === "rejected") {
-          return "Từ chối";
-      }
-      if ($approval['status'] === "pending") {
-          $hasPending = true;
-      }
+    if ($approval['status'] === "rejected") {
+      return "Từ chối";
+    }
+    if ($approval['status'] === "pending") {
+      $hasPending = true;
+    }
   }
 
   return $hasPending ? "Chờ duyệt" : "Đã duyệt";
@@ -59,153 +60,7 @@ function getApprovalStatus($item) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trang chủ quản lý phiếu thanh toán</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-    }
-
-    .header {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-    }
-
-    .menu {
-      background-color: #333;
-      overflow: hidden;
-    }
-
-    .menu a {
-      float: left;
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 14px 20px;
-      text-decoration: none;
-      font-size: 17px;
-    }
-
-    .menu a:hover {
-      background-color: #575757;
-    }
-
-    .container {
-      padding: 20px;
-    }
-
-    .welcome-message {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    .menu a.logout {
-      float: right;
-      background-color: #f44336;
-    }
-
-    .menu a.logout:hover {
-      background-color: #d32f2f;
-    }
-
-    .content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
-      overflow-x: auto;
-      /* Enable horizontal scrolling */
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    table,
-    th,
-    td {
-      border: 1px solid #ddd;
-    }
-
-    th,
-    td {
-      padding: 8px;
-      text-align: left;
-      white-space: nowrap;
-      /* Prevent text from wrapping */
-    }
-
-    th {
-      font-size: 6px;
-      /* Adjust this value as needed */
-      background-color: #f2f2f2;
-      padding: 6px;
-      text-align: left;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 14px;
-      color: #888;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      max-width: 100%;
-      margin: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      /* Forces table columns to fit evenly */
-    }
-
-    th,
-    td {
-      padding: 8px;
-      text-align: left;
-      border: 1px solid #ddd;
-      font-size: 0.85em;
-      min-width: 100px;
-      /* Adjust based on content */
-      word-wrap: break-word;
-      word-break: break-all;
-      /* Ensures long words break within cell */
-      white-space: normal;
-      /* Allows text wrapping */
-    }
-
-    th {
-      background-color: #f2f2f2;
-    }
-
-    /* Optional: Wrapping long text within cells */
-    .wrap-text {
-      white-space: normal;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 
 
   <!-- DataTables CSS and jQuery -->
@@ -222,6 +77,10 @@ function getApprovalStatus($item) {
   </div>
 
   <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
     <a href="../../../index.php">Home</a>
     <a href="../../../operator/request.php">Tạo phiếu xin tạm ứng</a>
     <a href="../create">Tạo phiếu thanh toán</a>
@@ -294,11 +153,11 @@ function getApprovalStatus($item) {
               echo "<td>" . (!empty($request['approval'][1]['time']) ? date("d/m/Y", strtotime($request['approval'][1]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][2]['time']) ? date("d/m/Y", strtotime($request['approval'][2]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
-              echo "<td>".getApprovalStatus($request)."</td>";
+              echo "<td>" . getApprovalStatus($request) . "</td>";
               if (!empty($request['file_path'])) {
                 if ($request['approval'][3]['status'] === 'approved') {
                   echo "<td><a href=\"../../../accountant/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
-                }else{
+                } else {
                   echo "<td><a href=\"../../../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
                 }
               } else {
@@ -377,6 +236,12 @@ function getApprovalStatus($item) {
       // Initial total calculation
       calculateTotal();
     });
+
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
 
     function calculateTotal() {
       let table = document.getElementById('requestsTable');

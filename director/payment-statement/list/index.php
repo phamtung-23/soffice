@@ -170,6 +170,9 @@ sort($years);
   </div>
   <div class="menu">
     <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
     <a href="../../index.php">Home</a>
     <a href="../../all_request.php">Quản lý phiếu tạm ứng</a>
     <a href="../../all_payment.php">Quản lý phiếu thanh toán</a>

@@ -143,6 +143,12 @@ sort($years);
         });
     }
 
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
+
     function updateYear() {
       loadRequests(); // Tải lại yêu cầu khi năm được chọn
     }
@@ -158,6 +164,10 @@ sort($years);
     <h1>Trang chủ</h1>
   </div>
   <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
     <a href="../../index.php">Home</a>
     <a href="../../all_request.php">Danh sách phiếu tạm ứng</a>
     <a href="../../all_payment.php">Danh sách phiếu thanh toán</a>

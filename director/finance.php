@@ -125,9 +125,21 @@ if (file_exists($file)) {
             text-align: center;
         }
 
+
         .menu {
             background-color: #333;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .icon {
+            padding: 10px 20px;
+        }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
         }
 
         .menu a {
@@ -223,6 +235,13 @@ if (file_exists($file)) {
             margin: auto;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            /* Forces table columns to fit evenly */
+        }
+
 
         th,
         td {
@@ -269,11 +288,11 @@ if (file_exists($file)) {
             font-size: 28px;
             cursor: pointer;
             color: white;
-            padding: 1px 20px;
+            padding: 10px 20px;
         }
 
         /* Basic responsive adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 950px) {
 
             /* Header and menu adjustments */
             .header {
@@ -285,6 +304,11 @@ if (file_exists($file)) {
                 font-size: 1.2em;
             }
 
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
             .menu a {
                 float: none;
                 display: block;
@@ -317,6 +341,12 @@ if (file_exists($file)) {
             /* Table adjustments */
             .table-wrapper {
                 overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: auto;
             }
 
             table,
@@ -358,12 +388,24 @@ if (file_exists($file)) {
                 font-size: 1.2em;
             }
 
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
+
             .menu a {
                 font-size: 0.9em;
             }
 
             .welcome-message {
                 font-size: 16px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: auto;
             }
 
             table,
@@ -436,6 +478,9 @@ if (file_exists($file)) {
 
     <div class="menu">
         <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+        <div class='icon'>
+            <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+        </div>
         <a href="index.php">Home</a>
         <a href="all_request.php">Quản lý phiếu tạm ứng</a>
         <a href="all_payment.php">Quản lý phiếu thanh toán</a>

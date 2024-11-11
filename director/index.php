@@ -125,9 +125,22 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
             text-align: center;
         }
 
+
         .menu {
             background-color: #333;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .icon {
+            padding: 10px 20px;
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
         }
 
         .menu a {
@@ -215,11 +228,11 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
             font-size: 28px;
             cursor: pointer;
             color: white;
-            padding: 1px 20px;
+            padding: 10px 20px;
         }
 
         /* Basic responsive adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 950px) {
 
             /* Header and menu adjustments */
             .header {
@@ -229,6 +242,12 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
 
             .header h1 {
                 font-size: 1.2em;
+            }
+
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
             }
 
             .menu a {
@@ -304,6 +323,12 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
                 font-size: 1.2em;
             }
 
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
+
             .menu a {
                 font-size: 0.9em;
             }
@@ -360,9 +385,12 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
     <div class="header">
         <h1>Director Dashboard</h1>
     </div>
-    
+
     <div class="menu">
         <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+        <div class='icon'>
+            <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+        </div>
         <a href="index.php">Home</a>
         <a href="all_request.php">Quản lý phiếu tạm ứng</a>
         <a href="all_payment.php">Quản lý phiếu thanh toán</a>

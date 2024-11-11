@@ -103,6 +103,9 @@ if (isset($_GET['edit'])) {
         .menu {
             background-color: #333;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .menu a {
@@ -167,7 +170,7 @@ if (isset($_GET['edit'])) {
         }
 
         th {
-            font-size: 6px;
+            font-size: 1em;
             /* Adjust this value as needed */
             background-color: #f2f2f2;
             padding: 6px;
@@ -226,6 +229,14 @@ if (isset($_GET['edit'])) {
             gap: 5px;
         }
 
+        .icon {
+            padding: 10px 20px;
+        }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+        }
+
         /* Hamburger icon (hidden by default) */
         .hamburger {
             display: none;
@@ -233,11 +244,11 @@ if (isset($_GET['edit'])) {
             font-size: 28px;
             cursor: pointer;
             color: white;
-            padding: 1px 20px;
+            padding: 10px 20px;
         }
 
         /* Basic responsive adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 950px) {
 
             /* Header and menu adjustments */
             .header {
@@ -247,6 +258,12 @@ if (isset($_GET['edit'])) {
 
             .header h1 {
                 font-size: 1.2em;
+            }
+
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
             }
 
             .menu a {
@@ -322,6 +339,12 @@ if (isset($_GET['edit'])) {
                 font-size: 1.2em;
             }
 
+            .menu {
+                background-color: #333;
+                overflow: hidden;
+                display: block;
+            }
+
             .menu a {
                 font-size: 0.9em;
             }
@@ -380,6 +403,9 @@ if (isset($_GET['edit'])) {
 
     <div class="menu">
         <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+        <div class='icon'>
+            <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+        </div>
         <a href="index.php">Home</a>
         <a href="all_request.php">Quản lý phiếu tạm ứng</a>
         <a href="all_payment.php">Quản lý phiếu thanh toán</a>

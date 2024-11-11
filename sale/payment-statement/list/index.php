@@ -163,6 +163,10 @@ sort($years);
     <h1>Trang chủ</h1>
   </div>
   <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
     <a href="../../index.php">Home</a>
     <!-- <a href="../../all_request.php">Danh sách phiếu tạm ứng</a> -->
     <a href="../../all_payment.php">Danh sách phiếu thanh toán</a>
@@ -229,6 +233,13 @@ sort($years);
   <div class="footer">
     <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
   </div>
+  <script>
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
+  </script>
 </body>
 
 </html>
