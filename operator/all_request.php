@@ -460,7 +460,11 @@ if (file_exists($file)) {
                             echo "<td>" . $request['lot_number'] . "</td>";
                             echo "<td>" . $request['quantity'] . "</td>";
                             echo "<td>" . $request['unit'] . "</td>";
-                            echo "<td>" . number_format($request['advance_amount']) . "</td>";
+ $advanceAmount = (float) $request['advance_amount'];
+
+    // Format the number with a period as the thousands separator
+    echo "<td>" . number_format($advanceAmount, 0, ',', '.') . "</td>";
+
                             echo "<td>" . (isset($request['approved_amount']) ? number_format($request['approved_amount']) : 'null') . "</td>";
                             echo "<td>" . $request['advance_description'] . "</td>";
                             echo "<td>" . (!empty($request['date_time']) ? date("d/m/Y", strtotime($request['date_time'])) : "") . "</td>";

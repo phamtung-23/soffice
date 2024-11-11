@@ -244,17 +244,17 @@ select {
             }
         }
 
-        function updateAmountText() {
-            const advanceAmountInput = document.getElementById('advance-amount');
-            const advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
-            advanceAmountInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-            const advanceAmountText = convertNumberToTextVND(advanceAmount);
-            document.getElementById('advance-amount-words').value = advanceAmountText;
-        }
+       function updateAmountText() {
+    const advanceAmountInput = document.getElementById('advance-amount');
+    const advanceAmount = advanceAmountInput.value.replace(/\./g, ''); // Remove any existing periods
+    advanceAmountInput.value = formatNumber(advanceAmount); // Insert periods for thousands separator
+    const advanceAmountText = convertNumberToTextVND(advanceAmount);
+    document.getElementById('advance-amount-words').value = advanceAmountText;
+}
 
-        function formatNumber(num) {
-            return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+function formatNumber(num) {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Replace comma with period
+}
 
       async function submitRequest() {
     const fullName = document.getElementById('employee-full-name').value.trim();
@@ -358,7 +358,8 @@ async function getPhoneByEmail(email) {
         }
 
         // Chuyển đổi phản hồi thành JSON
-        const users = await response.json();
+        const usersData = await response.json();
+        const users = Object.values(usersData); // Chuyển đối tượng thành mảng
 
         // Tìm người dùng theo email
         const user = users.find(user => user.email === email);
