@@ -1,21 +1,24 @@
 // Initiate the page
-console.log('Hello from payment-statement create page');
-
+console.log("Hello from payment-statement create page");
 
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
-const forms = document.querySelectorAll('.needs-validation')
+const forms = document.querySelectorAll(".needs-validation");
 
 // Loop over them and prevent submission
-Array.from(forms).forEach(form => {
-  form.addEventListener('submit', event => {
-    if (!form.checkValidity()) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
+Array.from(forms).forEach((form) => {
+  form.addEventListener(
+    "submit",
+    (event) => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
 
-    form.classList.add('was-validated')
-  }, false)
-})
+      form.classList.add("was-validated");
+    },
+    false
+  );
+});
 
 function addRow() {
   // Get the table body element
@@ -31,11 +34,12 @@ function addRow() {
   newRow.innerHTML = `
     <td>${rowCount}</td>
     <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-                <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
-                <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-                <td><input type="text" name="expense_payee[]" class="form-control" required></td>
-                <td><input type="text" name="expense_doc[]" class="form-control"></td>
-                <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
+    <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+    <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
+    <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+    <td><input type="text" name="expense_doc[]" class="form-control"></td>
+    <td><input class="form-control" type="file" id="formFile" name="expense_file[]"></td>
+    <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
   `;
 
   // Append the new row to the table
@@ -44,12 +48,18 @@ function addRow() {
 
 // Function to toggle 'disabled' status for corresponding expense fields
 function toggleExpenseFields(currentInput) {
-  const tableRow = currentInput.closest('tr'); // Locate the current row
-  
+  const tableRow = currentInput.closest("tr"); // Locate the current row
+
   if (currentInput.value) {
-    const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+    const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
     currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
   }
+}
+
+// Toggle the responsive class to show/hide the menu
+function toggleMenu() {
+  var menu = document.querySelector(".menu");
+  menu.classList.toggle("responsive");
 }
 
 function deleteRow(button) {
@@ -65,10 +75,40 @@ function deleteRow(button) {
 }
 
 function updateAmountText(currentInput) {
-  const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+  const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
   currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
 }
 
 function formatNumber(num) {
   return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+const submitForm = document.getElementById('expenseForm');
+
+submitForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const formData = new FormData(submitForm);
+
+  // // Log each key-value pair for debugging
+  // for (const [key, value] of formData.entries()) {
+  //   console.log(`${key}:`, value);
+  // }
+
+  fetch('submit_payment.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert("Expenses saved successfully!");
+      window.location.href = "../../index.php";
+    } else {
+      alert(data.error);
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+  });
+});
+

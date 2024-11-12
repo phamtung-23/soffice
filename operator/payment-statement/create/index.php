@@ -1,165 +1,47 @@
 <?php
 session_start();
 
-// Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
+// Check if user is logged in; otherwise, redirect to login page
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../../../index.php';</script>";
   exit();
 }
 
-
-// Lấy tên đầy đủ từ session
+// Get session data
 $fullName = $_SESSION['full_name'];
 $email = $_SESSION['user_id'];
 $userRole = $_SESSION['role'];
 
-// Đọc dữ liệu từ file users.json
+// Paths to JSON files
 $userFile = '../../../database/users.json';
+$idFile = '../../../database/id_payment.json';
+$currentYear = date("Y");
+$filePath = "../../../database/payment_$currentYear.json";
+
+// Validate file existence and read data
 if (!file_exists($userFile)) {
   die("File users.json không tồn tại.");
 }
+if (!file_exists($idFile)) {
+  die("File id_payment.json không tồn tại.");
+}
 
-$idFile ='../../../database/id_payment.json';  // Đảm bảo đường dẫn tới file id.json là đúng
-$currentYear = date("Y");
-// Đọc dữ liệu từ file id.json
+// Read and increment ID
 $jsonDataIdPayment = file_get_contents($idFile);
 $dataIdPayment = json_decode($jsonDataIdPayment, true);
 $newIdPayment = $dataIdPayment[$currentYear]["id"] + 1;
 $dataIdPayment[$currentYear]["id"] = $newIdPayment;
-// Cập nhật lại file id.json với giá trị ID mới
 file_put_contents($idFile, json_encode($dataIdPayment));
 
+// Read user data and filter roles
 $usersData = file_get_contents($userFile);
 $users = json_decode($usersData, true);
+$leaders = array_filter($users, fn($user) => $user['role'] === 'leader');
+$sales = array_filter($users, fn($user) => $user['role'] === 'sale');
+$directorData = current(array_filter($users, fn($user) => $user['role'] == 'director'));
 
-// Lọc danh sách người dùng có vai trò là "leader"
-$leaders = array_filter($users, function ($user) {
-  return $user['role'] === 'leader';
-});
-// Lọc danh sách người dùng có vai trò là "sale"
-$sales = array_filter($users, function ($user) {
-  return $user['role'] === 'sale';
-});
-
-
-// Get the current year
-$currentYear = date('Y');
-
-// Define the path to the JSON file for the current year
-$filePath = "../../../database/payment_$currentYear.json";
-$filePathUser = '../../../database/users.json';
-
-if (file_exists($filePathUser)) {
-  $jsonUserData = json_decode(file_get_contents($filePathUser), true);
-  if (!empty($jsonUserData)) {
-    // get leader data
-    $directorData = null;
-    foreach ($jsonUserData as $user) {
-      if ($user['role'] == 'director') {
-        $directorData = $user;
-        break;
-      }
-    }
-  }
-} else {
-  $jsonUserData = [];
-}
-
-
-// Initialize existing data array
-$existingData = [];
-if (file_exists($filePath)) {
-  $existingData = json_decode(file_get_contents($filePath), true) ?? [];
-}
-
-// Find the last instruction number and increment it
-$lastInstructionNo = 0;
-if (!empty($existingData)) {
-  // Extract the last instructionNo by finding the highest value in existing records
-  $lastInstructionNo = (int) max(array_column($existingData, 'instruction_no'));
-}
-$newInstructionNo = $lastInstructionNo + 1; // Set the new instruction number
-
-// Check if form was submitted via POST
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  // Initialize an array to store submitted data
-  $data = ['instruction_no' => $newInstructionNo]; // Add new instruction number to data
-  $data['approval'] = [];
-
-  // Initialize the expenses array
-  $data['expenses'] = [];
-
-  // Collect expense information in the required format
-  if (isset($_POST['expense_kind']) && isset($_POST['expense_amount']) && isset($_POST['so_hoa_don']) && isset($_POST['expense_payee']) && isset($_POST['expense_doc'])) {
-    for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-      $expenseAmount = $_POST['expense_amount'][$i];
-      // Remove commas and convert to float
-      $expenseAmount = (float)str_replace(',', '', $expenseAmount);
-
-      $expense = [
-        'expense_kind' => $_POST['expense_kind'][$i],
-        'expense_amount' => $expenseAmount,  // Ensure it's stored as a number
-        'so_hoa_don' => $_POST['so_hoa_don'][$i],
-        'expense_payee' => $_POST['expense_payee'][$i],
-        'expense_doc' => $_POST['expense_doc'][$i]
-      ];
-      $data['expenses'][] = $expense;  // Add each expense entry to the 'expenses' array
-    }
-  }
-
-  // Iterate through each submitted data field and store it in the $data array
-  foreach ($_POST as $key => $value) {
-    if ($key == "leader" || $key == "sale") {
-      $data['approval'][] = [
-        'role' => $key,
-        'email' => $value,
-        'status' => 'pending',
-        'time' => '',
-        'comment' => ''
-      ];
-    } elseif (!in_array($key, ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc'])) {
-      $data[$key] = is_array($value) ? $value : trim($value);
-    }
-  }
-
-  // add fullName and email to data
-  $data['operator_name'] = $fullName;
-  $data['operator_email'] = $email;
-  $data['approval'][] = [
-    'role' => 'director',
-    'email' => '',
-    'status' => 'pending',
-    'time' => '',
-    'comment' => ''
-  ];
-  $data['approval'][] = [
-    'role' => 'accountant',
-    'email' => '',
-    'status' => 'pending',
-    'time' => '',
-    'comment' => ''
-  ];
-  $data['total_actual'] = (float)str_replace(',', '', $data['total_actual']);
-  $data['created_at'] = date('Y-m-d H:i:s');
-  $data['id'] = $newIdPayment;
-  
-
-  // Append the new data to the existing data array
-  $existingData[] = $data;
-
-  // Save the updated data array back to the JSON file
-  file_put_contents($filePath, json_encode($existingData, JSON_PRETTY_PRINT));
-
-  // Display an alert and redirect to a new page
-  echo "<script>
-            alert('Data submitted successfully!');
-            window.location.href = '../../index.php';
-          </script>";
-  exit();
-} else {
-  echo "<script>console.log('No Data submitted');</script>";
-}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -170,11 +52,199 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    /* Basic styles for layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+
+    .menu {
+      background-color: #333;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .icon {
+      padding: 10px 20px;
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .menu a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .menu a:hover {
+      background-color: #575757;
+    }
+
+    .menu a.logout {
+      float: right;
+      background-color: #f44336;
+    }
+
+    .menu a.logout:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Hamburger icon (hidden by default) */
+    .hamburger {
+      display: none;
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    /* Basic responsive adjustments */
+    @media (max-width: 950px) {
+
+      /* Header and menu adjustments */
+      .header {
+        padding: 20px;
+        font-size: 1.5em;
+      }
+
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        float: none;
+        display: block;
+        text-align: left;
+        padding: 10px;
+      }
+
+      .menu a.logout {
+        float: none;
+        background-color: #f44336;
+        text-align: center;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      /* Smaller screens (mobile) */
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        font-size: 0.9em;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="header">
+    <h1>Operator Dashboard</h1>
+  </div>
+
+  <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
+    <a href="../../index.php">Home</a>
+    <a href="../../request.php">Tạo phiếu xin tạm ứng</a>
+    <a href="../../payment-statement/create">Tạo phiếu thanh toán</a>
+    <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../../../logout.php" class="logout">Đăng xuất</a>
+  </div>
   <div class="container mt-5">
-    <form method="post" class="needs-validation" novalidate>
+    <form id="expenseForm" class="needs-validation" novalidate enctype="multipart/form-data">
       <div class="d-flex flex-column justify-content-center align-items-center">
         <h3 class="fw-bold">UNI-GLOBAL</h3>
         <h5 class="mb-4">INLAND SERVICE INTERNAL INSTRUCTION</h5>
@@ -257,133 +327,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           </div>
         </div>
       <?php } ?>
-
-      <!-- II. PICK UP/DELIVERY INFORMATION: -->
-      <?php if ($userRole === 'sale') {
-      ?>
-        <div>
-          <h6>II. PICK UP/DELIVERY INFORMATION:</h6>
-          <div class="row mb-3 mt-3 ps-4">
-            <label for="address" class="col-sm-2 col-form-label">Address</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="address" placeholder="" name="address" required>
-            </div>
-          </div>
-
-          <div class="row mb-3 mt-3 ps-4">
-            <label for="time" class="col-sm-2 col-form-label">Time</label>
-            <div class="col-sm-4">
-              <input type="date" class="form-control" id="time" placeholder="" name="time" required>
-            </div>
-
-            <label for="volume" class="col-sm-2 col-form-label">PCT</label>
-            <div class="col-sm-4">
-              <input type="text" class="form-control" id="volume" placeholder="" name="volume" required>
-            </div>
-          </div>
-          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
-            <div class="col-sm-3">
-              <input type="text" class="form-control" id="trucking" placeholder="" name="trucking" required>
-            </div>
-            <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
-            <div class="col-sm-2">
-              <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="trunkingVat" required>
-                <span class="input-group-text">%</span>
-              </div>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="trunkingIncl" name="trunkingIncl" value="">
-              <label class="form-check-label" for="trunkingIncl">
-                INCL
-              </label>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="trunkingExcl" name="trunkingExcl">
-              <label class="form-check-label" for="trunkingExcl">
-                EXCL
-              </label>
-            </div>
-          </div>
-          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
-            <div class="col-sm-3">
-              <input type="text" class="form-control" id="stuffing" placeholder="" name="stuffing" required>
-            </div>
-            <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
-            <div class="col-sm-2">
-              <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required>
-                <span class="input-group-text">%</span>
-              </div>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl">
-              <label class="form-check-label" for="stuffingIncl">
-                INCL
-              </label>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="stuffingExcl" name="stuffingExcl">
-              <label class="form-check-label" for="stuffingExcl">
-                EXCL
-              </label>
-            </div>
-          </div>
-          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
-            <div class="col-sm-3">
-              <input type="text" class="form-control" id="liftOnOff" placeholder="" name="liftOnOff" required>
-            </div>
-            <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
-            <div class="col-sm-2">
-              <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="liftOnOffVat" required>
-                <span class="input-group-text">%</span>
-              </div>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="liftOnOffIncl" name="liftOnOffIncl">
-              <label class="form-check-label" for="liftOnOffIncl">
-                INCL
-              </label>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="liftOnOffExcl" name="liftOnOffExcl">
-              <label class="form-check-label" for="liftOnOffExcl">
-                EXCL
-              </label>
-            </div>
-          </div>
-          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
-            <div class="col-sm-3">
-              <input type="text" class="form-control" id="chiHo" placeholder="" name="chiHo" required>
-            </div>
-            <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
-            <div class="col-sm-2">
-              <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="chiHoVat" required>
-                <span class="input-group-text">%</span>
-              </div>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="chiHoIncl" name="chiHoIncl">
-              <label class="form-check-label" for="chiHoIncl">
-                INCL
-              </label>
-            </div>
-            <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="chiHoExcl" name="chiHoExcl">
-              <label class="form-check-label" for="chiHoExcl">
-                EXCL
-              </label>
-            </div>
-          </div>
-        </div>
-
-      <?php } ?>
       <!-- III. OPERATION INFORMATION -->
       <?php if ($userRole === 'operator') {
       ?>
@@ -411,6 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <th scope="col" colspan="2">Amount</th>
                 <th scope="col" rowspan="2" class="align-middle">Payee</th>
                 <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+                <th scope="col" rowspan="2" class="align-middle">Upload file</th>
                 <th scope="col" rowspan="2" class="align-middle">Action</th>
               </tr>
               <tr>
@@ -426,13 +370,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
                 <td><input type="text" name="expense_payee[]" class="form-control" required></td>
                 <td><input type="text" name="expense_doc[]" class="form-control"></td>
-                <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
+                <td><input class="form-control" type="file" id="formFile" name="expense_file[]"></td>
+                <td class="align-middle">
+                  <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
+                </td>
               </tr>
 
               <!-- Additional rows as needed -->
             <tfoot>
               <tr>
-                <td colspan="7" class="text-center">
+                <td colspan="8" class="text-center">
                   <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
                 </td>
               </tr>
@@ -443,7 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <td>
                   RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on">
                 </td>
-                <td colspan="2">
+                <td colspan="3">
                   BY: <input type="text" class="form-control" name="by">
                 </td>
               </tr>
@@ -455,7 +402,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <?php } ?>
       <!-- Submission Button -->
       <div class="w-100 d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
       </div>
     </form>
   </div>

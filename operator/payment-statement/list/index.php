@@ -156,9 +156,9 @@ function getApprovalStatus($item)
               echo "<td>" . getApprovalStatus($request) . "</td>";
               if (!empty($request['file_path'])) {
                 if ($request['approval'][3]['status'] === 'approved') {
-                  echo "<td><a href=\"../../../accountant/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+                  echo "<td><a href=\"../../../database/payment/exports/operator/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
                 } else {
-                  echo "<td><a href=\"../../../director/payment-statement/detail/pdfs/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+                  echo "<td><a href=\"../../../database/payment/exports/operator/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
                 }
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename

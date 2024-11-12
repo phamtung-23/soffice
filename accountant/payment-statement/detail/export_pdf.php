@@ -84,14 +84,13 @@ if (count($request['expenses']) > 0) {
   for ($i = 0; $i < count($request['expenses']); $i++) {
     $item = $request['expenses'][$i];
     $index = $i + 1;
-    $amount = isset($item['expense_amount']) ? $item['expense_amount'] : '';
-    $amount1 = isset($item['expense_amount1']) ? $item['expense_amount1'] : '';
+    $amount = (!empty($item['expense_amount']) ? number_format($item['expense_amount'], 0, ",", ".") : "");
     $rowsTable = $rowsTable."
     <tr>
       <td class='line-item'>{$index}</td>
       <td class='line-item'>{$item['expense_kind']}</td>
       <td class='line-item'>$amount</td>
-      <td class='line-item'>$amount1</td>
+      <td class='line-item'>{$item['so_hoa_don']}</td>
       <td class='line-item'>{$item['expense_payee']}</td>
       <td class='line-item'>{$item['expense_doc']}</td>
     </tr>
@@ -102,6 +101,7 @@ if (count($request['expenses']) > 0) {
 
 // Tạo data cho html
 $department = $request['department'] ?? 'Giao nhận';
+$formatTotal = (!empty($request['total_actual']) ? number_format($request['total_actual'], 0, ",", ".") : "");
 
 
 // Tạo tên file bằng hàm MD5 từ email của người dùng
@@ -502,7 +502,7 @@ $htmlContent = "
           <tfoot>
             <tr>
               <td colspan='2'>TOTAL</td>
-              <td><span>{$request['total_actual']}</span></td>
+              <td><span>{$formatTotal}</span></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <span>{$request['received_back_on']}</span>
@@ -544,7 +544,7 @@ $htmlContent = "
 ";
 
 // Tạo thư mục lưu PDF nếu chưa tồn tại
-$pdfDir = __DIR__ . '/pdfs/';
+$pdfDir = '../../../database/payment/exports/';
 if (!is_dir($pdfDir)) {
   mkdir($pdfDir, 0777, true);
 }

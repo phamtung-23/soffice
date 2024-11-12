@@ -156,6 +156,7 @@ if ($instructionNo !== null) {
               <th scope="col" colspan="2">Amount</th>
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+              <th scope="col" rowspan="2" class="align-middle">Attachment</th>
             </tr>
             <tr>
               <th>Actual</th>
@@ -173,6 +174,13 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
+                <?php 
+                  if (!empty($expense['expense_file'])) {
+                    echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                  } else {
+                    echo "<td></td>"; // Empty cell if there's no filename
+                  }
+                ?>
               </tr>
             <?php
             }
@@ -187,7 +195,7 @@ if ($instructionNo !== null) {
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
-              <td colspan="2">
+              <td colspan="3">
                 BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>" disabled>
               </td>
             </tr>
