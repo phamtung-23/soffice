@@ -415,8 +415,11 @@ async function getPhoneByEmail(email) {
 
             <div class="form-group">
                 <label for="type_item">Loại hình:</label>
-                <input type="text" id="type_item" placeholder="Nhập/Xuất">
-        
+                <select id="type_item">
+                    <option value="" disabled selected>Chọn loại hình</option>
+                    <option value="Nhập">Nhập</option>
+                    <option value="Xuất">Xuất</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -426,7 +429,7 @@ async function getPhoneByEmail(email) {
 
             <div class="form-group">
                 <label for="unit">Đơn vị (feet):</label>
-                <input type="text" id="unit" placeholder="Đơn vị">
+                <input type="number" id="unit" placeholder="Đơn vị">
             </div>
 
             

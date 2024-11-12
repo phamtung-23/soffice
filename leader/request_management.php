@@ -544,7 +544,7 @@ sort($years);
                 }).replace('T', ' ');
                 request.check_rejected_by = leader_name;
                 const advance_amount = request.advance_amount; // Sử dụng thuộc tính của request
-                const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Định dạng số tiền
+                const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Format number with period as thousands separator
                 const operator_phone = await getPhoneByEmail(request.operator_email); // Đợi kết quả từ hàm
 
                 // Ghi lại thông tin đã cập nhật vào file JSON
@@ -630,23 +630,19 @@ sort($years);
                 const usersData = await response.json();
                 const users = Object.values(usersData); // Chuyển đối tượng thành mảng
 
-                // Ensure users is an array before using .find
-                if (Array.isArray(users)) {
-                    // Find user with role "director"
-                    const user = users.find(user => user.role === 'director');
+               // Tìm người dùng theo email
+                const user = users.find(user => user.role === 'director');
 
-                    if (user) {
-                        return user.phone; // Return phone number if found
-                    } else {
-                        console.warn("No user with the role 'director' found");
-                        return null; // Return null if no director found
-                    }
+                // Kiểm tra xem có người dùng không
+                if (user) {
+                    //console.log("Số điện thoại của người dùng:", user.phone);
+                    return user.phone; // Trả về số điện thoại nếu tìm thấy
                 } else {
-                    console.error("Unexpected data format in users.json");
-                    return null;
+                    
+                    return null; // Trả về null nếu không tìm thấy
                 }
             } catch (error) {
-                console.error("An error occurred:", error);
+                console.error("Đã xảy ra lỗi:", error);
             }
         }
 
@@ -777,32 +773,12 @@ sort($years);
             }
         }
 
-       function updateAmountText() {
-    const advanceAmountInput = document.getElementById('advance-amount');
-    const advanceAmount = advanceAmountInput.value.replace(/\./g, ''); // Remove any existing periods
-    advanceAmountInput.value = formatNumber(advanceAmount); // Insert periods for thousands separator
-    const advanceAmountText = convertNumberToTextVND(advanceAmount);
-    document.getElementById('advance-amount-words').value = advanceAmountText;
-}
 
 function formatNumber(num) {
     return num.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Replace comma with period
 }
 
-        function updateAmountText() {
-            const advanceAmountInput = document.getElementById('money_approve');
-            let advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
 
-            // Kiểm tra nếu giá trị là số và lớn hơn 0
-            if (!isNaN(advanceAmount) && advanceAmount > 0) {
-                advanceAmountInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-                const advanceAmountText = convertNumberToTextVND(advanceAmount);
-                document.getElementById('advance-amount-words').value = advanceAmountText; // Cập nhật chữ
-            } else {
-                // Nếu không phải là số hoặc <= 0, xóa ô chữ
-                document.getElementById('advance-amount-words').value = '';
-            }
-        }
         async function approveRequest() {
             // Lấy thông tin từ các trường đầu vào
 
@@ -866,8 +842,9 @@ function formatNumber(num) {
                         })
                     });
                     const director_phone = await getPhoneDirector();
+                    
 
-                    const telegramMessage_2 = `Yêu cầu tạm ứng mới chờ duyệt**\n` +
+                    const telegramMessage_2 = `Yêu cầu tạm ứng mới chờ GĐ duyệt**\n` +
                         `ID yêu cầu: ${request.id}\n` +
                         `Người đề nghị: ${request.full_name}\n` +
                         `Số tiền xin tạm ứng: ${advance_amountFormatted}\n` +

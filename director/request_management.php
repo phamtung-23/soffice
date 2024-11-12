@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
 
 // Lấy tên đầy đủ từ session
 $fullName = $_SESSION['full_name'];
-$userEmail = $_SESSION['user_id']; // operator_email trùng với user_id
+$userEmail = $_SESSION['user_id']; // 
 // Lấy năm hiện tại
 $currentYear = date("Y");
 // Đọc các năm từ tệp JSON trong thư mục
@@ -595,7 +595,7 @@ sort($years);
         async function getPhoneByEmail(email) {
             try {
                 // Tải dữ liệu từ file users.json
-                const response = await fetch('..database/users.json', {
+                const response = await fetch('../database/users.json', {
                     cache: "no-store"
                 });
 
@@ -604,9 +604,9 @@ sort($years);
                     throw new Error('Network response was not ok');
                 }
 
-               // Chuyển đổi phản hồi thành JSON
-                    const usersData = await response.json();
-                    const users = Object.values(usersData); // Chuyển đối tượng thành mảng
+                // Chuyển đổi phản hồi thành JSON
+                const usersData = await response.json();
+                const users = Object.values(usersData); // Chuyển đối tượng thành mảng
 
                 // Tìm người dùng theo email
                 const user = users.find(user => user.email === email);
@@ -764,13 +764,13 @@ sort($years);
                 }).replace('T', ' ');
                 request.rejected_by = "<?php echo $fullName; ?>";
                 const advance_amount = request.advance_amount; // Sử dụng thuộc tính của request
-                const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Định dạng số tiền
+                const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền
 
 
                 // Ghi lại thông tin đã cập nhật vào file JSON
                 const updateSuccess = await updateRequests(request, yearselect); // Gọi hàm updateRequests và chờ kết quả
                 const operator_phone = await getPhoneByEmail(request.operator_email);
-                console.log(operator_phone);
+                //console.log(operator_phone);
 
                 if (updateSuccess) {
                     // Tạo nội dung tin nhắn để gửi
@@ -929,21 +929,21 @@ sort($years);
             }
         }
 
-        function updateAmountText() {
-            const advanceAmountInput = document.getElementById('advance-amount');
-            const advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
-            advanceAmountInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-            const advanceAmountText = convertNumberToTextVND(advanceAmount);
-            document.getElementById('advance-amount-words').value = advanceAmountText;
-        }
+             function updateAmountText() {
+    const advanceAmountInput = document.getElementById('advance-amount');
+    const advanceAmount = advanceAmountInput.value.replace(/\./g, ''); // Remove any existing periods
+    advanceAmountInput.value = formatNumber(advanceAmount); // Insert periods for thousands separator
+    const advanceAmountText = convertNumberToTextVND(advanceAmount);
+    document.getElementById('advance-amount-words').value = advanceAmountText;
+}
 
-        function formatNumber(num) {
-            return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+function formatNumber(num) {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Replace comma with period
+}
 
         function updateAmountText() {
             const advanceAmountInput = document.getElementById('money_approve');
-            let advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+            let advanceAmount = advanceAmountInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
 
             // Kiểm tra nếu giá trị là số và lớn hơn 0
             if (!isNaN(advanceAmount) && advanceAmount > 0) {
@@ -957,7 +957,7 @@ sort($years);
         }
         async function approveRequest() {
             // Lấy thông tin từ các trường đầu vào
-            const approvedAmount = document.getElementById('money_approve').value.replace(/,/g, ''); // Xóa dấu phẩy
+            const approvedAmount = document.getElementById('money_approve').value.replace(/\./g, ''); // Xóa dấu phẩy
             const approvedAmountText = document.getElementById('advance-amount-words').value; // Lấy chữ
             const approvalNote = document.getElementById('approve-note').value.trim(); // Lấy ghi chú phê duyệt
             const directorName = "<?php echo $fullName; ?>";
@@ -1016,13 +1016,14 @@ sort($years);
 
                 if (updateSuccess) {
                     //await fetchTemplateAndFill(request); // Gọi hàm fill template+
-                    alert('Đã ký thành công và gửi mail cho các đầu mối!!!');
+                    alert('Đã ký thành công và gửi telegram cho các đầu mối!!!');
 
                     const advance_amount = request.advance_amount; // Sử dụng thuộc tính của request         
-                    const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Định dạng số tiền
+                    const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền
                     const approved_amount = request.approved_amount; // Sử dụng thuộc tính của request
-                    const approve_amountFormatted = approved_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Định dạng số tiền
+                    const approve_amountFormatted = approved_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền
                     const operator_phone = await getPhoneByEmail(request.operator_email); // Đợi kết quả từ hàm
+                    
                     //console.log(operator_phone);
                     const telegramMessage = `Đề nghị tạm ứng đã được Giám đốc phê duyệt: \n` +
                         `Thời gian duyệt: ${request.approval_time}\n` +
@@ -1030,11 +1031,14 @@ sort($years);
                         `Số tiền xin tạm ứng: ${advance_amountFormatted} VNĐ\n` +
                         `----------------------\n` +
                         `Số tiền phê duyệt: ${approve_amountFormatted} VNĐ\n` +
-                        `Nội dung: ${request.approved_amount_words}\n` +
+                        `Số tiền bằng chữ: ${request.approved_amount_words}\n` +
                         `Tên khách hàng: ${request.customer_name}\n` +
                         `Số Bill/Booking: ${request.lot_number}\n` +
                         `Số lượng: ${request.quantity}\n` +
-                        `Đơn vị: ${request.unit}`;
+                        `Đơn vị: ${request.unit}\n` +
+                        `Nội dung: ${request.advance_description}\n` +
+                        `Ghi chú GĐ: **${request.approval_note}**` ;
+                        
 
 
                     // Gửi tin nhắn đến Telegram

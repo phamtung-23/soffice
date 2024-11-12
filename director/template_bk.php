@@ -46,9 +46,9 @@ $date = date('d/m/Y'); // Format ngày: Ngày/Tháng/Năm
 $proposer = $request['full_name'] ?? 'Chưa có thông tin';
 $department = $request['department'] ?? 'Giao nhận';
 $advance_amount = $request['advance_amount'];
-$advance_amountFormatted = number_format($advance_amount, 0, ',', '.'); // Định dạng số tiền
+$advance_amountFormatted = number_format($advance_amount, 0, '.', ','); // Định dạng số tiền
 $approvedAmount = $request['approved_amount'] ?? '0';
-$approvedAmountFormatted = number_format($approvedAmount, 0, ',', '.'); // Định dạng số tiền
+$approvedAmountFormatted = number_format($approvedAmount, 0, '.', ','); // Định dạng số tiền
 $approvedAmountWords = $request['approved_amount_words'] ?? '';
 $customerName = $request['customer_name'] ?? 'Chưa có';
 $declarationNumber = $request['declaration_number'] ?? 'Chưa có';
@@ -262,7 +262,7 @@ try {
 
 
     // Gửi email với file PDF
-    //sendEmailWithAttachment($pdfPath, $pdfFileName, $sale_email);
+    sendEmailWithAttachment($pdfPath, $pdfFileName, $sale_email);
    
 
     // Trả về đường dẫn file PDF

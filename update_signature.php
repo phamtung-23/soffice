@@ -1,26 +1,31 @@
 <?php
 session_start();
 
-
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) ){
+if (!isset($_SESSION['user_id'])) {
     echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = 'index.php';</script>";
     exit();
 }
-
 
 // Lấy tên đầy đủ từ session
 $fullName = $_SESSION['full_name'];
 $email = $_SESSION['user_id']; // sale_email trùng với user_id
 
+// Đường dẫn lưu file
+$uploadsDir = 'signatures/';
+$fileName = md5($email) . '.jpg'; // Đặt tên file theo chuỗi md5 của email
+$filePath = $uploadsDir . $fileName;
+
+// Kiểm tra nếu file ảnh của người dùng đã tồn tại
+if (file_exists($filePath)) {
+    $signatureImage = $filePath;
+} else {
+    $signatureImage = 'signatures/sign.png'; // Đường dẫn đến ảnh mẫu
+}
+
 // Xử lý khi người dùng submit form upload ảnh
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['signature']) && $_FILES['signature']['error'] === UPLOAD_ERR_OK) {
-        // Đường dẫn lưu file
-        $uploadsDir = 'signatures/';
-        $fileName = md5($email) . '.jpg'; // Đặt tên file theo chuỗi md5 của email
-        $filePath = $uploadsDir . $fileName;
-
         // Kiểm tra loại file upload
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         $fileType = mime_content_type($_FILES['signature']['tmp_name']);
@@ -194,14 +199,12 @@ button:hover {
     </style>
 </head>
 <body>
-
-
     <div id="content">
-    <div class="menu">
-        <a href="index.php">Home</a>
-        <a href="logout.php" class="logout">Đăng xuất</a>
-    </div>
-        <h2>Cập nhật hình chữ ký cho <?= htmlspecialchars($email) ?></h2> 
+        <div class="menu">
+            <a href="index.php">Home</a>
+            <a href="logout.php" class="logout">Đăng xuất</a>
+        </div>
+        <h2>Cập nhật hình chữ ký cho <?= htmlspecialchars($email) ?></h2>
         <form action="update_signature.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="signature">Tải lên hình ảnh chữ ký của bạn:</label>
@@ -211,12 +214,12 @@ button:hover {
             <button type="submit">Cập nhật chữ ký</button>
         </form>
 
-        <div class="signature-preview">
-            <h3>Chữ ký mẫu</h3>
-            <img src="signatures/sign.png" alt="Chữ ký mẫu">
-        </div>
+      <div class="signature-preview">
+    <h3>Chữ ký hiện tại</h3>
+    <img src="<?= htmlspecialchars($signatureImage) ?>?t=<?= time() ?>" alt="Chữ ký hiện tại">
+</div>
     </div>
- <div class="footer">
+    <div class="footer">
         <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
     </div>
 </body>

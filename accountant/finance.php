@@ -455,10 +455,10 @@ if (file_exists($file)) {
         // Function to format number with commas
         function formatNumberWithCommas(input) {
             // Remove any existing commas
-            let value = input.value.replace(/,/g, '');
+            let value = input.value.replace(/\./g, '');
 
             // Format with commas every three digits
-            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            input.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
         // Toggle the update form display
         function toggleUpdateForm() {
@@ -507,7 +507,7 @@ if (file_exists($file)) {
 
         </form>
         <h3>Tổng kết:</h3>
-        <p>Tổng tiền quỹ: <?php echo number_format($totalFund); ?> VNĐ
+        <p>Tổng tiền quỹ: <?php echo str_replace(',', '.', number_format($totalFund)); ?> VNĐ
             <button type="button" onclick="toggleUpdateForm()">Cập nhật</button>
         </p>
 
@@ -519,19 +519,21 @@ if (file_exists($file)) {
                 value="<?php echo number_format($totalFund); ?>" required>
             <button type="submit">Submit</button>
         </form>
-        <p>Tổng tiền đã chi: <?php echo number_format($totalPaidAmount); ?> VNĐ</p>
-        <p>Tổng tiền đã thu: <?php echo number_format($totalReturnedAmount); ?> VNĐ</p>
+        <p>Tổng tiền đã chi: <?php echo str_replace(',', '.', number_format($totalPaidAmount)); ?> VNĐ</p>
+        <p>Tổng tiền đã thu: <?php echo str_replace(',', '.', number_format($totalReturnedAmount)); ?> VNĐ</p>
         <?php
-        $remainingAmount = $totalPaidAmount - $totalReturnedAmount;
+        $remainingAmountToCollect = $totalPaidAmount - $totalReturnedAmount;
         ?>
 
         <p>Số tiền còn lại cần phải thu:
             <span style="color: <?php echo $remainingAmount > 0 ? 'red' : 'black'; ?>;">
-                <?php echo number_format($remainingAmount); ?> VNĐ
+                <?php echo str_replace(',', '.', number_format($remainingAmountToCollect)); ?> VNĐ
             </span>
         </p>
-
-        <p>Số tiền còn lại: <?php echo number_format($remainingAmount); ?> VNĐ</p>
+        <?php
+        $remainingAmount = $totalFund - $remainingAmountToCollect;
+        ?>
+        <p>Số tiền còn lại:  <?php echo str_replace(',', '.', number_format($remainingAmount)); ?> VNĐ</p>
         <h2>Tổng hợp tạm ứng theo từng operator</h2>
 
 
@@ -549,24 +551,28 @@ if (file_exists($file)) {
                 </tr>
             </thead>
             <tbody>
+                
                 <?php
-                if (!empty($summaryData)) {
-                    foreach ($summaryData as $data) {
-                        echo "<tr>";
-                        echo "<td>{$data['operator']}</td>";
-                        echo "<td>{$data['approved_count']}</td>";
-                        echo "<td>{$data['paid_count']}</td>";
-                        echo "<td>{$data['returned_count']}</td>";
-                        echo "<td>" . number_format($data['total_approved_amount']) . "</td>";
-                        echo "<td>" . number_format($data['total_paid_amount']) . "</td>";
-                        echo "<td>" . number_format($data['total_returned_amount']) . "</td>";
-                        echo "<td style='color:" . ($data['total_debt'] > 0 ? "red" : "black") . ";'>" . number_format($data['total_debt']) . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='8'>Không có dữ liệu.</td></tr>";
-                }
-                ?>
+            if (!empty($summaryData)) {
+               foreach ($summaryData as $data) {
+            // Only show data if approved_count is greater than 0
+            if ($data['approved_count'] > 0) {
+                echo "<tr>";
+                echo "<td>{$data['operator']}</td>";
+                echo "<td>{$data['approved_count']}</td>";
+                echo "<td>{$data['paid_count']}</td>";
+                echo "<td>{$data['returned_count']}</td>";
+                echo "<td>" . number_format($data['total_approved_amount'], 0, '.', '.') . "</td>";
+                echo "<td>" . number_format($data['total_paid_amount'], 0, '.', '.') . "</td>";
+                echo "<td>" . number_format($data['total_returned_amount'], 0, '.', '.') . "</td>";
+                echo "<td style='color:" . ($data['total_debt'] > 0 ? "red" : "black") . ";'>" . number_format($data['total_debt'], 0, '.', '.') . "</td>";
+                echo "</tr>";
+            }
+        }
+    } else {
+        echo "<tr><td colspan='8'>Không có dữ liệu.</td></tr>";
+    }
+    ?>
             </tbody>
         </table>
 

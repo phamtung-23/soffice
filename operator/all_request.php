@@ -370,6 +370,7 @@ if (file_exists($file)) {
             }
         }
     </style>
+    </style>
 
     <!-- DataTables CSS and jQuery -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
@@ -460,12 +461,8 @@ if (file_exists($file)) {
                             echo "<td>" . $request['lot_number'] . "</td>";
                             echo "<td>" . $request['quantity'] . "</td>";
                             echo "<td>" . $request['unit'] . "</td>";
- $advanceAmount = (float) $request['advance_amount'];
-
-    // Format the number with a period as the thousands separator
-    echo "<td>" . number_format($advanceAmount, 0, ',', '.') . "</td>";
-
-                            echo "<td>" . (isset($request['approved_amount']) ? number_format($request['approved_amount']) : 'null') . "</td>";
+                            echo "<td>" . number_format($request['advance_amount'], 0, ',', '.') . "</td>";
+                            echo "<td>" . (isset($request['approved_amount']) ? number_format($request['approved_amount'], 0, ',', '.') : 'null') . "</td>";
                             echo "<td>" . $request['advance_description'] . "</td>";
                             echo "<td>" . (!empty($request['date_time']) ? date("d/m/Y", strtotime($request['date_time'])) : "") . "</td>";
                             echo "<td>" . (!empty($request['check_approval_time']) ? date("d/m/Y", strtotime($request['check_approval_time'])) : "") . "</td>";
@@ -483,7 +480,7 @@ if (file_exists($file)) {
                             $totalAmount += $request['advance_amount'];
                         }
                     } else {
-                        echo "<tr><td colspan='15'>Không có yêu cầu nào.</td></tr>";
+                        echo "<tr><td colspan='13'>Không có yêu cầu nào.</td></tr>";
                     }
 
                     ?>
@@ -536,7 +533,6 @@ if (file_exists($file)) {
                 }
             });
 
-
             // Apply column search on each input field in the header
             $('#requestsTable thead tr:eq(1) th').each(function(i) {
                 $('input', this).on('keyup change', function() {
@@ -546,7 +542,6 @@ if (file_exists($file)) {
                     calculateTotal(); // Calculate total after filtering
                 });
             });
-
 
             // Initial total calculation
             calculateTotal();
@@ -571,13 +566,13 @@ if (file_exists($file)) {
                     // Get the "Số tiền xin tạm ứng (VNĐ)" column
                     let amountCell1 = tr[i].getElementsByTagName('td')[6]; // Adjust index for "Số tiền xin tạm ứng (VNĐ)"
                     if (amountCell1) {
-                        let amount = parseFloat(amountCell1.innerText.replace(/,/g, '')); // Remove commas for parsing
+                        let amount = parseFloat(amountCell1.innerText.replace(/\./g, '')); // Remove commas for parsing
                         totalAmount += isNaN(amount) ? 0 : amount; // Ensure valid number
                     }
                     // Get the "Số tiền được duyệt (VNĐ)" column
                     let amountCell2 = tr[i].getElementsByTagName('td')[7]; // Adjust index for "Số tiền được duyệt (VNĐ)"
                     if (amountCell2) {
-                        let approvedAmount = parseFloat(amountCell2.innerText.replace(/,/g, '')); // Remove commas for parsing
+                        let approvedAmount = parseFloat(amountCell2.innerText.replace(/\./g, '')); // Remove commas for parsing
                         totalApprovedAmount += isNaN(approvedAmount) ? 0 : approvedAmount; // Ensure valid number
 
                         // Calculate received amount based on column 12
@@ -602,11 +597,12 @@ if (file_exists($file)) {
             let totalDebtAmount = totalReceivedAmount - totalRefundedAmount;
 
             // Update the total amount display
-            document.getElementById('totalAmount').innerText = totalAmount.toLocaleString(); // Format for display
-            document.getElementById('totalApprovedAmount').innerText = totalApprovedAmount.toLocaleString(); // Format for display
-            document.getElementById('totalReceivedAmount').innerText = totalReceivedAmount.toLocaleString(); // Format for display
-            document.getElementById('totalRefundedAmount').innerText = totalRefundedAmount.toLocaleString(); // Format for display
-            document.getElementById('totalDebtAmount').innerText = totalDebtAmount.toLocaleString(); // Format for display
+            // Format the number with commas first, then replace commas with periods
+document.getElementById('totalAmount').innerText = totalAmount.toLocaleString().replace(/,/g, '.');
+document.getElementById('totalApprovedAmount').innerText = totalApprovedAmount.toLocaleString().replace(/,/g, '.');
+document.getElementById('totalReceivedAmount').innerText = totalReceivedAmount.toLocaleString().replace(/,/g, '.');
+document.getElementById('totalRefundedAmount').innerText = totalRefundedAmount.toLocaleString().replace(/,/g, '.');
+document.getElementById('totalDebtAmount').innerText = totalDebtAmount.toLocaleString().replace(/,/g, '.');
         }
     </script>
 
