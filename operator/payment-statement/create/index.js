@@ -4,6 +4,8 @@ console.log("Hello from payment-statement create page");
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
 const forms = document.querySelectorAll(".needs-validation");
 
+const submitBtn = document.getElementById("submitButton");
+
 // Loop over them and prevent submission
 Array.from(forms).forEach((form) => {
   form.addEventListener(
@@ -83,10 +85,12 @@ function formatNumber(num) {
   return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const submitForm = document.getElementById('expenseForm');
+const submitForm = document.getElementById("expenseForm");
 
-submitForm.addEventListener('submit', function(event) {
+submitForm.addEventListener("submit", function (event) {
   event.preventDefault();
+  // disable the submit button
+  submitBtn.disabled = true;
   const formData = new FormData(submitForm);
 
   // // Log each key-value pair for debugging
@@ -94,21 +98,26 @@ submitForm.addEventListener('submit', function(event) {
   //   console.log(`${key}:`, value);
   // }
 
-  fetch('submit_payment.php', {
-    method: 'POST',
-    body: formData
+  fetch("submit_payment.php", {
+    method: "POST",
+    body: formData,
   })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert("Expenses saved successfully!");
-      window.location.href = "../../index.php";
-    } else {
-      alert(data.error);
-    }
-  })
-  .catch(error => {
-    console.error("Error:", error);
-  });
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Expenses saved successfully!");
+        // enable the submit button
+        submitBtn.disabled = false;
+        window.location.href = "../../index.php";
+      } else {
+        alert(data.error);
+        // enable the submit button
+        submitBtn.disabled = false;
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      // enable the submit button
+      submitBtn.disabled = false;
+    });
 });
-

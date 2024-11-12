@@ -347,12 +347,12 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
-                <?php 
-                  if (!empty($expense['expense_file'])) {
-                    echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
-                  } else {
-                    echo "<td></td>"; // Empty cell if there's no filename
-                  }
+                <?php
+                if (!empty($expense['expense_file'])) {
+                  echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                } else {
+                  echo "<td></td>"; // Empty cell if there's no filename
+                }
                 ?>
               </tr>
             <?php
@@ -402,10 +402,10 @@ if ($instructionNo !== null) {
     </form>
     <div class="d-flex align-items-center justify-content-end gap-3">
       <div class="d-flex justify-content-end pb-3">
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button>
+        <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button>
       </div>
       <div class="d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-success" onclick="handleApprovePayment('approved')">Phê duyệt</button>
+        <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button>
       </div>
 
     </div>
@@ -439,6 +439,9 @@ if ($instructionNo !== null) {
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const directorData = <?= json_encode($directorData) ?>;
+
+    const pheDuyetBtn = document.getElementById('phe_duyet_btn');
+    const tuChoiBtn = document.getElementById('tu_choi_btn');
 
     const expensesAmount = document.getElementById('expenses_amount');
     const expensesAmountValue = expensesAmount.value;
@@ -570,6 +573,10 @@ if ($instructionNo !== null) {
         message: message
       };
 
+      // disable button
+      pheDuyetBtn.disabled = true;
+      tuChoiBtn.disabled = true;
+
       // Send data to the server using fetch
       fetch('update_payment_status.php', {
           method: 'POST',
@@ -633,14 +640,24 @@ if ($instructionNo !== null) {
             }
 
             alert("Approval status updated successfully!");
+            // enable button
+            pheDuyetBtn.disabled = false;
+            tuChoiBtn.disabled = false;
+
             window.location.href = '../../index.php';
           } else {
             alert("Failed to update approval status: " + data.message);
+            // enable button
+            pheDuyetBtn.disabled = false;
+            tuChoiBtn.disabled = false;
           }
         })
         .catch(error => {
           console.error('Error:', error);
           alert("An error occurred. Please try again.");
+          // enable button
+          pheDuyetBtn.disabled = false;
+          tuChoiBtn.disabled = false;
         });
     }
 

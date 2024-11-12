@@ -402,7 +402,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
       <?php } ?>
       <!-- Submission Button -->
       <div class="w-100 d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
+        <button type="submit" class="btn btn-success" id="submitButton">Submit</button>
       </div>
     </form>
   </div>

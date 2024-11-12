@@ -168,7 +168,7 @@ if ($instructionNo !== null) {
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="trunkingIncl" name="trunkingIncl" value="">
+              <input class="form-check-input" type="checkbox" id="trunkingIncl" name="trunkingIncl">
               <label class="form-check-label" for="trunkingIncl">
                 INCL
               </label>
@@ -333,7 +333,7 @@ if ($instructionNo !== null) {
 
       <!-- Submission Button -->
       <div class="d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-success">Trình ký</button>
+        <button type="submit" id="trinh_ki_btn" class="btn btn-success">Trình ký</button>
       </div>
     </form>
     <!-- <div class="d-flex align-items-center justify-content-end gap-3">
@@ -348,6 +348,8 @@ if ($instructionNo !== null) {
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const leaderData = <?= json_encode($leaderData) ?>;
 
+    const trinhKiBtn = document.getElementById('trinh_ki_btn');
+
     const expensesAmount = document.getElementById('expenses_amount');
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
@@ -359,6 +361,9 @@ if ($instructionNo !== null) {
     let updateForm = document.getElementById("form-update");
     updateForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
+      // disable the submit button
+      trinhKiBtn.disabled = true;
 
       // get data from form
       const formData = new FormData(updateForm);
@@ -381,14 +386,20 @@ if ($instructionNo !== null) {
         .then(data => {
           if (data.success) {
             alert("Delivery data updated successfully!");
+            // enable the submit button
+            trinhKiBtn.disabled = false;
             window.location.href = '../../index.php';
           } else {
             alert("Failed to update approval status: " + data.message);
+            // enable the submit button
+            trinhKiBtn.disabled = false;
           }
         })
         .catch(error => {
           console.error('Error:', error);
           alert("An error occurred. Please try again.");
+          // enable the submit button
+          trinhKiBtn.disabled = false;
         });
     });
 
