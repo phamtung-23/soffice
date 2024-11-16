@@ -67,11 +67,199 @@ if ($instructionNo !== null) {
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    /* Basic styles for layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+
+    .menu {
+      background-color: #333;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .icon {
+      padding: 10px 20px;
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .menu a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .menu a:hover {
+      background-color: #575757;
+    }
+
+    .menu a.logout {
+      float: right;
+      background-color: #f44336;
+    }
+
+    .menu a.logout:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Hamburger icon (hidden by default) */
+    .hamburger {
+      display: none;
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    /* Basic responsive adjustments */
+    @media (max-width: 950px) {
+
+      /* Header and menu adjustments */
+      .header {
+        padding: 20px;
+        font-size: 1.5em;
+      }
+
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        float: none;
+        display: block;
+        text-align: left;
+        padding: 10px;
+      }
+
+      .menu a.logout {
+        float: none;
+        background-color: #f44336;
+        text-align: center;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      /* Smaller screens (mobile) */
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        font-size: 0.9em;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="header">
+    <h1>Leader Dashboard</h1>
+  </div>
+
+  <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
+    <a href="../../index.php">Home</a>
+    <a href="../../all_request.php">Danh sách phiếu tạm ứng</a>
+    <a href="../../all_payment.php">Danh sách phiếu thanh toán</a>
+    <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../../../logout.php" class="logout">Đăng xuất</a>
+  </div>
   <div class="container mt-5 mb-5">
-    <form method="post" class="needs-validation" novalidate>
+    <form id="leader-form" class="needs-validation" novalidate>
       <div class="d-flex flex-column justify-content-center align-items-center">
         <h3 class="fw-bold">PHIẾU ĐỀ NGHỊ THANH TOÁN</h3>
         <!-- <h5 class="mb-4">INLAND SERVICE INTERNAL INSTRUCTION</h5> -->
@@ -89,25 +277,25 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="shipper" class="col-sm-2 col-form-label">Shipper</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required disabled value="<?= $data['shipper'] ?>">
+            <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required value="<?= $data['shipper'] ?>">
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="billTo" class="col-sm-2 col-form-label">Bill To</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required disabled value="<?= $data['billTo'] ?>">
+            <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required value="<?= $data['billTo'] ?>">
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="volume" class="col-sm-2 col-form-label">Volume</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="volume" placeholder="" name="volume" required disabled value="<?= $data['volume'] ?>">
+            <input type="text" class="form-control" id="volume" placeholder="" name="volume" required value="<?= $data['volume'] ?>">
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="payment_lo" class="col-sm-2 col-form-label">Lô</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required disabled value="<?= $data['payment_lo'] ?>">
+            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required value="<?= $data['payment_lo'] ?>">
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
@@ -143,7 +331,7 @@ if ($instructionNo !== null) {
 
           <label for="customs_manifest_on" class="col-sm-2 col-form-label">Customs manifest no</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $data['customs_manifest_on'] ?>">
+            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required value="<?= $data['customs_manifest_on'] ?>">
           </div>
         </div>
 
@@ -169,11 +357,11 @@ if ($instructionNo !== null) {
             ?>
               <tr>
                 <td><?= $index ?></td>
-                <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required id="expenses_amount" disabled value="<?= $expense['expense_amount'] ?>"></td>
-                <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
-                <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
-                <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
+                <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
+                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ".", ",") ?>" oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
+                <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
+                <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
                 <?php
                 if (!empty($expense['expense_file'])) {
                   echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
@@ -190,13 +378,13 @@ if ($instructionNo !== null) {
           <tfoot>
             <tr>
               <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" disabled></td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
               <td></td>
               <td>
-                RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
+                RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
               </td>
               <td colspan="3">
-                BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>" disabled>
+                BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>">
               </td>
             </tr>
           </tfoot>
@@ -206,16 +394,16 @@ if ($instructionNo !== null) {
       </div>
 
       <!-- Submission Button -->
-    </form>
-    <div class="d-flex align-items-center justify-content-end gap-3">
-      <div class="d-flex justify-content-end pb-3">
-        <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button>
-      </div>
-      <div class="d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button>
-      </div>
+      <div class="d-flex align-items-center justify-content-end gap-3">
+        <div class="d-flex justify-content-end pb-3">
+          <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button>
+        </div>
+        <div class="d-flex justify-content-end pb-3">
+          <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button>
+        </div>
 
-    </div>
+      </div>
+    </form>
 
     <!-- modal từ chối -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -235,7 +423,7 @@ if ($instructionNo !== null) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="rejectSubmitButton">Submit</button>
+            <button type="button" class="btn btn-primary" onclick="handleRejectPayment()" id="rejectSubmitButton">Submit</button>
           </div>
         </div>
       </div>
@@ -250,7 +438,7 @@ if ($instructionNo !== null) {
     const pheDuyetBtn = document.getElementById('phe_duyet_btn');
     const tuChoiBtn = document.getElementById('tu_choi_btn');
 
-    const expensesAmount = document.getElementById('expenses_amount');
+    const expensesAmount = document.getElementById('expense_amount');
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
@@ -265,6 +453,16 @@ if ($instructionNo !== null) {
         const button = event.relatedTarget
         // Extract info from data-bs-* attributes
       })
+    }
+
+    // Function to toggle 'disabled' status for corresponding expense fields
+    function toggleExpenseFields(currentInput) {
+      const tableRow = currentInput.closest("tr"); // Locate the current row
+
+      if (currentInput.value) {
+        const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+        currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+      }
     }
 
     document.getElementById('rejectSubmitButton').addEventListener('click', () => {
@@ -352,56 +550,37 @@ if ($instructionNo !== null) {
       }
     }
 
-    function handleApprovePayment(status, message = '') {
-      const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
-      const updateData = {
-        instruction_no: instructionNo,
-        approval_status: status,
-        message: message
-      };
+    const leaderForm = document.getElementById('leader-form');
 
-      // disable button
-      pheDuyetBtn.disabled = true;
-      tuChoiBtn.disabled = true;
+    function handleRejectPayment() {
+      const messageText = document.getElementById('message-text').value;
+      const formData = new FormData();
+      formData.append('instruction_no', <?= json_encode($instructionNo) ?>);
+      formData.append('approval_status', 'rejected');
+      formData.append('message', messageText);
 
-      // Send data to the server using fetch
+      // send data to the server using fetch
       fetch('update_payment_status.php', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updateData)
+          body: formData
         })
         .then(response => response.json())
-        .then(async data => {
+        .then(data => {
           if (data.success) {
             // Tạo nội dung tin nhắn để gửi
-            let telegramMessage = '';
-            if (status === 'approved') {
-              telegramMessage = `**Yêu cầu đã được Leader phê duyệt!**\n` +
-                `ID yêu cầu: ${itemData.instruction_no}\n` +
-                `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
-                `Tên khách hàng: ${itemData.shipper}\n` +
-                `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người phê duyệt:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
-                `Thời gian phê duyệt: ${data.data.approval[0].time}`;
-            } else {
-              telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
-                `ID yêu cầu: ${itemData.instruction_no}\n` +
-                `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
-                `Tên khách hàng: ${itemData.shipper}\n` +
-                `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Lý do: **${message}**\n` +
-                `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
-                `Thời gian từ chối: ${data.data.approval[0].time}`;
-            }
+            let telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
+              `ID yêu cầu: ${itemData.instruction_no}\n` +
+              `Người đề nghị: ${itemData.operator_name}\n` +
+              `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+              `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+              `Tên khách hàng: ${itemData.shipper}\n` +
+              `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+              `Lý do: **${messageText}**\n` +
+              `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+              `Thời gian từ chối: ${data.data.approval[0].time}`;
 
             // Gửi tin nhắn đến Telegram
-            await fetch('../../../sendTelegram.php', {
+            fetch('../../../sendTelegram.php', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -411,28 +590,109 @@ if ($instructionNo !== null) {
                 id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
               })
             });
-
             alert("Approval status updated successfully!");
-
-            // enable button
-            pheDuyetBtn.disabled = false;
-            tuChoiBtn.disabled = false;
-
             window.location.href = '../../index.php';
           } else {
             alert("Failed to update approval status: " + data.message);
-            // enable button
-            pheDuyetBtn.disabled = false;
-            tuChoiBtn.disabled = false;
           }
         })
         .catch(error => {
           console.error('Error:', error);
           alert("An error occurred. Please try again.");
-          // enable button
-          pheDuyetBtn.disabled = false;
-          tuChoiBtn.disabled = false;
         });
+    }
+
+    function handleApprovePayment(status, message = '') {
+      leaderForm.addEventListener('submit', (e) => {
+        if (!leaderForm.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+          leaderForm.classList.add("was-validated");
+        } else {
+          e.preventDefault();
+          const formData = new FormData(leaderForm);
+          const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
+          formData.append('instruction_no', instructionNo);
+          formData.append('approval_status', status);
+          formData.append('message', message);
+
+          // Log each key-value pair for debugging
+          for (const [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+          }
+
+          // disable button
+          pheDuyetBtn.disabled = true;
+          tuChoiBtn.disabled = true;
+
+          // Send data to the server using fetch
+          fetch('update_payment_status.php', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(async data => {
+              if (data.success) {
+                // Tạo nội dung tin nhắn để gửi
+                let telegramMessage = '';
+                if (status === 'approved') {
+                  telegramMessage = `**Yêu cầu đã được Leader phê duyệt!**\n` +
+                    `ID yêu cầu: ${itemData.instruction_no}\n` +
+                    `Người đề nghị: ${itemData.operator_name}\n` +
+                    `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+                    `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                    `Tên khách hàng: ${itemData.shipper}\n` +
+                    `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                    `Người phê duyệt:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+                    `Thời gian phê duyệt: ${data.data.approval[0].time}`;
+                } else {
+                  telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
+                    `ID yêu cầu: ${itemData.instruction_no}\n` +
+                    `Người đề nghị: ${itemData.operator_name}\n` +
+                    `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+                    `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                    `Tên khách hàng: ${itemData.shipper}\n` +
+                    `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                    `Lý do: **${message}**\n` +
+                    `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+                    `Thời gian từ chối: ${data.data.approval[0].time}`;
+                }
+
+                // Gửi tin nhắn đến Telegram
+                await fetch('../../../sendTelegram.php', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: telegramMessage,
+                    id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
+                  })
+                });
+
+                alert("Approval status updated successfully!");
+
+                // enable button
+                pheDuyetBtn.disabled = false;
+                tuChoiBtn.disabled = false;
+
+                window.location.href = '../../index.php';
+              } else {
+                alert("Failed to update approval status: " + data.message);
+                // enable button
+                pheDuyetBtn.disabled = false;
+                tuChoiBtn.disabled = false;
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert("An error occurred. Please try again.");
+              // enable button
+              pheDuyetBtn.disabled = false;
+              tuChoiBtn.disabled = false;
+            });
+        }
+      });
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

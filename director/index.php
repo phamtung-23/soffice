@@ -95,6 +95,8 @@ $paymentApprovedLeader =  isset($paymentData) ? countApprovalsByRoleAndStatus($p
 $paymentApprovedDirector =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'director', 'approved') : 0;
 $paymentRejectedLeader =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected') : 0;
 $paymentRejectedDirector =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected') : 0;
+$paymentApprovedSale =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'sale', 'approved') : 0;
+$paymentRejectedSale =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected') : 0;
 $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($paymentData, 'director', 'pending') : 0;
 ?>
 
@@ -429,6 +431,7 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
                 <tr>
                     <th>Loại phiếu</th>
                     <th>Số phiếu đã được Leader duyệt</th>
+                    <th>Số phiếu đã được Sale duyệt</th>
                     <th>Số phiếu đã được GĐ duyệt</th>
                     <th>Số phiếu bị Giám đốc từ chối</th>
                     <th>Số phiếu chờ duyệt GĐ duyệt</th>
@@ -437,6 +440,7 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
                 <tr>
                     <td>Phiếu tạm ứng</td>
                     <td><?php echo $requestApprovedLeader; ?></td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><?php echo $requestApprovedDirector; ?></td>
                     <td><?php echo $requestRejectedDirector; ?></td>
                     <td><?php echo $requestWaitingDirector; ?></td>
@@ -445,6 +449,7 @@ $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($p
                 <tr>
                     <td>Phiếu thanh toán</td>
                     <td><?php echo $paymentApprovedLeader; ?></td>
+                    <td><?php echo $paymentApprovedSale; ?></td>
                     <td><?php echo $paymentApprovedDirector; ?></td>
                     <td><?php echo $paymentRejectedDirector; ?></td>
                     <td><?php echo $paymentWaitingDirector; ?></td>

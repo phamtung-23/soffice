@@ -6,11 +6,15 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
   exit();
 }
 
+include '../../../helper/payment.php';
+
 header('Content-Type: application/json');
 
   // Get data from POST request
   $requestData = json_decode(file_get_contents("php://input"), true);
   $data = $requestData['data'] ?? null;
+  $isUpdate = isset($data['is_update']) ? $data['is_update'] : false;
+  logEntry("isUpdate: " . $isUpdate);
 
   // Check if data is provided
   if (empty($data)) {
@@ -55,10 +59,20 @@ header('Content-Type: application/json');
       $entry['chiHoIncl'] = isset($data['chiHoIncl']) ? $data['chiHoIncl'] : "";
       $entry['chiHoExcl'] = isset($data['chiHoExcl']) ? $data['chiHoExcl'] : "";
       foreach ($entry['approval'] as &$approval) {
-        if ($approval['role'] === 'sale' && $approval['email'] === $_SESSION['user_id']) {
-          $approval['status'] = 'approved';
-          $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
-          break;
+        if ($isUpdate) {
+          if ($approval['role'] === 'sale' && $approval['email'] === $_SESSION['user_id']) {
+            $approval['status'] = 'approved';
+            $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
+          }
+          if ($approval['role'] === 'director') {
+            $approval['status'] = 'pending';
+          }
+        } else {
+          if ($approval['role'] === 'sale' && $approval['email'] === $_SESSION['user_id']) {
+            $approval['status'] = 'approved';
+            $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
+            break;
+          }
         }
       }
       $updated = true;

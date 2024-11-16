@@ -88,36 +88,42 @@ function formatNumber(num) {
 const submitForm = document.getElementById("expenseForm");
 
 submitForm.addEventListener("submit", function (event) {
-  event.preventDefault();
-  // disable the submit button
-  submitBtn.disabled = true;
-  const formData = new FormData(submitForm);
+  if (!submitForm.checkValidity()) {
+    event.preventDefault();
+    event.stopPropagation();
+    submitForm.classList.add("was-validated");
+  } else {
+    event.preventDefault();
+    // disable the submit button
+    submitBtn.disabled = true;
+    const formData = new FormData(submitForm);
 
-  // // Log each key-value pair for debugging
-  // for (const [key, value] of formData.entries()) {
-  //   console.log(`${key}:`, value);
-  // }
+    // // Log each key-value pair for debugging
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}:`, value);
+    // }
 
-  fetch("submit_payment.php", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        alert("Expenses saved successfully!");
-        // enable the submit button
-        submitBtn.disabled = false;
-        window.location.href = "../../index.php";
-      } else {
-        alert(data.error);
-        // enable the submit button
-        submitBtn.disabled = false;
-      }
+    fetch("submit_payment.php", {
+      method: "POST",
+      body: formData,
     })
-    .catch((error) => {
-      console.error("Error:", error);
-      // enable the submit button
-      submitBtn.disabled = false;
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Expenses saved successfully!");
+          // enable the submit button
+          submitBtn.disabled = false;
+          window.location.href = "../../index.php";
+        } else {
+          alert(data.error);
+          // enable the submit button
+          submitBtn.disabled = false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        // enable the submit button
+        submitBtn.disabled = false;
+      });
+  }
 });

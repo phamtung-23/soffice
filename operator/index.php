@@ -84,6 +84,8 @@ $paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', '
 $paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
 $paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
 $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
+$paymentRejectedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected');
+$paymentApprovedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected');
 ?>
 
 <!DOCTYPE html>
@@ -416,8 +418,10 @@ $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director
                     <th>Loại phiếu</th>
                     <th>Tổng số phiếu</th>
                     <th>Số phiếu đã được Leader duyệt</th>
+                    <th>Số phiếu đã được Sale duyệt</th>
                     <th>Số phiếu đã được GĐ duyệt</th>
                     <th>Số phiếu bị Leader từ chối</th>
+                    <th>Số phiếu bị Sale từ chối</th>
                     <th>Số phiếu bị Giám đốc từ chối</th>
                     <th>Link quản lý</th>
                 </tr>
@@ -425,8 +429,10 @@ $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director
                     <td>Phiếu tạm ứng</td>
                     <td><?php echo $requestTotal; ?></td>
                     <td><?php echo $requestApprovedLeader; ?></td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><?php echo $requestApprovedDirector; ?></td>
                     <td><?php echo $requestRejectedLeader; ?></td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><?php echo $requestRejectedDirector; ?></td>
                     <td><a href="all_request.php">Quản lý phiếu tạm ứng</a></td>
                 </tr>
@@ -434,8 +440,10 @@ $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director
                     <td>Phiếu thanh toán</td>
                     <td><?php echo $paymentTotal; ?></td>
                     <td><?php echo $paymentApprovedLeader; ?></td>
+                    <td><?php echo $paymentApprovedSale; ?></td>
                     <td><?php echo $paymentApprovedDirector; ?></td>
                     <td><?php echo $paymentRejectedLeader; ?></td>
+                    <td><?php echo $paymentRejectedSale; ?></td>
                     <td><?php echo $paymentRejectedDirector; ?></td>
                     <td><a href="payment-statement/list">Quản lý phiếu thanh toán</a></td>
                 </tr>

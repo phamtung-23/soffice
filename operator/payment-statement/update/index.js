@@ -91,11 +91,6 @@ Array.from(forms).forEach(form => {
   }, false)
 })
 
-// Toggle the responsive class to show/hide the menu
-function toggleMenu() {
-    var menu = document.querySelector(".menu");
-    menu.classList.toggle("responsive");
-  }
 
 
 

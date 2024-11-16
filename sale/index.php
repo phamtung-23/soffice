@@ -112,6 +112,8 @@ $paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', '
 $paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
 $paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
 $paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
+$paymentApprovedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'approved');
+$paymentRejectedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected');
 $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending');
 ?>
 
@@ -445,8 +447,10 @@ $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending'
                     <th>Loại phiếu</th>
                     <th>Tổng số phiếu</th>
                     <th>Số phiếu đã được Leader duyệt</th>
+                    <th>Số phiếu đã được Sale duyệt</th>
                     <th>Số phiếu đã được GĐ duyệt</th>
                     <th>Số phiếu bị Leader từ chối</th>
+                    <th>Số phiếu bị Sale từ chối</th>
                     <th>Số phiếu bị Giám đốc từ chối</th>
                     <th>Số phiếu chờ duyệt</th>
                     <th>Link quản lý</th>
@@ -455,8 +459,10 @@ $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending'
                     <td>Phiếu thanh toán</td>
                     <td><?php echo $paymentTotal; ?></td>
                     <td><?php echo $paymentApprovedLeader; ?></td>
+                    <td><?php echo $paymentApprovedSale; ?></td>
                     <td><?php echo $paymentApprovedDirector; ?></td>
                     <td><?php echo $paymentRejectedLeader; ?></td>
+                    <td><?php echo $paymentRejectedSale; ?></td>
                     <td><?php echo $paymentRejectedDirector; ?></td>
                     <td><?php echo $paymentWaitingLeader; ?></td>
                     <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ duyệt</a></td>

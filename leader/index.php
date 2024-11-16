@@ -112,6 +112,8 @@ $paymentApprovedDirector =  isset($paymentData) ? countApprovalsByRoleAndStatus(
 $paymentRejectedLeader =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected') : 0;
 $paymentRejectedDirector =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected') : 0;
 $paymentWaitingLeader =  isset($paymentData) ? countApprovalsByRoleLeader($paymentData, 'leader', 'pending') : 0;
+$paymentApprovedSale =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'sale', 'approved') : 0;
+$paymentRejectedSale =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected') : 0;
 ?>
 
 <!DOCTYPE html>
@@ -444,8 +446,10 @@ $paymentWaitingLeader =  isset($paymentData) ? countApprovalsByRoleLeader($payme
                     <th>Loại phiếu</th>
                     <th>Tổng số phiếu</th>
                     <th>Số phiếu đã được Leader duyệt</th>
+                    <th>Số phiếu đã được Sale duyệt</th>
                     <th>Số phiếu đã được GĐ duyệt</th>
                     <th>Số phiếu bị Leader từ chối</th>
+                    <th>Số phiếu bị Sale từ chối</th>
                     <th>Số phiếu bị Giám đốc từ chối</th>
                     <th>Số phiếu chờ duyệt</th>
                     <th>Link quản lý</th>
@@ -454,8 +458,10 @@ $paymentWaitingLeader =  isset($paymentData) ? countApprovalsByRoleLeader($payme
                     <td>Phiếu tạm ứng</td>
                     <td><?php echo $requestTotal; ?></td>
                     <td><?php echo $requestApprovedLeader; ?></td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><?php echo $requestApprovedDirector; ?></td>
                     <td><?php echo $requestRejectedLeader; ?></td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><?php echo $requestRejectedDirector; ?></td>
                     <td><?php echo $requestWaitingLeader; ?></td>
                     <td><a href="request_management.php">Quản lý phiếu tạm ứng chờ duyệt</a></td>
@@ -464,8 +470,10 @@ $paymentWaitingLeader =  isset($paymentData) ? countApprovalsByRoleLeader($payme
                     <td>Phiếu thanh toán</td>
                     <td><?php echo $paymentTotal; ?></td>
                     <td><?php echo $paymentApprovedLeader; ?></td>
+                    <td><?php echo $paymentApprovedSale; ?></td>
                     <td><?php echo $paymentApprovedDirector; ?></td>
                     <td><?php echo $paymentRejectedLeader; ?></td>
+                    <td><?php echo $paymentRejectedSale; ?></td>
                     <td><?php echo $paymentRejectedDirector; ?></td>
                     <td><?php echo $paymentWaitingLeader; ?></td>
                     <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ duyệt</a></td>

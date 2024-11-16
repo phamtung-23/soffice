@@ -263,7 +263,7 @@ $htmlContent = "
           <img src='$operator_signature_path' alt='Chữ ký Người đề nghị' style='width: 150px; height: auto;'>
         </td>
         <td style='with: 25%; text-align: center;'>
-          <img src='$leader_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
+          <img src='$sale_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
         </td>
         <td style='with: 25%; text-align: center;'></td>
         <td style='with: 25%; text-align: center;'>

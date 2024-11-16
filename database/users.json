@@ -3,28 +3,28 @@
         "fullname": "Sale 1",
         "email": "sale1@gmail.com",
         "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
-        "phone": "1558599761",
+        "phone": "15585997619",
         "role": "sale"
     },
     "1": {
         "fullname": "Oper 1",
         "email": "oper1@gmail.com",
         "password": "$2y$10$vB.y.iTL45ZWirlKtpUztubaVPgfIpuK5AnNH0TxWC5ptwkQHtyri",
-        "phone": "1558599761",
+        "phone": "15585997619",
         "role": "operator"
     },
     "2": {
         "fullname": "Leader 1",
         "email": "leader1@gmail.com",
         "password": "$2y$10$QbnD\/H\/63uWvvndSsSzP7.I2cIsApkWZMuOEAt8oNHo3zLfOBNGK6",
-        "phone": "1558599761`",
+        "phone": "15585997619`",
         "role": "leader"
     },
     "3": {
         "fullname": "NGUY\u1ec4N MINH T\u00da",
         "email": "tu.nm@uni-global.com",
         "password": "$2y$10$v7UmpeUIbmQmOLeCB0eqp.Bog84NXNkJGYKja0N\/\/L7xDI\/TO3\/Pu",
-        "phone": "5681478252",
+        "phone": "5681478253333",
         "role": "director"
     },
     "4": {
@@ -115,7 +115,7 @@
         "fullname": "Director1",
         "email": "director@gmail.com",
         "password": "$2y$10$yzLv3iUdl\/FBLl0tK2jH\/OogtB2zUPxhPedsBG24D0.p9LxWV56PS",
-        "phone": "1558599761",
+        "phone": "15585997619",
         "role": "director"
     },
     "18": {

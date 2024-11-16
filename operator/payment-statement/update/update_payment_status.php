@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit();
 }
@@ -45,15 +45,32 @@ $jsonData = json_decode(file_get_contents($filePath), true);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Update the status for the matching instruction number
   $updated = false;
+  $errors = [];
+  $targetDir = '../../../database/payment/uploads/';
+
+  // Create uploads directory if not exists
+  if (!is_dir($targetDir)) {
+    mkdir($targetDir, 0777, true);
+  }
+
   foreach ($jsonData as &$entry) {
     if ($entry['instruction_no'] == $instructionNo) {
+      logEntry("Operator $instructionNo");
       // Collect expense information
       $newExpenses = [];
       if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
         for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
           $expenseAmount = (float)str_replace(',', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
           $soHoaDon = $_POST['so_hoa_don'][$i] ?? $entry['expenses'][$i]['so_hoa_don'] ?? "";
-          $expenseFile = $entry['expenses'][$i]['expense_file'] ?? "";
+          $fileUploaded = isset($_FILES['expense_file']['name'][$i]) && $_FILES['expense_file']['error'][$i] === UPLOAD_ERR_OK;
+          $expenseFile = $fileUploaded ? $_FILES['expense_file']['name'][$i] : $entry['expenses'][$i]['expense_file'] ?? null;
+
+          // Check conditional file upload requirement
+          if (!empty($soHoaDon) && !$fileUploaded && !$expenseFile) {
+            $errors[] = "Vui lòng tải tệp cho hóa đơn số {$soHoaDon}.";
+            continue;
+          }
+          // $expenseFile = $entry['expenses'][$i]['expense_file'] ?? "";
           // Store expense data
           $expense = [
             'expense_kind' => $_POST['expense_kind'][$i] ?? $entry['expenses'][$i]['expense_kind'] ?? null,
@@ -64,6 +81,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'expense_file' => $expenseFile
           ];
 
+          // Move uploaded file
+          if ($fileUploaded) {
+            // Generate a unique name for the file
+            $originalFileName = pathinfo($_FILES['expense_file']['name'][$i], PATHINFO_FILENAME);
+            $fileExtension = pathinfo($_FILES['expense_file']['name'][$i], PATHINFO_EXTENSION);
+            $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
+            $uniqueFileName = uniqid() . "_" . $formattedFileName . "." . $fileExtension;
+            $targetFilePath = $targetDir . $uniqueFileName;
+
+            if (move_uploaded_file($_FILES['expense_file']['tmp_name'][$i], $targetFilePath)) {
+              $expense['expense_file'] = $uniqueFileName;
+            } else {
+              $errors[] = "Failed to upload file for expense item at row " . ($i + 1);
+            }
+          }
+
           $newExpenses[] = $expense;
         }
       }
@@ -71,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       if (empty($newExpenses)) {
         $newExpenses = $entry['expenses'];
       }
-      
+
       $entry['expenses'] = $newExpenses;
 
       // Additional fields
@@ -84,19 +117,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       }
 
       $entry['total_actual'] = (float)str_replace(',', '', $entry['total_actual'] ?? '0');
+      $entry['updated_at'] = date("Y-m-d H:i:s");
 
       foreach ($entry['approval'] as &$approval) {
-        if ($approval['role'] === 'leader' && $approval['email'] === $_SESSION['user_id']) {
+        if (in_array($approval['role'], ['leader', 'sale'])) {
           $approval['status'] = $status;
-          $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
-          $approval['comment'] = $message;
           $updated = true;
-          break;
         }
       }
       break;
     }
   }
+}
+
+logEntry(json_encode($errors));
+
+if (!empty($errors)) {
+  echo json_encode(['success' => false, 'message' => implode("\n", $errors)]);
+  exit();
 }
 
 
@@ -110,7 +148,10 @@ if ($updated) {
   }
   // Save the updated JSON data back to the file
   file_put_contents($filePath, json_encode($jsonData, JSON_PRETTY_PRINT));
+  logEntry("Operator $instructionNo updated successfully");
+
   echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $updatedData]);
 } else {
+  logEntry("Operator $instructionNo update failed");
   echo json_encode(['success' => false, 'message' => 'Approval entry not found or already updated']);
 }

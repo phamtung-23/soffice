@@ -103,7 +103,7 @@ function getApprovalStatus($item)
         <select id="year" name="year" onchange="this.form.submit()">
           <?php
           foreach ($files as $file) {
-            preg_match('~request_(\d{4})\.json~', $file, $matches);
+            preg_match('~payment_(\d{4})\.json~', $file, $matches);
             if (isset($matches[1])) {
               $year = $matches[1];
               echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
@@ -129,10 +129,11 @@ function getApprovalStatus($item)
             <th>Thời gian Kế toán duyệt</th>
             <th>Trạng thái</th>
             <th>Phiếu đã duyệt</th>
+            <th>Action</th>
           </tr>
           <tr>
             <!-- Add search inputs for each column -->
-            <?php for ($i = 0; $i < 12; $i++): ?>
+            <?php for ($i = 0; $i < 13; $i++): ?>
               <th><input type="text" placeholder="Tìm kiếm" /></th>
             <?php endfor; ?>
           </tr>
@@ -162,6 +163,17 @@ function getApprovalStatus($item)
                 }
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
+              }
+              if ($request['approval'][0]['status'] === 'rejected' || $request['approval'][1]['status'] === 'rejected') {
+                echo "<td><button style='background-color: #808080;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    padding: 5px 10px;
+                    cursor: pointer;' 
+                  onclick='handleShowDetail(". $request['instruction_no'] .")'>Chỉnh sửa</button></td>";
+              } else {
+                echo "<td></td>";
               }
               echo "</tr>";
               // Add to total amount
@@ -236,6 +248,17 @@ function getApprovalStatus($item)
       // Initial total calculation
       calculateTotal();
     });
+
+    // Hàm để lấy năm từ dropdown
+    function getSelectedYear() {
+      const yearSelect = document.getElementById('year');
+      return yearSelect.value;
+    }
+
+    function handleShowDetail(instructionNo) {
+      const year = getSelectedYear();
+      window.location.href = `../update?instruction_no=${instructionNo}&year=${year}`;
+    }
 
     // Toggle the responsive class to show/hide the menu
     function toggleMenu() {

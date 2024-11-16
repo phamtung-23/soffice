@@ -426,9 +426,9 @@ $paymentWaitingPay = $paymentApprovedDirector - $paymentPaid;
                     <td>Phiếu thanh toán</td>
                     <td><?php echo $paymentApprovedDirector; ?></td>
                     <td><?php echo $paymentPaid; ?></td>
-                    <td>Null</td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><?php echo $paymentWaitingPay; ?></td>
-                    <td>Null</td>
+                    <td style="background-color:#c0c0c0">Null</td>
                     <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ chi</a></td>
 
                 </tr>
