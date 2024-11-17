@@ -20,7 +20,7 @@ $instructionNo = isset($_GET['instruction_no']) ? $_GET['instruction_no'] : null
 $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $data = null;
 $isUpdate = isset($_GET['update']) ? $_GET['update'] : false;
-echo '<script>console.log(' . json_encode($isUpdate) . ')</script>'; 
+echo '<script>console.log(' . json_encode($isUpdate) . ')</script>';
 // Define the path to the JSON file
 $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
@@ -338,30 +338,35 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4">
             <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address']??'' ?>" required>
+              <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" required>
             </div>
           </div>
 
           <div class="row mb-3 mt-3 ps-4">
             <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
             <div class="col-sm-4">
-              <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time']??'' ?>" required>
+              <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" required>
             </div>
 
             <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
             <div class="col-sm-4">
-              <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct']??'' ?>">
+              <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct'] ?? '' ?>">
             </div>
           </div>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="trucking" placeholder="Ex: Name Trucking" name="trucking" required value="<?php echo $data['trucking']??'' ?>">
+              <input type="text" class="form-control" id="trucking" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="trucking" required value="<?php 
+                if (isset($data['trucking'])) {
+                  echo number_format($data['trucking'], 0, ',', '.');
+                } else {
+                  echo '';
+                }?>">
             </div>
             <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="trunkingVat" required value="<?php echo $data['trunkingVat']??'' ?>">
+                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="trunkingVat" required value="<?php echo $data['trunkingVat'] ?? '' ?>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
@@ -378,10 +383,10 @@ if ($instructionNo !== null) {
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
               <input class="form-check-input" type="checkbox" id="trunkingExcl" name="trunkingExcl" <?php
-                if (isset($data['trunkingExcl']) && $data['trunkingExcl'] == 'on') {
-                  echo 'checked';
-                }
-                ?>>
+                                                                                                    if (isset($data['trunkingExcl']) && $data['trunkingExcl'] == 'on') {
+                                                                                                      echo 'checked';
+                                                                                                    }
+                                                                                                    ?>>
               <label class="form-check-label" for="trunkingExcl">
                 EXCL
               </label>
@@ -390,18 +395,23 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="stuffing" placeholder="Ex: Name Stuffing ..." name="stuffing" required value="<?php echo $data['stuffing']??'' ?>">
+              <input type="text" class="form-control" id="stuffing" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="stuffing" required value="<?php 
+                if (isset($data['stuffing'])) {
+                  echo number_format($data['stuffing'], 0, ',', '.');
+                } else {
+                  echo '';
+                }?>">
             </div>
             <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required value="<?php echo $data['stuffingVat']??'' ?>">
+                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required value="<?php echo $data['stuffingVat'] ?? '' ?>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl" 
-              <?php
+              <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl"
+                <?php
                 if (isset($data['stuffingIncl']) && $data['stuffingIncl'] == 'on') {
                   echo 'checked';
                 }
@@ -412,7 +422,7 @@ if ($instructionNo !== null) {
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
               <input class="form-check-input" type="checkbox" id="stuffingExcl" name="stuffingExcl"
-              <?php
+                <?php
                 if (isset($data['stuffingExcl']) && $data['stuffingExcl'] == 'on') {
                   echo 'checked';
                 }
@@ -425,18 +435,23 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="liftOnOff" placeholder="Ex: Name Lift on/off" name="liftOnOff" required value="<?php echo $data['liftOnOff']??'' ?>">
+              <input type="text" class="form-control" id="liftOnOff" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="liftOnOff" required value="<?php 
+                if (isset($data['liftOnOff'])) {
+                  echo number_format($data['liftOnOff'], 0, ',', '.');
+                } else {
+                  echo '';
+                }?>">
             </div>
             <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="liftOnOffVat" required value="<?php echo $data['liftOnOffVat']??'' ?>">
+                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="liftOnOffVat" required value="<?php echo $data['liftOnOffVat'] ?? '' ?>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="liftOnOffIncl" name="liftOnOffIncl" 
-              <?php
+              <input class="form-check-input" type="checkbox" id="liftOnOffIncl" name="liftOnOffIncl"
+                <?php
                 if (isset($data['liftOnOffIncl']) && $data['liftOnOffIncl'] == 'on') {
                   echo 'checked';
                 }
@@ -447,7 +462,7 @@ if ($instructionNo !== null) {
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
               <input class="form-check-input" type="checkbox" id="liftOnOffExcl" name="liftOnOffExcl"
-              <?php
+                <?php
                 if (isset($data['liftOnOffExcl']) && $data['liftOnOffExcl'] == 'on') {
                   echo 'checked';
                 }
@@ -460,18 +475,23 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="chiHo" placeholder="Ex: Name Chi hộ" name="chiHo" required value="<?php echo $data['chiHo']??'' ?>">
+              <input type="text" class="form-control" id="chiHo" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="chiHo" required value="<?php 
+                if (isset($data['chiHo'])) {
+                  echo number_format($data['chiHo'], 0, ',', '.');
+                } else {
+                  echo '';
+                }?>">
             </div>
             <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
               <div class="input-group">
-                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="chiHoVat" required value="<?php echo $data['chiHoVat']??'' ?>">
+                <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="chiHoVat" required value="<?php echo $data['chiHoVat'] ?? '' ?>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-              <input class="form-check-input" type="checkbox" id="chiHoIncl" name="chiHoIncl" 
-              <?php
+              <input class="form-check-input" type="checkbox" id="chiHoIncl" name="chiHoIncl"
+                <?php
                 if (isset($data['chiHoIncl']) && $data['chiHoIncl'] == 'on') {
                   echo 'checked';
                 }
@@ -482,7 +502,7 @@ if ($instructionNo !== null) {
             </div>
             <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
               <input class="form-check-input" type="checkbox" id="chiHoExcl" name="chiHoExcl"
-              <?php
+                <?php
                 if (isset($data['chiHoExcl']) && $data['chiHoExcl'] == 'on') {
                   echo 'checked';
                 }
@@ -534,7 +554,7 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required id="expenses_amount" disabled value="<?= $expense['expense_amount'] ?>"></td>
+                <td><input type="text" class="form-control" required id="expenses_amount" disabled value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
@@ -553,8 +573,8 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" disabled></td>
+              <td colspan="2" class="text-end"></td>
+              <td> </td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
@@ -620,9 +640,21 @@ if ($instructionNo !== null) {
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
-    const totalActual = document.getElementById('total_actual');
-    const totalActualValue = totalActual.value;
-    totalActual.value = formatNumber(totalActualValue);
+    // const totalActual = document.getElementById('total_actual');
+    // const totalActualValue = totalActual.value;
+    // totalActual.value = formatNumber(totalActualValue);
+
+    function updateAmountText(currentInput) {
+      //  Loại bỏ dấu cham '.' trong số
+      let advanceAmount = currentInput.value.replace(/\./g, '');
+      // check if not a number
+      if (isNaN(advanceAmount)) {
+        alert('Vui lòng nhập số');
+        currentInput.value = '';
+        return;
+      }
+      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    }
 
     function handleRejectPayment() {
       const message = document.getElementById('message-text').value;
@@ -689,7 +721,7 @@ if ($instructionNo !== null) {
         // disable the submit button
         trinhKiBtn.disabled = true;
 
-        
+
         // get data from form
         const formData = new FormData(updateForm);
         formData.append('is_update', isUpdate);
@@ -741,7 +773,7 @@ if ($instructionNo !== null) {
     }
 
     function formatNumber(num) {
-      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function convertNumberToTextVND(total) {

@@ -62,13 +62,15 @@ sort($years);
     }
 
     function getFirstExpenseAmountWithPayee(item, payee) {
+      let totalAmount = 0;
       if (item.expenses && item.expenses.length > 0) { // Check if expenses exist and are non-empty
-        const expense = item.expenses.find(exp => exp.expense_payee === payee);
-        if (expense) {
-          return expense.expense_amount;
-        }
+        const expense = item.expenses.find(exp => {
+          if (exp.expense_payee.trim().toLowerCase() === payee) {
+            totalAmount += parseFloat(exp.expense_amount);
+          }
+        });
       }
-      return ''; // Return null if no matching expense is found
+      return totalAmount; // Return null if no matching expense is found
     }
     // Tải yêu cầu dựa trên năm đã chọn
     function loadRequests() {
@@ -109,7 +111,7 @@ sort($years);
                 request.operator_name,
                 request.shipper,
                 request.customs_manifest_on,
-                formatNumber(getFirstExpenseAmountWithPayee(request, 'OPS').toString()),
+                formatNumber(getFirstExpenseAmountWithPayee(request, 'ops').toString()),
                 request.approval[0].status,
                 request.approval[1].status,
                 request.approval[2].status,

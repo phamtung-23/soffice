@@ -1,26 +1,111 @@
 [
     {
-        "instruction_no": 1,
+        "instruction_no": 3,
         "approval": [
             {
                 "role": "leader",
                 "email": "leader1@gmail.com",
                 "status": "approved",
-                "time": "2024-11-14 17:18:42",
+                "time": "2024-11-16 11:57:30",
                 "comment": ""
             },
             {
                 "role": "sale",
                 "email": "sale1@gmail.com",
                 "status": "approved",
-                "time": "2024-11-16 05:21:36",
-                "comment": "asdfasdf"
+                "time": "2024-11-16 12:21:42",
+                "comment": ""
             },
             {
                 "role": "director",
                 "email": "director@gmail.com",
+                "status": "rejected",
+                "time": "2024-11-16 13:21:11",
+                "comment": "asdfasdf"
+            },
+            {
+                "role": "accountant",
+                "email": "accountant@gmail.com",
+                "status": "pending",
+                "time": "2024-11-16 13:15:30",
+                "comment": "da chi"
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 222233,
+                "so_hoa_don": "",
+                "expense_payee": "OPS",
+                "expense_doc": "",
+                "expense_file": ""
+            },
+            {
+                "expense_kind": "Customs + Phi\u0301 NH CSHT",
+                "expense_amount": 111111,
+                "so_hoa_don": "",
+                "expense_payee": "OPS",
+                "expense_doc": "",
+                "expense_file": ""
+            }
+        ],
+        "shipper": "Kaka 1234",
+        "billTo": "Segina-SOC",
+        "volume": "1x40",
+        "payment_lo": "555",
+        "loai_hinh": "nhap",
+        "customs_manifest_on": "1234456",
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "PH\u1ea0M THANH T\u00d9NG",
+        "operator_email": "ptung23082001@gmail.com",
+        "total_actual": 0,
+        "created_at": "2024-11-16 11:49:42",
+        "id": 232,
+        "delivery_address": "Quan 4",
+        "delivery_time": "2024-11-06",
+        "delivery_pct": "1324",
+        "trucking": 11111100,
+        "trunkingVat": "12",
+        "trunkingIncl": "on",
+        "trunkingExcl": "",
+        "stuffing": 22222200,
+        "stuffingVat": "12",
+        "stuffingIncl": "on",
+        "stuffingExcl": "",
+        "liftOnOff": 33333000,
+        "liftOnOffVat": "12",
+        "liftOnOffIncl": "on",
+        "liftOnOffExcl": "",
+        "chiHo": 44444000,
+        "chiHoVat": "12",
+        "chiHoIncl": "on",
+        "chiHoExcl": "",
+        "amount": 333344,
+        "file_path": "Phieu de nghi thanh toan_id_232_time_11_2024.pdf"
+    },
+    {
+        "instruction_no": 4,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
                 "status": "approved",
-                "time": "2024-11-16 06:03:54",
+                "time": "2024-11-16 12:16:42",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "sale1@gmail.com",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "",
+                "status": "pending",
+                "time": "",
                 "comment": ""
             },
             {
@@ -33,142 +118,176 @@
         ],
         "expenses": [
             {
-                "expense_kind": "tst 112",
-                "expense_amount": 3333,
-                "so_hoa_don": "hd001",
+                "expense_kind": "tst",
+                "expense_amount": 22222244,
+                "so_hoa_don": "",
                 "expense_payee": "OPS",
                 "expense_doc": "",
-                "expense_file": "6734d64b39509_Phieu_de_nghi_thanh_toan_id_1_time_11_2024.pdf"
+                "expense_file": ""
             },
             {
-                "expense_kind": "tst 112",
-                "expense_amount": 11111,
+                "expense_kind": "tst2",
+                "expense_amount": 33333344,
                 "so_hoa_don": "",
                 "expense_payee": "OPS",
                 "expense_doc": "",
                 "expense_file": ""
             }
         ],
-        "shipper": "Neymar jr 123",
+        "shipper": "Neymar",
         "billTo": "1x40",
         "volume": "1x400",
         "payment_lo": "3333",
         "loai_hinh": "nhap",
         "customs_manifest_on": "12345642",
-        "total_actual": 60000000,
         "received_back_on": "",
         "by": "",
         "operator_name": "PH\u1ea0M THANH T\u00d9NG",
         "operator_email": "ptung23082001@gmail.com",
-        "created_at": "2024-11-13 17:39:39",
-        "id": 223,
-        "updated_at": "2024-11-14 18:11:19",
-        "file_path": "Phieu de nghi thanh toan_id_223_time_11_2024.pdf",
-        "delivery_address": "Quan 4 56",
-        "delivery_time": "2024-11-22",
-        "delivery_pct": "132455",
-        "trucking": "Trucking 113",
-        "trunkingVat": "113",
-        "trunkingIncl": "",
-        "trunkingExcl": "on",
-        "stuffing": "customs 123",
-        "stuffingVat": "123",
-        "stuffingIncl": "on",
-        "stuffingExcl": "",
-        "liftOnOff": "Lift on\/off 133",
-        "liftOnOffVat": "133",
-        "liftOnOffIncl": "on",
-        "liftOnOffExcl": "",
-        "chiHo": "Chi h\u00f4\u0323 143",
-        "chiHoVat": "143",
-        "chiHoIncl": "on",
-        "chiHoExcl": "",
-        "amount": "14444"
+        "total_actual": 0,
+        "created_at": "2024-11-16 12:13:01",
+        "id": 241
     },
     {
-        "instruction_no": 2,
+        "instruction_no": 5,
         "approval": [
             {
                 "role": "leader",
                 "email": "leader1@gmail.com",
                 "status": "approved",
-                "time": "2024-11-16 05:58:26",
+                "time": "2024-11-16 13:27:48",
                 "comment": ""
             },
             {
                 "role": "sale",
                 "email": "sale1@gmail.com",
                 "status": "approved",
-                "time": "2024-11-16 06:01:19",
-                "comment": "sdfasdf"
+                "time": "2024-11-16 13:31:54",
+                "comment": ""
             },
             {
                 "role": "director",
                 "email": "director@gmail.com",
                 "status": "approved",
-                "time": "2024-11-16 06:01:52",
+                "time": "2024-11-16 13:32:08",
                 "comment": ""
             },
             {
                 "role": "accountant",
                 "email": "accountant@gmail.com",
                 "status": "approved",
-                "time": "2024-11-16 06:31:58",
+                "time": "2024-11-16 13:32:33",
+                "comment": "okokok"
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "tst",
+                "expense_amount": 222222,
+                "so_hoa_don": "hd002",
+                "expense_payee": "OPS",
+                "expense_doc": "",
+                "expense_file": "67388fbb96755_Invoice___INV_100___Copy__4_.pdf"
+            },
+            {
+                "expense_kind": "tst2",
+                "expense_amount": 333333,
+                "so_hoa_don": "hd001",
+                "expense_payee": "OPS",
+                "expense_doc": "",
+                "expense_file": "67388f88644c7_Phieu_de_nghi_thanh_toan_id_1_time_11_2024.pdf"
+            }
+        ],
+        "shipper": "Neymar",
+        "billTo": "1x40",
+        "volume": "1x400",
+        "payment_lo": "3333",
+        "loai_hinh": "nhap",
+        "customs_manifest_on": "12345642",
+        "received_back_on": "",
+        "by": "",
+        "operator_name": "PH\u1ea0M THANH T\u00d9NG",
+        "operator_email": "ptung23082001@gmail.com",
+        "total_actual": 0,
+        "created_at": "2024-11-16 13:26:48",
+        "id": 245,
+        "updated_at": "2024-11-16 13:27:39",
+        "delivery_address": "Quan 4",
+        "delivery_time": "2024-11-12",
+        "delivery_pct": "asdf",
+        "trucking": 1111111,
+        "trunkingVat": "12",
+        "trunkingIncl": "on",
+        "trunkingExcl": "",
+        "stuffing": 2222222,
+        "stuffingVat": "12",
+        "stuffingIncl": "on",
+        "stuffingExcl": "",
+        "liftOnOff": 3333333,
+        "liftOnOffVat": "12",
+        "liftOnOffIncl": "on",
+        "liftOnOffExcl": "",
+        "chiHo": 4444444,
+        "chiHoVat": "12",
+        "chiHoIncl": "on",
+        "chiHoExcl": "",
+        "amount": "555555",
+        "file_path": "Phieu de nghi thanh toan_id_245_time_11_2024.pdf"
+    },
+    {
+        "instruction_no": 6,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "sale1@gmail.com",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "",
+                "status": "pending",
+                "time": "",
+                "comment": ""
+            },
+            {
+                "role": "accountant",
+                "email": "",
+                "status": "pending",
+                "time": "",
                 "comment": ""
             }
         ],
         "expenses": [
             {
                 "expense_kind": "tst",
-                "expense_amount": 10000004,
-                "so_hoa_don": "hd001",
+                "expense_amount": 1000000,
+                "so_hoa_don": "",
                 "expense_payee": "OPS",
                 "expense_doc": "",
-                "expense_file": "67381f237e556_invoice_sample_PJ_door.pdf"
-            },
-            {
-                "expense_kind": "tst2",
-                "expense_amount": 20000004,
-                "so_hoa_don": "hd002",
-                "expense_payee": "OPS",
-                "expense_doc": "",
-                "expense_file": "67381fa275ace_Phieu_de_nghi_thanh_toan_id_1_time_11_2024.pdf"
+                "expense_file": null
             }
         ],
-        "shipper": "Neymar Jr",
+        "shipper": "Neymar",
         "billTo": "1x40",
-        "volume": "1x500",
-        "payment_lo": "12345",
+        "volume": "1x400",
+        "payment_lo": "3333",
         "loai_hinh": "nhap",
         "customs_manifest_on": "12345642",
-        "total_actual": 6000000,
         "received_back_on": "",
         "by": "",
         "operator_name": "PH\u1ea0M THANH T\u00d9NG",
         "operator_email": "ptung23082001@gmail.com",
-        "created_at": "2024-11-16 05:27:15",
-        "id": 227,
-        "updated_at": "2024-11-16 05:56:55",
-        "file_path": "Phieu de nghi thanh toan_id_227_time_11_2024.pdf",
-        "delivery_address": "Quan 4",
-        "delivery_time": "2024-11-13",
-        "delivery_pct": "11356",
-        "trucking": "Trucking",
-        "trunkingVat": "123",
-        "trunkingIncl": "on",
-        "trunkingExcl": "on",
-        "stuffing": "customs",
-        "stuffingVat": "123",
-        "stuffingIncl": "on",
-        "stuffingExcl": "on",
-        "liftOnOff": "Lift on\/off",
-        "liftOnOffVat": "133",
-        "liftOnOffIncl": "on",
-        "liftOnOffExcl": "on",
-        "chiHo": "Chi h\u00f4\u0323",
-        "chiHoVat": "143",
-        "chiHoIncl": "on",
-        "chiHoExcl": "on",
-        "amount": "30000008"
+        "total_actual": 0,
+        "created_at": "2024-11-16 13:55:39",
+        "id": 247
     }
 ]

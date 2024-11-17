@@ -78,6 +78,11 @@ $liftOnOffExcl = $request['liftOnOffExcl'] == 'on' ? "<img src='https://static-0
 $chiHoIncl = $request['chiHoIncl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
 $chiHoExcl = $request['chiHoExcl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
 
+$truckingFormatCurrency = (!empty($request['trucking']) ? number_format($request['trucking'], 0, ",", ".") : "");
+$stuffingFormatCurrency = (!empty($request['stuffing']) ? number_format($request['stuffing'], 0, ",", ".") : "");
+$liftOnOffFormatCurrency = (!empty($request['liftOnOff']) ? number_format($request['liftOnOff'], 0, ",", ".") : "");
+$chiHoFormatCurrency = (!empty($request['chiHo']) ? number_format($request['chiHo'], 0, ",", ".") : "");
+
 $rowsTable = "";
 
 if (count($request['expenses']) > 0) {
@@ -332,7 +337,7 @@ $htmlContent = "
               <td class='cell-item'>
                   <div class='form-group'>
                       <label for='payment-content'>Trucking:</label>
-                      <span>{$request['trucking']}</span>
+                      <span>{$truckingFormatCurrency}</span>
                   </div>
               </td>
               <td>
@@ -365,7 +370,7 @@ $htmlContent = "
               <td class='cell-item'>
                   <div class='form-group'>
                     <label for='payment-content'>Stuffing & customs & Phyto:</label>
-                    <span>{$request['stuffing']}</span>
+                    <span>{$stuffingFormatCurrency}</span>
                 </div>
               </td>
               <td>
@@ -398,7 +403,7 @@ $htmlContent = "
               <td class='cell-item'>
                   <div class='form-group'>
                       <label for='payment-content'>Lift on/off:</label>
-                      <span>{$request['liftOnOff']}</span>
+                      <span>{$liftOnOffFormatCurrency}</span>
                   </div>
               </td>
               <td>
@@ -431,7 +436,7 @@ $htmlContent = "
               <td class='cell-item'>
                   <div class='form-group'>
                       <label for='payment-content'>Chi hộ:</label>
-                      <span>{$request['chiHo']}</span>
+                      <span>{$chiHoFormatCurrency}</span>
                   </div>
               </td>
               <td>

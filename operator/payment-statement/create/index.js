@@ -53,7 +53,13 @@ function toggleExpenseFields(currentInput) {
   const tableRow = currentInput.closest("tr"); // Locate the current row
 
   if (currentInput.value) {
-    const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+    const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
+    // check if not a number
+    if (isNaN(advanceAmount)) {
+      alert('Vui lòng nhập số');
+      currentInput.value = '';
+      return;
+    }
     currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
   }
 }
@@ -82,7 +88,7 @@ function updateAmountText(currentInput) {
 }
 
 function formatNumber(num) {
-  return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
 const submitForm = document.getElementById("expenseForm");

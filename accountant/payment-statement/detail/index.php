@@ -205,7 +205,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="trucking" placeholder="" name="trucking" required value="<?= $data['trucking'] ?>" disabled>
+            <input type="text" class="form-control" id="trucking" placeholder="" name="trucking" required value="<?= number_format($data['trucking'], 0, ',', '.') ?>" disabled>
           </div>
           <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -230,7 +230,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="stuffing" placeholder="" name="stuffing" required value="<?= $data['stuffing'] ?>" disabled>
+            <input type="text" class="form-control" id="stuffing" placeholder="" name="stuffing" required value="<?= number_format($data['stuffing'], 0, ',', '.') ?>" disabled>
           </div>
           <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -255,7 +255,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="liftOnOff" placeholder="" name="liftOnOff" required value="<?= $data['liftOnOff'] ?>" disabled>
+            <input type="text" class="form-control" id="liftOnOff" placeholder="" name="liftOnOff" required value="<?= number_format($data['liftOnOff'], 0, ',', '.') ?>" disabled>
           </div>
           <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -280,7 +280,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="chiHo" placeholder="" name="chiHo" required value="<?= $data['chiHo'] ?>" disabled>
+            <input type="text" class="form-control" id="chiHo" placeholder="" name="chiHo" required value="<?= number_format($data['chiHo'], 0, ',', '.') ?>" disabled>
           </div>
           <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -343,7 +343,7 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required id="expenses_amount" disabled value="<?= $expense['expense_amount'] ?>"></td>
+                <td><input type="text" class="form-control" required id="expenses_amount" disabled value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
@@ -362,8 +362,8 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" disabled></td>
+              <td colspan="2" class="text-end"></td>
+              <td></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
@@ -402,11 +402,11 @@ if ($instructionNo !== null) {
     </form>
     <div class="d-flex align-items-center justify-content-end gap-3">
       <div class="d-flex justify-content-end pb-3">
-        <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button>
+        <button type="button" class="btn btn-success" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Chi Tiền</button>
       </div>
-      <div class="d-flex justify-content-end pb-3">
+      <!-- <div class="d-flex justify-content-end pb-3">
         <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button>
-      </div>
+      </div> -->
 
     </div>
 
@@ -415,13 +415,13 @@ if ($instructionNo !== null) {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận từ chối</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận chi tiền</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="message-text" class="col-form-label">Lý do:</label>
+                <label for="message-text" class="col-form-label">Ghi chú:</label>
                 <textarea class="form-control" id="message-text"></textarea>
               </div>
             </form>
@@ -440,16 +440,16 @@ if ($instructionNo !== null) {
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const directorData = <?= json_encode($directorData) ?>;
 
-    const pheDuyetBtn = document.getElementById('phe_duyet_btn');
+    // const pheDuyetBtn = document.getElementById('phe_duyet_btn');
     const tuChoiBtn = document.getElementById('tu_choi_btn');
 
     const expensesAmount = document.getElementById('expenses_amount');
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
-    const totalActual = document.getElementById('total_actual');
-    const totalActualValue = totalActual.value;
-    totalActual.value = formatNumber(totalActualValue);
+    // const totalActual = document.getElementById('total_actual');
+    // const totalActualValue = totalActual.value;
+    // totalActual.value = formatNumber(totalActualValue);
 
     const soTienDoc = document.getElementById('soTien');
     const advanceAmount = soTienDoc.value;
@@ -459,7 +459,7 @@ if ($instructionNo !== null) {
 
 
     function updateAmountText(currentInput) {
-      const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+      const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
       // check if not a number
       if (isNaN(advanceAmount)) {
         alert('Vui lòng nhập số');
@@ -482,7 +482,7 @@ if ($instructionNo !== null) {
 
     document.getElementById('rejectSubmitButton').addEventListener('click', () => {
       const messageText = document.getElementById('message-text').value;
-      handleApprovePayment('rejected', messageText);
+      handleApprovePayment('approved', messageText);
       // Close the modal
       const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
       modal.hide();
@@ -499,7 +499,7 @@ if ($instructionNo !== null) {
     }
 
     function formatNumber(num) {
-      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function convertNumberToTextVND(total) {
@@ -574,7 +574,6 @@ if ($instructionNo !== null) {
       };
 
       // disable button
-      pheDuyetBtn.disabled = true;
       tuChoiBtn.disabled = true;
 
       // Send data to the server using fetch
@@ -598,7 +597,7 @@ if ($instructionNo !== null) {
                 `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
                 `Tên khách hàng: ${itemData.shipper}\n` +
                 `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người phê duyệt:  <?php echo $fullName; ?> - <?php echo $email; ?>` +
+                `Người phê duyệt:  <?php echo $fullName; ?> - <?php echo $email; ?>\n` +
                 `Thời gian phê duyệt: ${data.data.approval[3].time}`;
             } else {
               telegramMessage = `**Yêu cầu đã bị Kế toán từ chối!**\n` +
@@ -641,14 +640,12 @@ if ($instructionNo !== null) {
 
             alert("Approval status updated successfully!");
             // enable button
-            pheDuyetBtn.disabled = false;
             tuChoiBtn.disabled = false;
 
             window.location.href = '../../index.php';
           } else {
             alert("Failed to update approval status: " + data.message);
             // enable button
-            pheDuyetBtn.disabled = false;
             tuChoiBtn.disabled = false;
           }
         })
@@ -656,7 +653,6 @@ if ($instructionNo !== null) {
           console.error('Error:', error);
           alert("An error occurred. Please try again.");
           // enable button
-          pheDuyetBtn.disabled = false;
           tuChoiBtn.disabled = false;
         });
     }

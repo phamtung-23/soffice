@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $newExpenses = [];
       if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
         for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-          $expenseAmount = (float)str_replace(',', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
+          $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
           $soHoaDon = $_POST['so_hoa_don'][$i] ?? $entry['expenses'][$i]['so_hoa_don'] ?? "";
           $expenseFile = $entry['expenses'][$i]['expense_file'] ?? "";
           // Store expense data
@@ -92,6 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           $entry[$key] = is_array($value) ? $value : trim($value);
         }
       }
+
+      $entry['trucking'] = (float)str_replace('.', '', $_POST['trucking']);
+      $entry['stuffing'] = (float)str_replace('.', '', $_POST['stuffing']);
+      $entry['liftOnOff'] = (float)str_replace('.', '', $_POST['liftOnOff']);
+      $entry['chiHo'] = (float)str_replace('.', '', $_POST['chiHo']);
+
 
       $entry['trunkingIncl'] = isset($_POST['trunkingIncl']) ? $_POST['trunkingIncl'] : "";
       $entry['trunkingExcl'] = isset($_POST['trunkingExcl']) ? $_POST['trunkingExcl'] : "";

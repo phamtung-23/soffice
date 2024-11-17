@@ -115,7 +115,6 @@ sort($years);
                 request.operator_name,
                 request.shipper,
                 request.customs_manifest_on,
-                formatNumber(getFirstExpenseAmountWithPayee(request, 'OPS').toString()),
                 request.approval[0].status,
                 request.approval[1].status,
                 request.approval[2].status,
@@ -226,7 +225,6 @@ sort($years);
             <th>Họ tên Operator</th>
             <th>Tên Khách hàng</th>
             <th>Số tờ khai</th>
-            <th>Số tiền</th>
             <th>Leader</th>
             <th>Sale</th>
             <th>Director</th>

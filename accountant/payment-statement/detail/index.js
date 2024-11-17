@@ -71,10 +71,6 @@ function updateAmountText(number) {
   console.log(advanceAmountText);
 }
 
-function formatNumber(num) {
-  return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
 
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
 const forms = document.querySelectorAll('.needs-validation')

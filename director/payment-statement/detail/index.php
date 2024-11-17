@@ -395,7 +395,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="trucking" placeholder="" name="trucking" required value="<?= $data['trucking'] ?>">
+            <input type="text" class="form-control" id="trucking" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="trucking" required value="<?= number_format($data['trucking'], 0, ',', '.') ?>">
           </div>
           <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -420,7 +420,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="stuffing" placeholder="" name="stuffing" required value="<?= $data['stuffing'] ?>">
+            <input type="text" class="form-control" id="stuffing" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="stuffing" required value="<?= number_format($data['stuffing'], 0, ',', '.') ?>">
           </div>
           <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -445,7 +445,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="liftOnOff" placeholder="" name="liftOnOff" required value="<?= $data['liftOnOff'] ?>">
+            <input type="text" class="form-control" id="liftOnOff" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="liftOnOff" required value="<?= number_format($data['liftOnOff'], 0, ',', '.') ?>">
           </div>
           <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -470,7 +470,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="chiHo" placeholder="" name="chiHo" required value="<?= $data['chiHo'] ?>">
+            <input type="text" class="form-control" id="chiHo" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="chiHo" required value="<?= number_format($data['chiHo'], 0, ',', '.') ?>">
           </div>
           <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
           <div class="col-sm-2">
@@ -533,7 +533,7 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control expense-amount" required name="expense_amount[]" id="expenses_amount" value="<?= number_format($expense['expense_amount']) ?>"></td>
+                <td><input type="text" class="form-control expense-amount" required name="expense_amount[]" id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control expense-payee" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
@@ -552,8 +552,8 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>"></td>
+              <td colspan="2" class="text-end"></td>
+              <td></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
@@ -573,7 +573,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="operatorName" class="col-sm-1 col-form-label">Salesman:</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $leaderData['fullname'] ?>">
+            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $saleUserData['fullname'] ?>" >
           </div>
 
           <label for="customs_manifest_on" class="col-sm-1 col-form-label">Date:</label>
@@ -583,7 +583,7 @@ if ($instructionNo !== null) {
 
           <label for="customs_manifest_on" class="col-sm-2 col-form-label">Approved by:</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $saleUserData['fullname'] ?>">
+            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $leaderData['fullname'] ?>">
           </div>
         </div>
       </div>
@@ -636,22 +636,21 @@ if ($instructionNo !== null) {
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
-    const totalActual = document.getElementById('total_actual');
-    const totalActualValue = totalActual.value;
-    totalActual.value = formatNumber(totalActualValue);
+    // const totalActual = document.getElementById('total_actual');
+    // const totalActualValue = totalActual.value;
+    // totalActual.value = formatNumber(totalActualValue);
 
-    // function updateAmountText(currentInput) {
-    //   const advanceAmount = currentInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
-    //   // check if not a number
-    //   if (isNaN(advanceAmount)) {
-    //     alert('Vui lòng nhập số');
-    //     currentInput.value = '';
-    //     return;
-    //   }
-    //   currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-    //   const advanceAmountText = convertNumberToTextVND(advanceAmount);
-    //   document.getElementById('soTienBangChu').value = advanceAmountText;
-    // }
+    function updateAmountText(currentInput) {
+      //  Loại bỏ dấu cham '.' trong số
+      let advanceAmount = currentInput.value.replace(/\./g, '');
+      // check if not a number
+      if (isNaN(advanceAmount)) {
+        alert('Vui lòng nhập số');
+        currentInput.value = '';
+        return;
+      }
+      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    }
 
     const exampleModal = document.getElementById('exampleModal')
     if (exampleModal) {
@@ -773,19 +772,8 @@ if ($instructionNo !== null) {
       }
     });
 
-    function updateAmountText(currentInput) {
-      const advanceAmount = currentInput.value.replace(/,/g, ''); // Remove commas
-      // Check if the value is not a valid number
-      if (isNaN(advanceAmount)) {
-        alert('Vui lòng nhập số');
-        currentInput.value = '';
-        return;
-      }
-      currentInput.value = formatNumber(advanceAmount); // Format with commas
-    }
-
     function formatNumber(num) {
-      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function updateTotalOpsAmount() {
@@ -797,7 +785,7 @@ if ($instructionNo !== null) {
         const payeeInput = row.querySelector('.expense-payee');
 
         if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
-          const amount = parseFloat(amountInput.value.replace(/,/g, '')) || 0; // Strip commas for calculation
+          const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
           totalOpsAmount += amount;
         }
       });
@@ -813,7 +801,7 @@ if ($instructionNo !== null) {
       const amountInput = row.querySelector('.expense-amount');
       const previousValue = payeeInput.getAttribute('data-prev-value') || '';
       const newValue = payeeInput.value.trim().toLowerCase();
-      const amount = parseFloat(amountInput.value.replace(/,/g, '')) || 0;
+      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
 
       if (previousValue === 'ops' && newValue !== 'ops') {
         updateTotalOpsAmount(); // Recalculate after removing 'ops'
@@ -843,7 +831,7 @@ if ($instructionNo !== null) {
           formData.append('message', message);
 
           if (status === 'approved') {
-            const amountString = document.getElementById('soTien').value.replace(/,/g, '');
+            const amountString = document.getElementById('soTien').value.replace(/\./g, '');
             const amount = parseInt(amountString);
             formData.append('amount', amount);
           }
@@ -950,7 +938,7 @@ if ($instructionNo !== null) {
       };
 
 
-      const amountString = document.getElementById('soTien').value.replace(/,/g, '');
+      const amountString = document.getElementById('soTien').value.replace(/\./g, '');
       const amount = parseInt(amountString);
       updateData.amount = amount ? amount : 0;
 

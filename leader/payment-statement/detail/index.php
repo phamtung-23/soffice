@@ -358,7 +358,7 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ".", ",") ?>" oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
@@ -377,8 +377,8 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
+              <td colspan="2" class="text-end"></td>
+              <td></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
@@ -442,9 +442,9 @@ if ($instructionNo !== null) {
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
-    const totalActual = document.getElementById('total_actual');
-    const totalActualValue = totalActual.value;
-    totalActual.value = formatNumber(totalActualValue);
+    // const totalActual = document.getElementById('total_actual');
+    // const totalActualValue = totalActual.value;
+    // totalActual.value = formatNumber(totalActualValue);
 
     const exampleModal = document.getElementById('exampleModal')
     if (exampleModal) {
@@ -460,7 +460,13 @@ if ($instructionNo !== null) {
       const tableRow = currentInput.closest("tr"); // Locate the current row
 
       if (currentInput.value) {
-        const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+        const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
+        // check if not a number
+        if (isNaN(advanceAmount)) {
+          alert('Vui lòng nhập số');
+          currentInput.value = '';
+          return;
+        }
         currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
       }
     }
@@ -484,7 +490,7 @@ if ($instructionNo !== null) {
     }
 
     function formatNumber(num) {
-      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function convertNumberToTextVND(total) {
