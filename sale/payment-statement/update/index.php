@@ -356,12 +356,12 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="trucking" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="trucking" required value="<?php 
-                if (isset($data['trucking'])) {
-                  echo number_format($data['trucking'], 0, ',', '.');
-                } else {
-                  echo '';
-                }?>">
+              <input type="text" class="form-control" id="trucking" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="trucking" required value="<?php
+                                                                                                                                                                  if (isset($data['trucking'])) {
+                                                                                                                                                                    echo number_format($data['trucking'], 0, ',', '.');
+                                                                                                                                                                  } else {
+                                                                                                                                                                    echo '';
+                                                                                                                                                                  } ?>">
             </div>
             <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
@@ -395,12 +395,12 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="stuffing" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="stuffing" required value="<?php 
-                if (isset($data['stuffing'])) {
-                  echo number_format($data['stuffing'], 0, ',', '.');
-                } else {
-                  echo '';
-                }?>">
+              <input type="text" class="form-control" id="stuffing" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="stuffing" required value="<?php
+                                                                                                                                                                  if (isset($data['stuffing'])) {
+                                                                                                                                                                    echo number_format($data['stuffing'], 0, ',', '.');
+                                                                                                                                                                  } else {
+                                                                                                                                                                    echo '';
+                                                                                                                                                                  } ?>">
             </div>
             <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
@@ -435,12 +435,12 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="liftOnOff" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="liftOnOff" required value="<?php 
-                if (isset($data['liftOnOff'])) {
-                  echo number_format($data['liftOnOff'], 0, ',', '.');
-                } else {
-                  echo '';
-                }?>">
+              <input type="text" class="form-control" id="liftOnOff" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="liftOnOff" required value="<?php
+                                                                                                                                                                    if (isset($data['liftOnOff'])) {
+                                                                                                                                                                      echo number_format($data['liftOnOff'], 0, ',', '.');
+                                                                                                                                                                    } else {
+                                                                                                                                                                      echo '';
+                                                                                                                                                                    } ?>">
             </div>
             <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
@@ -475,12 +475,12 @@ if ($instructionNo !== null) {
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
             <div class="col-sm-3">
-              <input type="text" class="form-control" id="chiHo" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="chiHo" required value="<?php 
-                if (isset($data['chiHo'])) {
-                  echo number_format($data['chiHo'], 0, ',', '.');
-                } else {
-                  echo '';
-                }?>">
+              <input type="text" class="form-control" id="chiHo" placeholder="Ex: 1.000.000" oninput="updateAmountText(this)" name="chiHo" required value="<?php
+                                                                                                                                                            if (isset($data['chiHo'])) {
+                                                                                                                                                              echo number_format($data['chiHo'], 0, ',', '.');
+                                                                                                                                                            } else {
+                                                                                                                                                              echo '';
+                                                                                                                                                            } ?>">
             </div>
             <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
             <div class="col-sm-2">
@@ -573,8 +573,8 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="2" class="text-end"></td>
-              <td> </td>
+              <td colspan="2" class="text-end">TOTAL</td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" disabled></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
@@ -640,9 +640,9 @@ if ($instructionNo !== null) {
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
-    // const totalActual = document.getElementById('total_actual');
-    // const totalActualValue = totalActual.value;
-    // totalActual.value = formatNumber(totalActualValue);
+    const totalActual = document.getElementById('total_actual');
+    const totalActualValue = totalActual.value;
+    totalActual.value = formatNumber(totalActualValue);
 
     function updateAmountText(currentInput) {
       //  Loại bỏ dấu cham '.' trong số

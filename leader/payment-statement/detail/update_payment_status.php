@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
       }
 
-      $entry['total_actual'] = (float)str_replace(',', '', $entry['total_actual'] ?? '0');
+      $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
 
       foreach ($entry['approval'] as &$approval) {
         if ($approval['role'] === 'leader' && $approval['email'] === $_SESSION['user_id']) {

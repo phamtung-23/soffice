@@ -384,9 +384,9 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-end"></td>
+                <td colspan="2" class="text-end">TOTAL</td>
                 <td>
-                  <!-- <input type="text" id="total_actual" name="total_actual" class="form-control" required oninput="updateAmountText(this)"> -->
+                  <input type="text" id="total_actual" name="total_actual" class="form-control" oninput="updateAmountText(this)">
                 </td>
                 <td></td>
                 <td>

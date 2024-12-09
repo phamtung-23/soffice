@@ -83,7 +83,7 @@ function deleteRow(button) {
 }
 
 function updateAmountText(currentInput) {
-  const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+  const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
   currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
 }
 

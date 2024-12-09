@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $newExpenses = [];
       if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
         for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-          $expenseAmount = (float)str_replace(',', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
+          $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
           $soHoaDon = $_POST['so_hoa_don'][$i] ?? $entry['expenses'][$i]['so_hoa_don'] ?? "";
           $fileUploaded = isset($_FILES['expense_file']['name'][$i]) && $_FILES['expense_file']['error'][$i] === UPLOAD_ERR_OK;
           $expenseFile = $fileUploaded ? $_FILES['expense_file']['name'][$i] : $entry['expenses'][$i]['expense_file'] ?? null;
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
       }
 
-      $entry['total_actual'] = (float)str_replace(',', '', $entry['total_actual'] ?? '0');
+      $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
       $entry['updated_at'] = date("Y-m-d H:i:s");
 
       foreach ($entry['approval'] as &$approval) {

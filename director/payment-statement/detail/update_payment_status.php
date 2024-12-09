@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $entry['chiHoIncl'] = isset($_POST['chiHoIncl']) ? $_POST['chiHoIncl'] : "";
       $entry['chiHoExcl'] = isset($_POST['chiHoExcl']) ? $_POST['chiHoExcl'] : "";
 
-      $entry['total_actual'] = (float)str_replace(',', '', $entry['total_actual'] ?? '0');
+      $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
 
       foreach ($entry['approval'] as &$approval) {
         if ($approval['role'] === 'director') {

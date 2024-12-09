@@ -85,3 +85,10 @@
 [2024-11-16 13:30:55] /soffice/sale/payment-statement/update/update_payment_delivery.php: isUpdate: false
 [2024-11-16 13:31:24] /soffice/director/payment-statement/detail/update_payment_status_reject.php: Payment status updated for instruction number: 5
 [2024-11-16 13:31:54] /soffice/sale/payment-statement/update/update_payment_delivery.php: isUpdate: true
+[2024-11-17 16:06:00] /soffice/operator/payment-statement/update/update_payment_status.php: Operator 7
+[2024-11-17 16:06:00] /soffice/operator/payment-statement/update/update_payment_status.php: []
+[2024-11-17 16:06:00] /soffice/operator/payment-statement/update/update_payment_status.php: Operator 7 updated successfully
+[2024-11-17 16:08:55] /soffice/sale/payment-statement/update/update_payment_delivery.php: isUpdate: false
+[2024-11-17 16:17:58] /soffice/operator/payment-statement/update/update_payment_status.php: Operator 7
+[2024-11-17 16:17:58] /soffice/operator/payment-statement/update/update_payment_status.php: []
+[2024-11-17 16:17:58] /soffice/operator/payment-statement/update/update_payment_status.php: Operator 7 updated successfully

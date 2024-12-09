@@ -552,8 +552,8 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="2" class="text-end"></td>
-              <td></td>
+              <td colspan="2" class="text-end">TOTAL</td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" oninput="updateAmountText(this)" value="<?= $data['total_actual'] ?>"></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
@@ -573,7 +573,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="operatorName" class="col-sm-1 col-form-label">Salesman:</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $saleUserData['fullname'] ?>" >
+            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $saleUserData['fullname'] ?>">
           </div>
 
           <label for="customs_manifest_on" class="col-sm-1 col-form-label">Date:</label>
@@ -636,9 +636,9 @@ if ($instructionNo !== null) {
     const expensesAmountValue = expensesAmount.value;
     expensesAmount.value = formatNumber(expensesAmountValue);
 
-    // const totalActual = document.getElementById('total_actual');
-    // const totalActualValue = totalActual.value;
-    // totalActual.value = formatNumber(totalActualValue);
+    const totalActual = document.getElementById('total_actual');
+    const totalActualValue = totalActual.value;
+    totalActual.value = formatNumber(totalActualValue);
 
     function updateAmountText(currentInput) {
       //  Loại bỏ dấu cham '.' trong số

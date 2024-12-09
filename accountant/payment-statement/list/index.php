@@ -169,7 +169,7 @@ sort($years);
 
 <body>
   <div class="header">
-    <h1>Trang chủ</h1>
+    <h1>Accountant Dashboard</h1>
   </div>
   <div class="menu">
     <span class="hamburger" onclick="toggleMenu()">&#9776;</span>

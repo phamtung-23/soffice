@@ -67,9 +67,197 @@ if ($instructionNo !== null) {
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    /* Basic styles for layout */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+
+    .menu {
+      background-color: #333;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .icon {
+      padding: 10px 20px;
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .menu a {
+      float: left;
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .menu a:hover {
+      background-color: #575757;
+    }
+
+    .menu a.logout {
+      float: right;
+      background-color: #f44336;
+    }
+
+    .menu a.logout:hover {
+      background-color: #d32f2f;
+    }
+
+    /* Hamburger icon (hidden by default) */
+    .hamburger {
+      display: none;
+      float: right;
+      font-size: 28px;
+      cursor: pointer;
+      color: white;
+      padding: 10px 20px;
+    }
+
+    /* Basic responsive adjustments */
+    @media (max-width: 950px) {
+
+      /* Header and menu adjustments */
+      .header {
+        padding: 20px;
+        font-size: 1.5em;
+      }
+
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        float: none;
+        display: block;
+        text-align: left;
+        padding: 10px;
+      }
+
+      .menu a.logout {
+        float: none;
+        background-color: #f44336;
+        text-align: center;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      /* Smaller screens (mobile) */
+      .header h1 {
+        font-size: 1.2em;
+      }
+
+      .menu {
+        background-color: #333;
+        overflow: hidden;
+        display: block;
+      }
+
+      .menu a {
+        font-size: 0.9em;
+      }
+
+      .menu a {
+        display: none;
+        /* Hide menu links */
+      }
+
+      .menu a.logout {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
+        /* Show hamburger icon */
+      }
+
+      .menu.responsive a {
+        float: none;
+        /* Make links stack vertically */
+        display: block;
+        text-align: left;
+      }
+
+      .menu.responsive .logout {
+        float: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="header">
+    <h1>Operator Dashboard</h1>
+  </div>
+
+  <div class="menu">
+    <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
+    <div class='icon'>
+      <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
+    </div>
+    <a href="../../index.php">Home</a>
+    <a href="../../request.php">Tạo phiếu xin tạm ứng</a>
+    <a href="../../payment-statement/create">Tạo phiếu thanh toán</a>
+    <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
+    <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../../../logout.php" class="logout">Đăng xuất</a>
+  </div>
   <div class="container mt-5 mb-5">
     <form id="leader-form" class="needs-validation" novalidate>
       <div class="d-flex flex-column justify-content-center align-items-center">
@@ -172,7 +360,7 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ".", ",") ?>" oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
@@ -196,7 +384,7 @@ if ($instructionNo !== null) {
           <tfoot>
             <tr>
               <td colspan="3" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" required value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
@@ -278,7 +466,7 @@ if ($instructionNo !== null) {
       const tableRow = currentInput.closest("tr"); // Locate the current row
 
       if (currentInput.value) {
-        const advanceAmount = currentInput.value.replace(/,/g, ""); // Loại bỏ dấu phẩy
+        const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
         currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
       }
     }
@@ -302,7 +490,7 @@ if ($instructionNo !== null) {
     }
 
     function formatNumber(num) {
-      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     function convertNumberToTextVND(total) {
