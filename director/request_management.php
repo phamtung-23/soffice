@@ -80,6 +80,15 @@ sort($years);
             color: white;
             border: none;
             border-radius: 10px;
+            transition: opacity 0.5s ease; 
+        }
+        .submit-button2 {
+            margin: 5px 0px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: opacity 0.5s ease; 
         }
 
         .submit-approve {
@@ -955,7 +964,50 @@ function formatNumber(num) {
                 document.getElementById('advance-amount-words').value = '';
             }
         }
+          async function getPhoneAccountant() {
+            try {
+                // Fetch data from users.json without caching
+                const response = await fetch('../database/users.json', {
+                    cache: "no-store"
+                });
+
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                // Chuyển đổi phản hồi thành JSON
+                const usersData = await response.json();
+                const users = Object.values(usersData); // Chuyển đối tượng thành mảng
+
+               // Tìm người dùng theo email
+                const user = users.find(user => user.role === 'accountant');
+
+                // Kiểm tra xem có người dùng không
+                if (user) {
+                    //console.log("Số điện thoại của người dùng:", user.phone);
+                    return user.phone; // Trả về số điện thoại nếu tìm thấy
+                } else {
+                    
+                    return null; // Trả về null nếu không tìm thấy
+                }
+            } catch (error) {
+                console.error("Đã xảy ra lỗi:", error);
+            }
+        }
         async function approveRequest() {
+            
+             const button = document.querySelector(".submit-button2");
+            // Nếu nút đã bị vô hiệu hóa, không làm gì thêm
+            if (button.disabled) {
+                return;
+            }
+
+            if (button) {
+                button.textContent = "Đang xử lý";
+                button.disabled = true; // Vô hiệu hóa nút
+                button.style.opacity = "0.5"; // Làm mờ nút
+            }
             // Lấy thông tin từ các trường đầu vào
             const approvedAmount = document.getElementById('money_approve').value.replace(/\./g, ''); // Xóa dấu phẩy
             const approvedAmountText = document.getElementById('advance-amount-words').value; // Lấy chữ
@@ -1016,7 +1068,8 @@ function formatNumber(num) {
 
                 if (updateSuccess) {
                     //await fetchTemplateAndFill(request); // Gọi hàm fill template+
-                    alert('Đã ký thành công và gửi telegram cho các đầu mối!!!');
+                    await fetchTemplateAndFill(request); // Gọi hàm fill template+
+                    
 
                     const advance_amount = request.advance_amount; // Sử dụng thuộc tính của request         
                     const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền
@@ -1052,8 +1105,38 @@ function formatNumber(num) {
                             id_telegram: operator_phone // Truyền thêm thông tin operator_phone
                         })
                     });
+
+                     const accountant_phone = await getPhoneAccountant();
+                    
+
+                    const telegramMessage_2 = `Đề nghị tạm ứng đã được Giám đốc phê duyệt: \n` +
+                        `Thời gian duyệt: ${request.approval_time}\n` +
+                        `Người đề nghị: ${request.full_name}\n` +
+                        `Số tiền xin tạm ứng: ${advance_amountFormatted} VNĐ\n` +
+                        `----------------------\n` +
+                        `Số tiền phê duyệt: ${approve_amountFormatted} VNĐ\n` +
+                        `Số tiền bằng chữ: ${request.approved_amount_words}\n` +
+                        `Tên khách hàng: ${request.customer_name}\n` +
+                        `Số Bill/Booking: ${request.lot_number}\n` +
+                        `Số lượng: ${request.quantity}\n` +
+                        `Đơn vị: ${request.unit}\n` +
+                        `Nội dung: ${request.advance_description}\n` +
+                        `Ghi chú GĐ: **${request.approval_note}**` ;
+
+
+                    await fetch('../sendTelegram.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: telegramMessage_2,
+                            id_telegram: accountant_phone
+                        })
+                    });
+                    alert('Đã ký thành công và gửi telegram cho các đầu mối!!!');
                     cancel(); // Thực hiện hành động hủy nếu cần
-                    await fetchTemplateAndFill(request); // Gọi hàm fill template+
+                    
 
 
                 }
@@ -1173,7 +1256,7 @@ function formatNumber(num) {
             <textarea id="approve-note" rows="4" cols="50" placeholder="Nhập nội dung duyệt..."></textarea>
             <br><br>
 
-            <button class="submit-button" onclick="approveRequest()">Duyệt</button>
+            <button class="submit-button2" onclick="approveRequest()">Duyệt</button>
             <button class="reset-button" onclick="cancel()">Hủy</button>
         </div>
 

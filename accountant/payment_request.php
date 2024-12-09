@@ -473,7 +473,7 @@ sort($years);
                                 request.approved_amount_words,
                                 request.advance_description,
                                 request.approval_time,
-                                request.approved_filename ? `<a href="../director/pdfs/${request.approved_filename}" target="_blank">Xem Phiếu</a>` : ''
+                                request.approved_filename ? `<a href="../database/pdfs/${request.approved_filename}" target="_blank">Xem Phiếu</a>` : ''
                             ];
 
                             cells.forEach(cell => {
@@ -684,33 +684,27 @@ sort($years);
             }
         }
 
-        function updateAmountText() {
-            const advanceAmountInput = document.getElementById('advance-amount');
-            const advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
-            advanceAmountInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-            const advanceAmountText = convertNumberToTextVND(advanceAmount);
-            document.getElementById('advance-amount-words').value = advanceAmountText;
-        }
+       
 
         function formatNumber(num) {
-            return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+            num = String(num); 
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Replace comma with period
+}
 
-        function updateAmountText() {
-            const advanceAmountInput = document.getElementById('money_approve');
-            let advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
-
-            // Kiểm tra nếu giá trị là số và lớn hơn 0
-            if (!isNaN(advanceAmount) && advanceAmount > 0) {
-                advanceAmountInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-                const advanceAmountText = convertNumberToTextVND(advanceAmount);
-                document.getElementById('advance-amount-words').value = advanceAmountText; // Cập nhật chữ
-            } else {
-                // Nếu không phải là số hoặc <= 0, xóa ô chữ
-                document.getElementById('advance-amount-words').value = '';
-            }
-        }
+    
         async function approveRequest() {
+              const button = document.querySelector(".submit-button");
+            // Nếu nút đã bị vô hiệu hóa, không làm gì thêm
+            if (button.disabled) {
+                return;
+            }
+
+            if (button) {
+                button.textContent = "Đang xử lý";
+                button.disabled = true; // Vô hiệu hóa nút
+                button.style.opacity = "0.5"; // Làm mờ nút
+            }
+
             // Lấy thông tin từ các trường đầu vào
 
             const paymentNote = document.getElementById('approve-note').value.trim(); // Lấy ghi chú phê duyệt
@@ -747,7 +741,7 @@ sort($years);
                 request.payment_note = paymentNote;
                 request.accountant_email_payment = accountant_email;
                 const approved_amount = request.approved_amount; // Sử dụng thuộc tính của request
-                const approved_amountFormatted = approved_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Định dạng số tiền
+                const approved_amountFormatted = approved_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền; 
                 // Ghi lại thông tin đã cập nhật vào file JSON
                 const updateSuccess = await updateRequests(request, yearselect); // Gọi hàm updateRequests và chờ kết quả
 

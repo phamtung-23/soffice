@@ -124,29 +124,33 @@ if (file_exists($file)) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid #ddd;
+            table-layout: fixed;
         }
 
         th,
-        td {
-            padding: 8px;
-            text-align: left;
-            white-space: nowrap;
-            /* Prevent text from wrapping */
-        }
+td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 0.85em;
+    word-wrap: break-word;
+    white-space: normal;
+}
+th:nth-child(1),
+td:nth-child(1),
+th:nth-child(5),
+td:nth-child(5),
+th:nth-child(6),
+td:nth-child(6) {
+    width: 50px; /* Độ rộng nhỏ hơn cho các cột 1, 5 và 6 */
+}
 
-        th {
-            font-size: 6px;
-            /* Adjust this value as needed */
-            background-color: #f2f2f2;
-            padding: 6px;
-            text-align: left;
-        }
+th:nth-child(2),
+th:nth-child(4),
+td:nth-child(2),
+td:nth-child(4) {
+    width: 120px; /* Độ rộng lớn hơn cho cột Họ tên */
+}
 
         input[type="text"] {
             width: 100%;
@@ -170,31 +174,8 @@ if (file_exists($file)) {
             margin: auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            /* Forces table columns to fit evenly */
-        }
 
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid #ddd;
-            font-size: 0.85em;
-            min-width: 100px;
-            /* Adjust based on content */
-            word-wrap: break-word;
-            word-break: break-all;
-            /* Ensures long words break within cell */
-            white-space: normal;
-            /* Allows text wrapping */
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
+       
 
         /* Optional: Wrapping long text within cells */
         .wrap-text {
@@ -370,7 +351,7 @@ if (file_exists($file)) {
             }
         }
     </style>
-    </style>
+   
 
     <!-- DataTables CSS and jQuery -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
@@ -518,93 +499,99 @@ if (file_exists($file)) {
         </div>
 
     </div>
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable with individual column search
+        var table = $('#requestsTable').DataTable({
+            "language": {
+                "search": "Tìm kiếm nhanh:",
+                "lengthMenu": "Hiển thị _MENU_ phiếu trên mỗi trang",
+                "zeroRecords": "Không tìm thấy phiếu nào",
+                "info": "Hiển thị _START_ đến _END_ của _TOTAL_ phiếu",
+                "infoEmpty": "Hiển thị 0 đến 0 của 0 phiếu",
+                "infoFiltered": "(lọc từ _MAX_ phiếu)"
+            }
+        });
 
-    <script>
-        $(document).ready(function() {
-            // Initialize DataTable with individual column search
-            var table = $('#requestsTable').DataTable({
-                "language": {
-                    "search": "Tìm kiếm nhanh:",
-                    "lengthMenu": "Hiển thị _MENU_ phiếu trên mỗi trang",
-                    "zeroRecords": "Không tìm thấy phiếu nào",
-                    "info": "Hiển thị _START_ đến _END_ của _TOTAL_ phiếu",
-                    "infoEmpty": "Hiển thị 0 đến 0 của 0 phiếu",
-                    "infoFiltered": "(lọc từ _MAX_ phiếu)"
+        // Apply column search on each input field in the header
+        $('#requestsTable thead tr:eq(1) th').each(function(i) {
+            $('input', this).on('keyup change', function() {
+                if (table.column(i).search() !== this.value) {
+                    table.column(i).search(this.value).draw();
                 }
+                calculateTotal(); // Recalculate total after filtering
             });
+        });
 
-            // Apply column search on each input field in the header
-            $('#requestsTable thead tr:eq(1) th').each(function(i) {
-                $('input', this).on('keyup change', function() {
-                    if (table.column(i).search() !== this.value) {
-                        table.column(i).search(this.value).draw();
-                    }
-                    calculateTotal(); // Calculate total after filtering
-                });
-            });
-
-            // Initial total calculation
+        // Recalculate totals every time DataTable is redrawn
+        table.on('draw', function() {
             calculateTotal();
         });
 
-        // Toggle the responsive class to show/hide the menu
-        function toggleMenu() {
-            var menu = document.querySelector('.menu');
-            menu.classList.toggle('responsive');
-        }
+        // Initial total calculation
+        calculateTotal();
+    });
 
-        function calculateTotal() {
-            let table = document.getElementById('requestsTable');
-            let tr = table.getElementsByTagName('tr');
-            let totalAmount = 0; // Total requested amount
-            let totalApprovedAmount = 0; // Total approved amount
-            let totalReceivedAmount = 0; // Total received amount
-            let totalRefundedAmount = 0; // Total refunded amount
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+        var menu = document.querySelector('.menu');
+        menu.classList.toggle('responsive');
+    }
 
-            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
-                if (tr[i].style.display !== 'none') { // Only consider visible rows
-                    // Get the "Số tiền xin tạm ứng (VNĐ)" column
-                    let amountCell1 = tr[i].getElementsByTagName('td')[6]; // Adjust index for "Số tiền xin tạm ứng (VNĐ)"
-                    if (amountCell1) {
-                        let amount = parseFloat(amountCell1.innerText.replace(/\./g, '')); // Remove commas for parsing
-                        totalAmount += isNaN(amount) ? 0 : amount; // Ensure valid number
+    function calculateTotal() {
+        let table = document.getElementById('requestsTable');
+        let tr = table.getElementsByTagName('tr');
+        let totalAmount = 0; // Total requested amount
+        let totalApprovedAmount = 0; // Total approved amount
+        let totalReceivedAmount = 0; // Total received amount
+        let totalRefundedAmount = 0; // Total refunded amount
+
+        for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
+            if (tr[i].style.display !== 'none') { // Only consider visible rows
+                // Get the "Số tiền xin tạm ứng (VNĐ)" column
+                let amountCell1 = tr[i].getElementsByTagName('td')[6]; // Adjust index for "Số tiền xin tạm ứng (VNĐ)"
+                if (amountCell1) {
+                    let amount = parseFloat(amountCell1.innerText.replace(/\./g, '')); // Remove commas for parsing
+                    totalAmount += isNaN(amount) ? 0 : amount; // Ensure valid number
+                }
+                // Get the "Số tiền được duyệt (VNĐ)" column
+                let amountCell2 = tr[i].getElementsByTagName('td')[7]; // Adjust index for "Số tiền được duyệt (VNĐ)"
+                if (amountCell2) {
+                    let approvedAmount = parseFloat(amountCell2.innerText.replace(/\./g, '')); // Remove commas for parsing
+                    totalApprovedAmount += isNaN(approvedAmount) ? 0 : approvedAmount; // Ensure valid number
+
+                    // Calculate received amount based on column 12
+                    let receivedCell = tr[i].getElementsByTagName('td')[12]; // Adjust index for "Số tiền đã được nhận (VNĐ)"
+                    if (receivedCell && receivedCell.innerText) {
+                        totalReceivedAmount += approvedAmount; // Set to approved amount if there's a value
+                    } else {
+                        totalReceivedAmount += 0; // Set to 0 if no value
                     }
-                    // Get the "Số tiền được duyệt (VNĐ)" column
-                    let amountCell2 = tr[i].getElementsByTagName('td')[7]; // Adjust index for "Số tiền được duyệt (VNĐ)"
-                    if (amountCell2) {
-                        let approvedAmount = parseFloat(amountCell2.innerText.replace(/\./g, '')); // Remove commas for parsing
-                        totalApprovedAmount += isNaN(approvedAmount) ? 0 : approvedAmount; // Ensure valid number
 
-                        // Calculate received amount based on column 12
-                        let receivedCell = tr[i].getElementsByTagName('td')[12]; // Adjust index for "Số tiền đã được nhận (VNĐ)"
-                        if (receivedCell && receivedCell.innerText) {
-                            totalReceivedAmount += approvedAmount; // Set to approved amount if there's a value
-                        } else {
-                            totalReceivedAmount += 0; // Set to 0 if no value
-                        }
-
-                        // Calculate refunded amount based on column 13
-                        let refundedCell = tr[i].getElementsByTagName('td')[13]; // Adjust index for "Số tiền đã hoàn (VNĐ)"
-                        if (refundedCell && refundedCell.innerText) {
-                            totalRefundedAmount += approvedAmount; // Set to approved amount if there's a value
-                        } else {
-                            totalRefundedAmount += 0; // Set to 0 if no value
-                        }
+                    // Calculate refunded amount based on column 13
+                    let refundedCell = tr[i].getElementsByTagName('td')[13]; // Adjust index for "Số tiền đã hoàn (VNĐ)"
+                    if (refundedCell && refundedCell.innerText) {
+                        totalRefundedAmount += approvedAmount; // Set to approved amount if there's a value
+                    } else {
+                        totalRefundedAmount += 0; // Set to 0 if no value
                     }
                 }
             }
-            // Calculate total outstanding amount (số tiền nợ)
-            let totalDebtAmount = totalReceivedAmount - totalRefundedAmount;
-
-            // Update the total amount display
-            // Format the number with commas first, then replace commas with periods
-document.getElementById('totalAmount').innerText = totalAmount.toLocaleString().replace(/,/g, '.');
-document.getElementById('totalApprovedAmount').innerText = totalApprovedAmount.toLocaleString().replace(/,/g, '.');
-document.getElementById('totalReceivedAmount').innerText = totalReceivedAmount.toLocaleString().replace(/,/g, '.');
-document.getElementById('totalRefundedAmount').innerText = totalRefundedAmount.toLocaleString().replace(/,/g, '.');
-document.getElementById('totalDebtAmount').innerText = totalDebtAmount.toLocaleString().replace(/,/g, '.');
         }
-    </script>
+        // Calculate total outstanding amount (số tiền nợ)
+        let totalDebtAmount = totalReceivedAmount - totalRefundedAmount;
+
+        // Update the total amount display
+        // Format the number with commas first, then replace commas with periods
+        document.getElementById('totalAmount').innerText = totalAmount.toLocaleString().replace(/,/g, '.');
+        document.getElementById('totalApprovedAmount').innerText = totalApprovedAmount.toLocaleString().replace(/,/g, '.');
+        document.getElementById('totalReceivedAmount').innerText = totalReceivedAmount.toLocaleString().replace(/,/g, '.');
+        document.getElementById('totalRefundedAmount').innerText = totalRefundedAmount.toLocaleString().replace(/,/g, '.');
+        document.getElementById('totalDebtAmount').innerText = totalDebtAmount.toLocaleString().replace(/,/g, '.');
+    }
+</script>
+
+
 
     <div class="footer">
         <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>

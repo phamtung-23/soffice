@@ -196,6 +196,14 @@ button:hover {
             font-size: 14px;
             color: #888;
         }
+.signature-preview img {
+    max-width: 60%; /* Giới hạn chiều rộng tối đa */
+    max-height: 60%; /* Giới hạn chiều cao tối đa */
+    width: auto; /* Để kích thước tự động thay đổi theo tỉ lệ */
+    height: auto; /* Để kích thước tự động thay đổi theo tỉ lệ */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
     </style>
 </head>
 <body>

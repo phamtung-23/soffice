@@ -101,7 +101,6 @@ if (isset($_SESSION['user_id'])) {
                                     <option value="operator">Operator</option>
                                     <option value="leader">Leader</option>
                                     <option value="accountant">Accountant</option>
-                                    <option value="director">Director</option>
                                 </select>
                             </div>
                             <div class="form-group form-button">

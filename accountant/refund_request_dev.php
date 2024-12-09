@@ -2,10 +2,10 @@
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
-    echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
-    exit();
-}
+//if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
+//    echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
+//    exit();
+//}
 
 
 // Lấy tên đầy đủ từ session
@@ -34,9 +34,13 @@ sort($years);
 <html lang="vi">
 
 <head>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Quản lý phiếu tạm ứng chờ duyệt</title>
+    <title>Trang chủ Quản lý phiếu tạm ứng chờ nhận hoàn</title>
     <style>
         /* Basic styles for layout */
 
@@ -53,57 +57,21 @@ sort($years);
             margin: 10px 0;
         }
 
-         button {
-            width: 150px;
-            height: 50px;
-            font-size: 18px;
-            padding: 10px;
+        button {
+            width: 100px;
+            height: 25px;
+            font-size: 12px;
+            padding: 5px;
             cursor: pointer;
         }
 
-       
         .submit-button {
-            margin: 5px 0px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 10px;
-            transition: opacity 0.5s ease; 
-        }
-        .submit-button2 {
-            margin: 5px 0px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            transition: opacity 0.5s ease; 
+            border-radius: 5px;
         }
 
- .submit-approve {
-            width: 100px;
-            height: 40px;
-            font-size: 1em;
-            padding: 5px;
-            cursor: pointer;
-            margin: 5px 0px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-        }
-
-        .reset-reject {
-            width: 100px;
-            height: 40px;
-            font-size: 1em;
-            padding: 5px;
-            cursor: pointer;
-            margin: 5px 0px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 10px;
-        }
         .reset-button {
             background-color: #f44336;
             color: white;
@@ -190,7 +158,7 @@ sort($years);
         table,
         th,
         td {
-            border: 1px solid black;
+            border: 0.5px solid black;
         }
 
         th,
@@ -337,16 +305,7 @@ sort($years);
                 margin-top: 15px;
             }
 
-            /* Table adjustments */
-            .table-wrapper {
-                overflow-x: auto;
-            }
-
-            table,
-            th,
-            td {
-                font-size: 0.9em;
-            }
+          
 
             .menu a {
                 display: none;
@@ -395,12 +354,7 @@ sort($years);
                 font-size: 16px;
             }
 
-            table,
-            th,
-            td {
-                font-size: 0.9em;
-                padding: 6px;
-            }
+          
 
             .content h2 {
                 font-size: 1em;
@@ -443,6 +397,10 @@ sort($years);
 
     <script>
         let currentRequest = null;
+        let requestsData = []; // Biến lưu trữ tất cả dữ liệu yêu cầu
+
+    const rowsPerPage = 10; // Số lượng hàng trên mỗi trang
+    let currentPage = 1; // Trang hiện tại
         // Hàm để lấy năm từ dropdown
         function getSelectedYear() {
             const yearSelect = document.getElementById('year-select');
@@ -468,76 +426,135 @@ sort($years);
         }
 
 
+// Tải yêu cầu dựa trên năm đã chọn
+function loadRequests() {
+    const year = getSelectedYear(); // Lấy năm từ dropdown
 
-        // Tải yêu cầu dựa trên năm đã chọn
-        function loadRequests() {
-            const year = getSelectedYear(); // Lấy năm từ dropdown
-            const leader_email = "<?php echo $userEmail; ?>";
-            fetch(`../database/request_${year}.json`, {
-                    cache: "no-store"
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const tableBody = document.getElementById('requests-table-body');
-                    tableBody.innerHTML = ''; // Xóa nội dung cũ
+    fetch(`../database/request_${year}.json`, {
+        cache: "no-store"
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Lưu trữ dữ liệu yêu cầu vào biến requestsData
+            requestsData = data.filter(request => 
+                request.check_status === 'Phê duyệt' &&
+                request.payment_status === 'Chi tiền' &&
+                request.payment_refund_status !== 'Đã hoàn tiền'
+            );
 
-                    const validRequests = data.filter(request => request.check_status !== 'Từ chối' && request.check_status !== 'Phê duyệt' && request.status !== 'Phê duyệt' && request.status !== 'Từ chối' && request.leader_email === leader_email);
+            renderRequestsTable(); // Gọi hàm hiển thị dữ liệu
+        })
+        .catch(error => {
+            console.error('Error loading requests:', error.message);
+        });
+}
 
-                    if (validRequests.length === 0) {
-                        const noRequestsRow = document.createElement('tr');
-                        noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
-                        tableBody.appendChild(noRequestsRow);
-                    } else {
-                        validRequests.forEach(request => {
-                            const row = document.createElement('tr');
-                            row.setAttribute('id', 'request-row-' + request.id);
+// Render bảng yêu cầu
+function renderRequestsTable() {
+    const tableBody = document.getElementById('requests-table-body');
+    tableBody.innerHTML = ''; // Xóa nội dung cũ
 
-                            const cells = [
-                                request.id,
-                                request.full_name,
-                                request.customer_name,
-                                request.lot_number,
-                                request.quantity,
-                                request.unit,
-                                request.type_item,
-                                formatNumber(request.advance_amount),
-                                request.advance_amount_words,
-                                request.advance_description,
-                                request.date_time
-                            ];
+    // Tạo hàng dữ liệu
+    requestsData.forEach(request => {
+        const row = document.createElement('tr');
+        row.setAttribute('id', 'request-row-' + request.id);
 
-                            cells.forEach(cell => {
-                                const cellElement = document.createElement('td');
-                                cellElement.textContent = cell;
-                                row.appendChild(cellElement);
-                            });
+        const cells = [
+            request.id,
+            request.full_name,
+            request.customer_name,
+            request.lot_number,
+            request.type_item,
+            formatNumber(request.approved_amount),
+            request.advance_description,
+            formatDate(request.payment_time), // Sử dụng hàm định dạng ngày
+            request.approved_filename ? `<a href="../database/pdfs/${request.approved_filename}" target="_blank">Xem Phiếu</a>` : ''
+        ];
 
-                            const actionsCell = document.createElement('td');
-                            actionsCell.innerHTML = `
-                                <button  class="btn submit-approve" onclick="reviewRequest(${request.id})">Phê duyệt</button>
-                                <button class="btn reset-reject"  onclick="openRejectModal(${request.id})">Từ chối</button>
-                            `;
-                            row.appendChild(actionsCell);
+        cells.forEach(cell => {
+            const cellElement = document.createElement('td');
+            if (String(cell).includes('<a')) {
+                cellElement.innerHTML = cell; // Dùng innerHTML để render thẻ <a>
+            } else {
+                cellElement.textContent = cell; // Đối với các ô không phải là HTML
+            }
+            row.appendChild(cellElement);
+        });
 
-                            tableBody.appendChild(row);
-                        });
-                    }
+        // Cột thao tác
+        const actionsCell = document.createElement('td');
+        actionsCell.innerHTML = `
+            <button onclick="reviewRequest(${request.id})">Thu tạm ứng</button>
+        `;
+        row.appendChild(actionsCell);
 
-                    document.getElementById('requests').style.display = 'block';
-                })
-                .catch(error => {
-                    console.error('Error loading requests:', error.message);
-                });
-        }
+        tableBody.appendChild(row);
+    });
+
+    // Cập nhật hoặc khởi tạo DataTables
+    initializeDataTable();
+}
+
+// Hàm khởi tạo hoặc cập nhật DataTables
+function initializeDataTable() {
+    // Kiểm tra nếu DataTables đã khởi tạo, hủy bỏ trước
+    if ($.fn.DataTable.isDataTable('#requests-table')) {
+        $('#requests-table').DataTable().destroy();
+    }
+
+    // Khởi tạo lại DataTables
+    $('#requests-table').DataTable({
+        "language": {
+            "lengthMenu": "Hiển thị _MENU_ bản ghi",
+            "zeroRecords": "Không tìm thấy kết quả",
+            "info": "Hiển thị _START_ đến _END_ của _TOTAL_ bản ghi",
+            "infoEmpty": "Không có dữ liệu",
+            "infoFiltered": "(lọc từ _MAX_ bản ghi)",
+            "search": "Tìm kiếm nhanh:",
+            "paginate": {
+                "first": "Đầu",
+                "last": "Cuối",
+                "next": "Tiếp",
+                "previous": "Trước"
+            }
+        },
+        "pageLength": 10
+    });
+}
+
+// Hàm định dạng ngày từ datetime
+function formatDate(dateTime) {
+    // Kiểm tra nếu không có dữ liệu thì trả về chuỗi rỗng
+    if (!dateTime) return '';
+    const date = new Date(dateTime);
+    // Định dạng lại chỉ lấy phần ngày
+    const formattedDate = date.toISOString().split('T')[0];
+    return formattedDate;
+}
+   
 
         function updateYear() {
             loadRequests(); // Tải lại yêu cầu khi năm được chọn
         }
+         // Tìm kiếm yêu cầu
+    function searchRequests() {
+        const searchQuery = document.getElementById('search-input').value.toLowerCase();
+        requestsData = requestsData.filter(request => {
+            return (
+                request.full_name.toLowerCase().includes(searchQuery) ||
+                request.customer_name.toLowerCase().includes(searchQuery) ||
+                request.lot_number.toLowerCase().includes(searchQuery)
+            );
+        });
+        currentPage = 1; // Reset về trang 1 khi tìm kiếm
+        renderRequestsTable();
+    }
+
 
 
         function reviewRequest(requestId) {
@@ -548,76 +565,7 @@ sort($years);
         }
 
 
-        function openRejectModal(requestId) {
-            currentRequestId = requestId;
-            hideOtherRows(requestId); // Ẩn các hàng khác
-            document.getElementById('reject-reason-modal').style.display = 'block';
-        }
 
-        async function rejectRequest() {
-            const reason = document.getElementById('reject-reason').value;
-            const leader_name = "<?php echo $fullName; ?>";
-            const yearselect = document.getElementById('year-select').value; // Lấy năm chọn
-            const filePath = `../database/request_${yearselect}.json`;
-            if (!reason) {
-                alert('Vui lòng nhập lý do từ chối!');
-                return;
-            }
-
-            try {
-                const response = await fetch(filePath, {
-                    cache: "no-store"
-                });
-                const data = await response.json();
-                const request = data.find(req => req.id === currentRequestId); // Tìm yêu cầu theo ID cố định
-
-                // Cập nhật thông tin yêu cầu
-                request.check_status = 'Từ chối';
-                request.check_reject_reason = reason;
-                request.check_reject_time = new Date().toLocaleString('sv-SE', {
-                    timeZone: 'Asia/Ho_Chi_Minh',
-                    hour12: false
-                }).replace('T', ' ');
-                request.check_rejected_by = leader_name;
-                const advance_amount = request.advance_amount; // Sử dụng thuộc tính của request
-                const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Format number with period as thousands separator
-                const operator_phone = await getPhoneByEmail(request.operator_email); // Đợi kết quả từ hàm
-
-                // Ghi lại thông tin đã cập nhật vào file JSON
-                const updateSuccess = await updateRequests(request, yearselect); // Gọi hàm updateRequests và chờ kết quả
-
-                if (updateSuccess) {
-                    // Tạo nội dung tin nhắn để gửi
-                    const telegramMessage = `**Yêu cầu đã bị Quản lý từ chối!**\n` +
-                        `ID yêu cầu: ${request.id}\n` +
-                        `Người đề nghị: ${request.full_name}\n` +
-                        `Số tiền xin tạm ứng: ${advance_amountFormatted}\n` +
-                        `Số tiền xin tạm ứng bằng chữ: ${request.advance_amount_words}\n` +
-                        `Tên khách hàng: ${request.customer_name}\n` +
-                        `Số Bill/Booking: ${request.lot_number}\n` +
-                        `Người từ chối: ${request.check_rejected_by}\n` +
-                        `Lý do: **${reason}**\n` +
-                        `Thời gian từ chối: ${request.check_reject_time}`;
-
-                    // Gửi tin nhắn đến Telegram
-                    await fetch('../sendTelegram.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: telegramMessage,
-                            id_telegram: operator_phone // Truyền thêm thông tin operator_phone
-                        })
-                    });
-                    alert('Yêu cầu đã bị từ chối thành công!');
-                    cancel(); // Thực hiện hành động hủy nếu cần
-                }
-            } catch (error) {
-                console.error('Error loading requests:', error);
-                alert('Failed to load requests.');
-            }
-        }
 
         async function getPhoneByEmail(email) {
             try {
@@ -632,8 +580,7 @@ sort($years);
                 }
 
                 // Chuyển đổi phản hồi thành JSON
-                const usersData = await response.json();
-                const users = Object.values(usersData); // Chuyển đối tượng thành mảng
+                const users = await response.json();
 
                 // Tìm người dùng theo email
                 const user = users.find(user => user.email === email);
@@ -650,38 +597,6 @@ sort($years);
                 console.error("Đã xảy ra lỗi:", error);
             }
         }
-        async function getPhoneDirector() {
-            try {
-                // Fetch data from users.json without caching
-                const response = await fetch('../database/users.json', {
-                    cache: "no-store"
-                });
-
-                // Check if response is ok
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                // Chuyển đổi phản hồi thành JSON
-                const usersData = await response.json();
-                const users = Object.values(usersData); // Chuyển đối tượng thành mảng
-
-               // Tìm người dùng theo email
-                const user = users.find(user => user.role === 'director');
-
-                // Kiểm tra xem có người dùng không
-                if (user) {
-                    //console.log("Số điện thoại của người dùng:", user.phone);
-                    return user.phone; // Trả về số điện thoại nếu tìm thấy
-                } else {
-                    
-                    return null; // Trả về null nếu không tìm thấy
-                }
-            } catch (error) {
-                console.error("Đã xảy ra lỗi:", error);
-            }
-        }
-
 
 
         function cancel() {
@@ -809,15 +724,16 @@ sort($years);
             }
         }
 
+        
 
-function formatNumber(num) {
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Replace comma with period
-}
+           function formatNumber(num) {
+            num = String(num); 
+            return num.replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Replace comma with period
+            }
 
-
+        
         async function approveRequest() {
-
-             const button = document.querySelector(".submit-button2");
+              const button = document.querySelector(".submit-button");
             // Nếu nút đã bị vô hiệu hóa, không làm gì thêm
             if (button.disabled) {
                 return;
@@ -830,16 +746,14 @@ function formatNumber(num) {
             }
             // Lấy thông tin từ các trường đầu vào
 
-            const approvalNote = document.getElementById('approve-note').value.trim(); // Lấy ghi chú phê duyệt
-            const leader_name = "<?php echo $fullName; ?>";
-            const approvalTime = new Date().toLocaleString('sv-SE', {
-                timeZone: 'Asia/Ho_Chi_Minh',
-                hour12: false
-            }).replace('T', ' ');
+            const paymentrefundNote = document.getElementById('approve-note').value.trim(); // Lấy ghi chú phê duyệt
+            const accountant_name = "<?php echo $fullName; ?>";
+            const accountant_email = "<?php echo $userEmail; ?>";
+
             const yearselect = document.getElementById('year-select').value; // Lấy năm chọn
             const filePath = `../database/request_${yearselect}.json`;
             // Kiểm tra ghi chú phê duyệt không bị để trống
-            if (!approvalNote) {
+            if (!paymentrefundNote) {
                 alert('Vui lòng nhập ghi chú phê duyệt!');
                 return;
             }
@@ -857,26 +771,30 @@ function formatNumber(num) {
 
 
                 // Cập nhật thông tin yêu cầu
-                request.check_status = 'Phê duyệt';
-                request.check_approval_time = approvalTime;
-                request.check_approved_by = leader_name;
-                request.check_approval_note = approvalNote;
-                const advance_amount = request.advance_amount; // Sử dụng thuộc tính của request
-                const advance_amountFormatted = advance_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền
+                request.payment_refund_status = 'Đã hoàn tiền';
+                request.payment_refund_time = new Date().toLocaleString('sv-SE', {
+                    timeZone: 'Asia/Ho_Chi_Minh',
+                    hour12: false
+                }).replace('T', ' ');
+                request.payment_refund_by = accountant_name;
+                request.payment_refund_note = paymentrefundNote;
+                request.accountant_email_refund = accountant_email;
+                const approved_amount = request.approved_amount; // Sử dụng thuộc tính của request
+                const approved_amountFormatted = approved_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Định dạng số tiền
                 // Ghi lại thông tin đã cập nhật vào file JSON
                 const updateSuccess = await updateRequests(request, yearselect); // Gọi hàm updateRequests và chờ kết quả
 
                 if (updateSuccess) {
-                    const telegramMessage = `**Yêu cầu đã được Quản lý duyệt!**\n` +
+                    const telegramMessage = `**Kế toán đã xác nhận hoàn tiền tạm ứng**\n` +
                         `ID yêu cầu: ${request.id}\n` +
                         `Người đề nghị: ${request.full_name}\n` +
-                        `Số tiền xin tạm ứng: ${advance_amountFormatted}\n` +
-                        `Số tiền xin tạm ứng bằng chữ: ${request.advance_amount_words}\n` +
+                        `Số tiền hoàn tạm ứng: ${approved_amountFormatted}\n` +
+                        `Số tiền hoàn tạm ứng bằng chữ: ${request.approved_amount_words}\n` +
                         `Tên khách hàng: ${request.customer_name}\n` +
                         `Số Bill/Booking: ${request.lot_number}\n` +
-                        `Người duyệt: ${request.check_approved_by}\n` +
-                        `Ghi chú: **${approvalNote}**\n` +
-                        `Thời gian duyệt: ${request.check_approval_time}`;
+                        `Kế toán: ${request.payment_refund_by}\n` +
+                        `Ghi chú: **${request.payment_refund_note}**\n` +
+                        `Thời gian chi tiền: ${request.payment_refund_time}`;
 
                     // Gửi tin nhắn đến Telegram
                     await fetch('../sendTelegram.php', {
@@ -889,32 +807,7 @@ function formatNumber(num) {
                             id_telegram: operator_phone // Truyền thêm thông tin operator
                         })
                     });
-                    const director_phone = await getPhoneDirector();
-                    
-
-                    const telegramMessage_2 = `Yêu cầu tạm ứng mới chờ GĐ duyệt**\n` +
-                        `ID yêu cầu: ${request.id}\n` +
-                        `Người đề nghị: ${request.full_name}\n` +
-                        `Số tiền xin tạm ứng: ${advance_amountFormatted}\n` +
-                        `Số tiền xin tạm ứng bằng chữ: ${request.advance_amount_words}\n` +
-                        `Tên khách hàng: ${request.customer_name}\n` +
-                        `Số Bill/Booking: ${request.lot_number}\n` +
-                        `Người duyệt: ${request.check_approved_by}\n` +
-                        `Ghi chú: **${approvalNote}**\n` +
-                        `Thời gian duyệt: ${request.check_approval_time}`;
-
-
-                    await fetch('../sendTelegram.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: telegramMessage_2,
-                            id_telegram: director_phone
-                        })
-                    });
-                    alert('Đã phê duyệt thành công!!!');
+                    alert('Đã thu tiền tạm ứng thành công!!!');
                     cancel(); // Thực hiện hành động hủy nếu cần
                 }
             } catch (error) {
@@ -937,16 +830,17 @@ function formatNumber(num) {
 
 <body>
     <div class="header">
-        <h1>Quản lý phiếu tạm ứng chờ duyệt</h1>
+        <h1>Quản lý phiếu tạm ứng chờ nhận hoàn</h1>
     </div>
     <div class="menu">
         <span class="hamburger" onclick="toggleMenu()">&#9776;</span>
-        <div class='icon'>
+        <div class="icon">
             <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
         </div>
-        <a href="./index.php">Home</a>
-        <a href="all_request.php">Danh sách phiếu tạm ứng</a>
-        <a href="all_payment.php">Danh sách phiếu thanh toán</a>
+        <a href="index.php">Home</a>
+        <a href="all_request.php">Quản lý phiếu tạm ứng</a>
+        <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+        <a href="finance.php">Quản lý tài chính</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>
@@ -956,10 +850,10 @@ function formatNumber(num) {
             <p>Xin chào, <?php echo $fullName; ?>!</p>
         </div>
 
-        <!-- Thêm Dropdown chọn năm -->
+        <!-- Dropdown chọn năm -->
         <div class="form-group">
             <label for="year-select">Chọn năm:</label>
-            <select id="year-select" onchange="updateYear()">
+            <select id="year-select" onchange="loadRequests()">
                 <?php
                 // Tạo các tùy chọn cho năm từ mảng $years
                 foreach ($years as $year) {
@@ -968,54 +862,49 @@ function formatNumber(num) {
                 ?>
             </select>
         </div>
+
         <!-- Requests table -->
         <div id="requests">
-            <h2>Danh sách các yêu cầu tạm ứng cần phê duyệt</h2>
-            <table>
+            <h2>Danh sách các yêu cầu tạm ứng chờ chi tiền</h2>
+            <table id="requests-table" class="display">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Họ tên Operator</th>
                         <th>Tên Khách hàng</th>
                         <th>Số Bill/Booking</th>
-                        <th>Số lượng (container)</th>
-                        <th>Đơn vị (feet)</th>
                         <th>Loại hình</th>
                         <th>Số tiền tạm ứng</th>
-                        <th>Số tiền tạm ứng (bằng chữ)</th>
                         <th>Nội dung xin tạm ứng</th>
-                        <th>Ngày giờ trình</th>
+                        <th>Ngày giờ tạm ứng</th>
+                        <th>Phiếu tạm ứng</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="requests-table-body"></tbody>
             </table>
+
+            <!-- Phân trang -->
+            <div id="pagination" class="pagination"></div>
         </div>
-
-        <!-- Reject reason modal -->
-        <div id="reject-reason-modal">
-            <h2>Lý do từ chối</h2>
-            <textarea id="reject-reason" rows="4" cols="50" placeholder="Nhập lý do từ chối..."></textarea>
-            <br><br>
-            <button class="submit-button" onclick="rejectRequest()">Từ chối</button>
-            <button class="reset-button" onclick=" cancel()">Hủy</button>
-        </div>
-        <!-- Approval modal -->
-        <div id="approve-reason-modal">
-            <h2>Nhập nội dung duyệt</h2>
-
-
-            <textarea id="approve-note" rows="4" cols="50" placeholder="Nhập nội dung duyệt..."></textarea>
-            <br><br>
-
-            <button class="submit-button2" onclick="approveRequest()">Duyệt</button>
-            <button class="reset-button" onclick="cancel()">Hủy</button>
-        </div>
-
     </div>
+
+    <!-- Approval modal -->
+    <div id="approve-reason-modal">
+        <h2>Nhập nội dung ghi chú</h2>
+        <textarea id="approve-note" rows="4" cols="50" placeholder="Nhập nội ghi chú..."></textarea>
+        <br><br>
+        <button class="submit-button" onclick="approveRequest()">Thu tạm ứng</button>
+        <button class="reset-button" onclick="cancel()">Hủy</button>
+    </div>
+
     <div class="footer">
         <p>© 2024 Phần mềm soffice phát triển bởi Hienlm 0988838487</p>
     </div>
-</body>
 
+    <!-- Gọi hàm loadRequests khi trang tải -->
+    <script>
+        document.addEventListener('DOMContentLoaded', loadRequests);
+    </script>
+</body>
 </html>

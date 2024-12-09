@@ -124,29 +124,33 @@ if (file_exists($file)) {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid #ddd;
+            table-layout: fixed;
         }
 
         th,
-        td {
-            padding: 8px;
-            text-align: left;
-            white-space: nowrap;
-            /* Prevent text from wrapping */
-        }
+td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 0.85em;
+    word-wrap: break-word;
+    white-space: normal;
+}
+th:nth-child(1),
+td:nth-child(1),
+th:nth-child(5),
+td:nth-child(5),
+th:nth-child(6),
+td:nth-child(6) {
+    width: 50px; /* Độ rộng nhỏ hơn cho các cột 1, 5 và 6 */
+}
 
-        th {
-            font-size: 6px;
-            /* Adjust this value as needed */
-            background-color: #f2f2f2;
-            padding: 6px;
-            text-align: left;
-        }
+th:nth-child(2),
+th:nth-child(4),
+td:nth-child(2),
+td:nth-child(4) {
+    width: 120px; /* Độ rộng lớn hơn cho cột Họ tên */
+}
 
         input[type="text"] {
             width: 100%;
@@ -170,31 +174,8 @@ if (file_exists($file)) {
             margin: auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            /* Forces table columns to fit evenly */
-        }
 
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-            border: 1px solid #ddd;
-            font-size: 0.85em;
-            min-width: 100px;
-            /* Adjust based on content */
-            word-wrap: break-word;
-            word-break: break-all;
-            /* Ensures long words break within cell */
-            white-space: normal;
-            /* Allows text wrapping */
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
+       
 
         /* Optional: Wrapping long text within cells */
         .wrap-text {
@@ -369,7 +350,6 @@ if (file_exists($file)) {
                 font-size: 12px;
             }
         }
-    </style>
     </style>
 
     <!-- DataTables CSS and jQuery -->
