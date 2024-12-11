@@ -37,7 +37,7 @@ file_put_contents($idFile, json_encode($dataIdPayment));
 $usersData = file_get_contents($userFile);
 $users = json_decode($usersData, true);
 $leaders = array_filter($users, fn($user) => $user['role'] === 'leader');
-$sales = array_filter($users, fn($user) => $user['role'] === 'sale');
+$sales = array_filter($users, fn($user) => $user['role'] === 'sale' || $user['role'] === 'director');
 $directorData = current(array_filter($users, fn($user) => $user['role'] == 'director'));
 
 ?>
@@ -327,6 +327,67 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
           </div>
         </div>
       <?php } ?>
+
+      <!-- II. PAYMENT INFORMATION -->
+      <div id="payment-info-container">
+        <h6>II. PICK UP/DELIVERY INFORMATION:</h6>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" required>
+          </div>
+        </div>
+
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" required>
+          </div>
+
+          <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct'] ?? '' ?>">
+          </div>
+        </div>
+
+        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <div class="col-sm-3 pb-2">
+            <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
+          </div>
+          <div class="col-sm-2 pb-2">
+            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required>
+          </div>
+          <div class="col-sm-2 d-flex pb-2">
+            <label for="customVat" class="col-form-label">V.A.T</label>
+            <div class="input-group ps-2">
+              <input type="text" class="form-control" name="customVat[]" placeholder="%" required>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+            <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+              <option selected disabled value="">Choose Cont/Set</option>
+              <option value="cont">Cont</option>
+              <option value="set">Set</option>
+            </select>
+          </div>
+          <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+            <input class="form-check-input" type="checkbox" name="customIncl[]">
+            <label class="form-check-label">INCL</label>
+          </div>
+          <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+            <input class="form-check-input" type="checkbox" name="customExcl[]">
+            <label class="form-check-label">EXCL</label>
+          </div>
+          <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+            <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button>
+      </div>
+
       <!-- III. OPERATION INFORMATION -->
       <?php if ($userRole === 'operator') {
       ?>
@@ -370,7 +431,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
                 <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
                 <td><input type="text" name="expense_payee[]" class="form-control" required></td>
                 <td><input type="text" name="expense_doc[]" class="form-control"></td>
-                <td><input class="form-control" type="file" id="formFile" name="expense_file[]"></td>
+                <td><input class="form-control" type="file" id="formFile" name="expense_file[0][]" multiple></td>
                 <td class="align-middle">
                   <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
                 </td>

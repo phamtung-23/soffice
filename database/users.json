@@ -10,119 +10,35 @@
         "fullname": "Oper 1",
         "email": "oper1@gmail.com",
         "password": "$2y$10$vB.y.iTL45ZWirlKtpUztubaVPgfIpuK5AnNH0TxWC5ptwkQHtyri",
-        "phone": "15585997619",
+        "phone": "6944007336",
         "role": "operator"
     },
     "2": {
         "fullname": "Leader 1",
         "email": "leader1@gmail.com",
         "password": "$2y$10$QbnD\/H\/63uWvvndSsSzP7.I2cIsApkWZMuOEAt8oNHo3zLfOBNGK6",
-        "phone": "15585997619`",
+        "phone": "6944007336`",
         "role": "leader"
     },
     "3": {
-        "fullname": "NGUY\u1ec4N MINH T\u00da",
-        "email": "tu.nm@uni-global.com",
-        "password": "$2y$10$v7UmpeUIbmQmOLeCB0eqp.Bog84NXNkJGYKja0N\/\/L7xDI\/TO3\/Pu",
-        "phone": "5681478253333",
-        "role": "director"
-    },
-    "4": {
         "fullname": "Accountant",
         "email": "accountant@gmail.com",
         "password": "$2y$10$dMYaF0enJTwhkMuYTlmGmutLy0P4.TvZaqP2OOLY9vrhMfLXkfJ8m",
-        "phone": "121212",
+        "phone": "6944007336",
         "role": "accountant"
     },
-    "6": {
+    "4": {
         "fullname": "PH\u1ea0M TH\u1eca MY",
         "email": "logistics06@uni-global.com",
         "password": "$2y$10$qmhHOZeIG3du7GPTPk.AM.Gl2g1KMSLsJ7azchZmkNm9ek1.oYsGq",
-        "phone": "72872017375",
+        "phone": "6944007336",
         "role": "operator"
     },
-    "7": {
-        "fullname": "\u0110\u00c0M V\u0102N HI\u1ec6P",
-        "email": "hiep@uni-global.com",
-        "password": "$2y$10$C4ZT1S\/OQUkq.j\/dLYn0TunI00eVDhloDAH8AwwYanuaTkPE45AaW",
-        "phone": "72082614555",
-        "role": "leader"
-    },
-    "8": {
-        "fullname": "NGUY\u1ec4N THANH PHONG",
-        "email": "logistics14@uni-global.com",
-        "password": "$2y$10$2LvZOuBx9F56iPAm1tRi0e4SRHQkGa3fynpS066pftBN.lCTugY2e",
-        "phone": "09784071448",
-        "role": "operator"
-    },
-    "9": {
-        "fullname": "V\u00d5 TH\u1eca THU \u0110\u00c0O",
-        "email": "logistics24@uni-global.com",
-        "password": "$2y$10$nckKVexuFtF82RdL6FW1Tu547YtdeuEKYIGxjZWLgU88wNeq4C5fy",
-        "phone": "08284886197",
-        "role": "operator"
-    },
-    "10": {
-        "fullname": "TR\u1ea6N THU SANG",
-        "email": "logistics02@uni-global.com",
-        "password": "$2y$10$B51KPN80.DopkeghYQBbkuuixni3CDP6N9skeW5VUFYMT7x3a7JgO",
-        "phone": "74030851192",
-        "role": "operator"
-    },
-    "11": {
-        "fullname": "NGUY\u1ec4N THANH H\u1ea2I",
-        "email": "logistics16@uni-global.com",
-        "password": "$2y$10$OmKDhPy3Yj66pm\/12pz5dORheJEt4Dv\/G8wDiRwMQuEsravFRECfW",
-        "phone": "80838141341",
-        "role": "operator"
-    },
-    "12": {
-        "fullname": "NGUY\u1ec4N TH\u1eca KI\u1ec0U MY",
-        "email": "logistics12@uni-global.com",
-        "password": "$2y$10$A2ipMt.vLriHzlUSsrSZ.OgLDJZE2\/1QbVHuSSjf8iUqzYM\/73Y7m",
-        "phone": "72528510220",
-        "role": "operator"
-    },
-    "13": {
-        "fullname": "T\u1ed0NG TH\u1eca NG\u1eccC B\u00cdCH",
-        "email": "account@uni-global.com",
-        "password": "$2y$10$XG4IkB\/JpK2.yqPBvR8TWOoxUHqhYJgigAfPKHy8Y9opdds5yEntm",
-        "phone": "76261511933",
-        "role": "accountant"
-    },
-    "14": {
-        "fullname": "PH\u1ea0M THANH T\u00d9NG",
-        "email": "ptung23082001@gmail.com",
-        "password": "$2y$10$GVDLDh.Y6Ga7FqkQTOWAa.kVGt4lnAM7\/aIy5lwTXb0dOeCqEDKlq",
-        "phone": "69440073316",
-        "role": "operator"
-    },
-    "15": {
-        "fullname": "PH\u01af\u01a0NG TH\u1eca M\u1ef8 TI\u00caN",
-        "email": "logistics08@uni-global.com",
-        "password": "$2y$10$eT8R9n3Vfex\/FL1Z6Xkzre5tQwrDFPRMmaDl\/wgjr4kSKqTd6lT1m",
-        "phone": "7451867623",
-        "role": "operator"
-    },
-    "16": {
-        "fullname": "V\u00d5 TH\u1eca B\u00cdCH TR\u00cd",
-        "email": "logistics04@uni-global.com",
-        "password": "$2y$10$1.47yt5lsSMtLCfclZm56eJF48cRJY6JNEuddanKb7FvifeIi83HS",
-        "phone": "vothibichtri0705@gmail.com",
-        "role": "operator"
-    },
-    "17": {
+    "5": {
         "fullname": "Director1",
         "email": "director@gmail.com",
         "password": "$2y$10$yzLv3iUdl\/FBLl0tK2jH\/OogtB2zUPxhPedsBG24D0.p9LxWV56PS",
-        "phone": "15585997619",
+        "phone": "6944007336",
         "role": "director"
-    },
-    "18": {
-        "fullname": "OPER 2",
-        "email": "oper2@gmail.com",
-        "password": "$2y$10$KALSZHka5jAXU\/zDNQIGfOF.DM0UL1c0jUXa24yKXlPYKQC8bracW",
-        "phone": "1512121",
-        "role": "operator"
     }
 }

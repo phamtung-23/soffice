@@ -1,1 +1,31 @@
-[2024-11-17 22:36:25] /soffice-dev/sale/payment-statement/update/update_payment_delivery.php: isUpdate: false
+[2024-12-11 17:32:35] /soffice/operator/payment-statement/create/submit_payment.php: infoUserData: {"status":"fail","message":"File not found"}
+[2024-12-11 17:32:35] /soffice/operator/payment-statement/create/submit_payment.php: infoUserData: {"status":"fail","message":"File not found"}
+[2024-12-11 17:32:35] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:32:35] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:32:35] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:34:46] /soffice/operator/payment-statement/create/submit_payment.php: infoUserData: {"status":"fail","message":"File not found"}
+[2024-12-11 17:34:46] /soffice/operator/payment-statement/create/submit_payment.php: infoUserData: {"status":"fail","message":"File not found"}
+[2024-12-11 17:34:46] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:34:46] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:34:46] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:36:08] /soffice/operator/payment-statement/create/submit_payment.php: infoUserData: {"status":"success","data":{"fullname":"Leader 1","email":"leader1@gmail.com","password":"$2y$10$QbnD\/H\/63uWvvndSsSzP7.I2cIsApkWZMuOEAt8oNHo3zLfOBNGK6","phone":"6944007336`","role":"leader"}}
+[2024-12-11 17:36:08] /soffice/operator/payment-statement/create/submit_payment.php: infoUserData: {"status":"success","data":{"fullname":"Sale 1","email":"sale1@gmail.com","password":"$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe","phone":"15585997619","role":"sale"}}
+[2024-12-11 17:36:08] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:36:08] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:36:08] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:37:03] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off","off"]
+[2024-12-11 17:37:03] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off","off"]
+[2024-12-11 17:37:03] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:37:03] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst 1
+[2024-12-11 17:37:30] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:37:30] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:37:30] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:39:10] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:39:10] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:39:10] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:52:48] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:52:48] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:52:48] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-11 17:54:37] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-11 17:54:37] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-11 17:54:37] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst

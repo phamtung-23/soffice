@@ -23,28 +23,22 @@ Array.from(forms).forEach((form) => {
 });
 
 function addRow() {
-  // Get the table body element
   const tableBody = document.querySelector(".tableBody");
+  const rowIndex = tableBody.rows.length;
 
-  // Count current rows to assign row number
-  const rowCount = tableBody.rows.length + 1;
-
-  // Create a new row
   const newRow = document.createElement("tr");
-
-  // Define new cells and input fields for the row
   newRow.innerHTML = `
-    <td>${rowCount}</td>
+    <td>${rowIndex + 1}</td>
     <td><input type="text" name="expense_kind[]" class="form-control" required></td>
     <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
     <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
     <td><input type="text" name="expense_payee[]" class="form-control" required></td>
     <td><input type="text" name="expense_doc[]" class="form-control"></td>
-    <td><input class="form-control" type="file" id="formFile" name="expense_file[]"></td>
-    <td class="align-middle"><button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button></td>
+    <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
+    <td class="align-middle">
+      <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
+    </td>
   `;
-
-  // Append the new row to the table
   tableBody.appendChild(newRow);
 }
 
@@ -53,11 +47,11 @@ function toggleExpenseFields(currentInput) {
   const tableRow = currentInput.closest("tr"); // Locate the current row
 
   if (currentInput.value) {
-    const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
+    const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
     // check if not a number
     if (isNaN(advanceAmount)) {
-      alert('Vui lòng nhập số');
-      currentInput.value = '';
+      alert("Vui lòng nhập số");
+      currentInput.value = "";
       return;
     }
     currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
@@ -83,7 +77,7 @@ function deleteRow(button) {
 }
 
 function updateAmountText(currentInput) {
-  const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
+  const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
   currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
 }
 
@@ -100,10 +94,17 @@ submitForm.addEventListener("submit", function (event) {
     submitForm.classList.add("was-validated");
   } else {
     event.preventDefault();
+
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      if (!checkbox.checked) {
+        checkbox.checked = true;
+        checkbox.value = "off";
+      }
+    });
     // disable the submit button
     submitBtn.disabled = true;
     const formData = new FormData(submitForm);
-
     // // Log each key-value pair for debugging
     // for (const [key, value] of formData.entries()) {
     //   console.log(`${key}:`, value);
@@ -133,3 +134,71 @@ submitForm.addEventListener("submit", function (event) {
       });
   }
 });
+
+document.getElementById("addRowPayment").addEventListener("click", function () {
+  // Lấy container chứa các hàng hiện tại
+  const container = document.getElementById("payment-info-container");
+
+  // Tạo một hàng mới
+  const newRow = document.createElement("div");
+  newRow.classList.add(
+    "row",
+    "mb-3",
+    "mt-3",
+    "ps-4",
+    "d-flex",
+    "align-items-center"
+  );
+
+  // Nội dung HTML của hàng mới
+  newRow.innerHTML = `
+    <div class="col-sm-3 pb-2">
+            <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
+          </div>
+          <div class="col-sm-2 pb-2">
+            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required>
+          </div>
+          <div class="col-sm-2 d-flex pb-2">
+            <label for="customVat" class="col-form-label">V.A.T</label>
+            <div class="input-group ps-2">
+              <input type="text" class="form-control" name="customVat[]" placeholder="%" required>
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+          <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+            <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+              <option selected disabled value="">Choose Cont/Set</option>
+              <option value="cont">Cont</option>
+              <option value="set">Set</option>
+            </select>
+          </div>
+          <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+            <input class="form-check-input" type="checkbox" name="customIncl[]">
+            <label class="form-check-label">
+              INCL
+            </label>
+          </div>
+          <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+            <input class="form-check-input" type="checkbox" name="customExcl[]">
+            <label class="form-check-label">
+              EXCL
+            </label>
+          </div>
+          <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+            <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+          </div>
+  `;
+
+  // Thêm hàng mới vào container
+  container.appendChild(newRow);
+});
+
+function deleteRowPayment(button) {
+  // Find the parent row (div) containing the button and remove it
+  const row = button.closest('.row');
+  if (row) {
+    row.remove();
+  }
+}
+
+
