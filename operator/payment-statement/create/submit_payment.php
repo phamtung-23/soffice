@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
       $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i]);
       $soHoaDon = $_POST['so_hoa_don'][$i];
-      $uploadedFiles = $_FILES['expense_file']['name'][$i] ?? [];
+      $uploadedFiles = $_FILES['expense_file']['name'][$i] == [""] ? [] : $_FILES['expense_file']['name'][$i];
       $uploadedFilesTmp = $_FILES['expense_file']['tmp_name'][$i] ?? [];
       $expenseFiles = [];
 
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
   }
 
-  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSetRadio', 'customIncl', 'customExcl'];
+  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
   // Additional fields
   foreach ($_POST as $key => $value) {
     if ($key == "leader" || $key == "sale") {

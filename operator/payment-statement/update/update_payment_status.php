@@ -60,42 +60,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $newExpenses = [];
       if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
         for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-          $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
-          $soHoaDon = $_POST['so_hoa_don'][$i] ?? $entry['expenses'][$i]['so_hoa_don'] ?? "";
-          $fileUploaded = isset($_FILES['expense_file']['name'][$i]) && $_FILES['expense_file']['error'][$i] === UPLOAD_ERR_OK;
-          $expenseFile = $fileUploaded ? $_FILES['expense_file']['name'][$i] : $entry['expenses'][$i]['expense_file'] ?? null;
+          $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i]);
+          $soHoaDon = $_POST['so_hoa_don'][$i];
+          $uploadedFiles = $_FILES['expense_file']['name'][$i] == [""] ? [] : $_FILES['expense_file']['name'][$i];
+          $uploadedFilesTmp = $_FILES['expense_file']['tmp_name'][$i] ?? [];
+          $expenseFiles = $entry['expenses'][$i]['expense_files'] ?? [];
+
+          logEntry("uploadedFiles: " . json_encode($uploadedFiles));
 
           // Check conditional file upload requirement
-          if (!empty($soHoaDon) && !$fileUploaded && !$expenseFile) {
+          if (!empty($soHoaDon) && empty($uploadedFiles) && empty($expenseFiles)) {
             $errors[] = "Vui lòng tải tệp cho hóa đơn số {$soHoaDon}.";
             continue;
           }
-          // $expenseFile = $entry['expenses'][$i]['expense_file'] ?? "";
-          // Store expense data
-          $expense = [
-            'expense_kind' => $_POST['expense_kind'][$i] ?? $entry['expenses'][$i]['expense_kind'] ?? null,
-            'expense_amount' => $expenseAmount,
-            'so_hoa_don' => $soHoaDon,
-            'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
-            'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
-            'expense_file' => $expenseFile
-          ];
 
-          // Move uploaded file
-          if ($fileUploaded) {
-            // Generate a unique name for the file
-            $originalFileName = pathinfo($_FILES['expense_file']['name'][$i], PATHINFO_FILENAME);
-            $fileExtension = pathinfo($_FILES['expense_file']['name'][$i], PATHINFO_EXTENSION);
-            $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
-            $uniqueFileName = uniqid() . "_" . $formattedFileName . "." . $fileExtension;
-            $targetFilePath = $targetDir . $uniqueFileName;
+          // Process multiple files for this expense row
+          if (!empty($uploadedFiles)) {
+            foreach ($uploadedFiles as $fileIndex => $fileName) {
+              if ($_FILES['expense_file']['error'][$i][$fileIndex] === UPLOAD_ERR_OK) {
+                $originalFileName = pathinfo($fileName, PATHINFO_FILENAME);
+                $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+                $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
+                $uniqueFileName = uniqid() . "_" . $formattedFileName . "." . $fileExtension;
+                $targetFilePath = $targetDir . $uniqueFileName;
 
-            if (move_uploaded_file($_FILES['expense_file']['tmp_name'][$i], $targetFilePath)) {
-              $expense['expense_file'] = $uniqueFileName;
-            } else {
-              $errors[] = "Failed to upload file for expense item at row " . ($i + 1);
+                if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
+                  $expenseFiles[] = $uniqueFileName;
+                } else {
+                  $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
+                }
+              }
             }
           }
+
+          // Store expense data
+          $expense = [
+            'expense_kind' => $_POST['expense_kind'][$i],
+            'expense_amount' => $expenseAmount,
+            'so_hoa_don' => $soHoaDon,
+            'expense_payee' => $_POST['expense_payee'][$i],
+            'expense_doc' => $_POST['expense_doc'][$i],
+            'expense_files' => $expenseFiles // Store all uploaded files for this expense
+          ];
 
           $newExpenses[] = $expense;
         }
@@ -107,14 +113,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
       $entry['expenses'] = $newExpenses;
 
+      $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
+
       // Additional fields
       foreach ($_POST as $key => $value) {
         if ($key == "leader" || $key == "sale" || $key == "approval_status" || $key == "message" || $key == "instruction_no") {
           continue;
-        } elseif (!in_array($key, ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc'])) {
+        } elseif (!in_array($key, $fieldIgnore)) {
           $entry[$key] = is_array($value) ? $value : trim($value);
         }
       }
+
+      // get data payment
+      // Extract custom fields
+      $customFieldNames = $_POST['customFieldName'] ?? [];
+      $customFields = $_POST['customField'] ?? [];
+      $customVats = $_POST['customVat'] ?? [];
+      $customContSetRadios = $_POST['customContSet'] ?? [];
+      $customIncl = $_POST['customIncl'] ?? [];
+      $customExcl = $_POST['customExcl'] ?? [];
+
+      // Prepare an array to store custom fields
+      $customData = [];
+
+      logEntry("customInclude: " . json_encode($customIncl));
+      logEntry("customExcl: " . json_encode($customExcl));
+
+      foreach ($customFieldNames as $index => $name) {
+        logEntry("Processing custom field: $name");
+        $customData[] = [
+          'name' => $name,
+          'value' => (float)str_replace('.', '', $customFields[$index]),
+          'vat' => $customVats[$index] ?? '',
+          'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
+          'incl' => $customIncl[$index] ?? '',
+          'excl' => $customExcl[$index] ?? ''
+        ];
+      }
+
+      if (empty($customData)) {
+        $customData = $entry['payment'];
+      }
+      // Save to entry
+      $entry['payment'] = $customData;
 
       $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
       $entry['updated_at'] = date("Y-m-d H:i:s");

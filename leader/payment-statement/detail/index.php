@@ -320,6 +320,71 @@ if ($instructionNo !== null) {
         </div>
       </div>
 
+      <!-- II. PAYMENT INFORMATION -->
+      <div id="payment-info-container">
+        <h6>II. PICK UP/DELIVERY INFORMATION:</h6>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" required>
+          </div>
+        </div>
+
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" required>
+          </div>
+
+          <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct'] ?? '' ?>">
+          </div>
+        </div>
+
+        <?php
+        foreach ($data['payment'] as $customField) {
+        ?>
+          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+            <div class="col-sm-3 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>">
+            </div>
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+            </div>
+            <div class="col-sm-2 d-flex pb-2">
+              <label for="customVat" class="col-form-label">V.A.T</label>
+              <div class="input-group ps-2">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" required value="<?= $customField['vat'] ?>">
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+              <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+                <option value="cont" <?= $customField['contSet'] === 'cont' ? 'selected' : '' ?>>Cont</option>
+                <option value="set" <?= $customField['contSet'] === 'set' ? 'selected' : '' ?>>Set</option>
+              </select>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customIncl[]" <?= $customField['incl'] == 'on' ? 'checked' : '' ?>>
+              <label class="form-check-label">INCL</label>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customExcl[]" <?= $customField['excl'] == 'on' ? 'checked' : '' ?>>
+              <label class="form-check-label">EXCL</label>
+            </div>
+            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+            </div>
+          </div>
+        <?php
+        }
+        ?>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button>
+      </div>
+
       <div>
         <h6>III. OPERATION INFORMATION</h6>
 
@@ -363,8 +428,10 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
                 <?php
-                if (!empty($expense['expense_file'])) {
-                  echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                if (!empty($expense['expense_files'])) {
+                  foreach ($expense['expense_files'] as $file) {
+                    echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                  }
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
@@ -616,16 +683,25 @@ if ($instructionNo !== null) {
           leaderForm.classList.add("was-validated");
         } else {
           e.preventDefault();
+
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+              checkbox.checked = true;
+              checkbox.value = "off";
+            }
+          });
+
           const formData = new FormData(leaderForm);
           const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
           formData.append('instruction_no', instructionNo);
           formData.append('approval_status', status);
           formData.append('message', message);
 
-          // Log each key-value pair for debugging
-          for (const [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-          }
+          // // Log each key-value pair for debugging
+          // for (const [key, value] of formData.entries()) {
+          //   console.log(`${key}:`, value);
+          // }
 
           // disable button
           pheDuyetBtn.disabled = true;

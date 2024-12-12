@@ -75,5 +75,185 @@
         "chiHoExcl": "",
         "amount": "22222",
         "file_path": "Phieu de nghi thanh toan_id_49_time_11_2024.pdf"
+    },
+    {
+        "instruction_no": 3,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 14:53:29",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "sale1@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 15:35:17",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "director@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 16:13:16",
+                "comment": ""
+            },
+            {
+                "role": "accountant",
+                "email": "accountant@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 16:20:44",
+                "comment": "sdfasdf"
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "tst",
+                "expense_amount": 33333333,
+                "so_hoa_don": "",
+                "expense_payee": "OPS",
+                "expense_doc": "",
+                "expense_file": ""
+            }
+        ],
+        "shipper": "Neymar",
+        "billTo": "1x40",
+        "volume": "1x400",
+        "payment_lo": "3333",
+        "loai_hinh": "nhap",
+        "delivery_address": "Quan 4 56",
+        "delivery_time": "2024-12-11",
+        "delivery_pct": "132455",
+        "customs_manifest_on": "12345642",
+        "total_actual": 55555555,
+        "received_back_on": "",
+        "by": "",
+        "payment": [
+            {
+                "name": "tesst",
+                "value": 10000000,
+                "vat": "1",
+                "contSet": "cont",
+                "incl": "off",
+                "excl": "on"
+            },
+            {
+                "name": "tets",
+                "value": 2000000,
+                "vat": "2",
+                "contSet": "set",
+                "incl": "on",
+                "excl": "off"
+            },
+            {
+                "name": "tesst 2",
+                "value": 22222222,
+                "vat": "3",
+                "contSet": "cont",
+                "incl": "on",
+                "excl": "on"
+            },
+            {
+                "name": "tets",
+                "value": 3333333,
+                "vat": "4",
+                "contSet": "cont",
+                "incl": "on",
+                "excl": "on"
+            }
+        ],
+        "operator_name": "Oper 1",
+        "operator_email": "oper1@gmail.com",
+        "created_at": "2024-12-12 15:02:44",
+        "id": 181,
+        "is_update": "false",
+        "amount": "33333333",
+        "file_path": "Phieu de nghi thanh toan_id_181_time_12_2024.pdf"
+    },
+    {
+        "instruction_no": 4,
+        "approval": [
+            {
+                "role": "leader",
+                "email": "leader1@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 17:40:40",
+                "comment": ""
+            },
+            {
+                "role": "sale",
+                "email": "sale1@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 17:49:54",
+                "comment": ""
+            },
+            {
+                "role": "director",
+                "email": "director@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 17:53:36",
+                "comment": ""
+            },
+            {
+                "role": "accountant",
+                "email": "accountant@gmail.com",
+                "status": "approved",
+                "time": "2024-12-12 17:55:00",
+                "comment": "okokok"
+            }
+        ],
+        "expenses": [
+            {
+                "expense_kind": "tst",
+                "expense_amount": 2222,
+                "so_hoa_don": "hd001",
+                "expense_payee": "OPS",
+                "expense_doc": "",
+                "expense_file": ""
+            }
+        ],
+        "shipper": "Neymar 123333",
+        "billTo": "1x40",
+        "volume": "1x400",
+        "payment_lo": "3333",
+        "loai_hinh": "nhap",
+        "delivery_address": "Quan 4 56",
+        "delivery_time": "2024-12-27",
+        "delivery_pct": "132455",
+        "customContSet": [
+            "cont"
+        ],
+        "customs_manifest_on": "12345642",
+        "total_actual": 0,
+        "received_back_on": "",
+        "by": "",
+        "payment": [
+            {
+                "name": "tesst",
+                "value": 11111111,
+                "vat": "2",
+                "contSet": "cont",
+                "incl": "off",
+                "excl": "off"
+            },
+            {
+                "name": "tets",
+                "value": 10000000,
+                "vat": "2",
+                "contSet": "set",
+                "incl": "on",
+                "excl": "on"
+            }
+        ],
+        "operator_name": "Oper 1",
+        "operator_email": "oper1@gmail.com",
+        "created_at": "2024-12-12 16:34:26",
+        "id": 185,
+        "updated_at": "2024-12-12 17:39:44",
+        "is_update": "true",
+        "amount": "2222",
+        "file_path": "Phieu de nghi thanh toan_id_185_time_12_2024.pdf"
     }
 ]

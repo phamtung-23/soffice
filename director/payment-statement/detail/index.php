@@ -372,126 +372,69 @@ if ($instructionNo !== null) {
         </div>
       </div>
 
-      <div>
+      <!-- II. PAYMENT INFORMATION -->
+      <div id="payment-info-container">
         <h6>II. PICK UP/DELIVERY INFORMATION:</h6>
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="delivery_address" name="delivery_address" required value="<?= $data['delivery_address'] ?>">
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" required>
           </div>
         </div>
 
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
           <div class="col-sm-4">
-            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" required value="<?= $data['delivery_time'] ?>">
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" required>
           </div>
 
           <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="delivery_pct" placeholder="" name="delivery_pct" required value="<?= $data['delivery_pct'] ?>">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct'] ?? '' ?>">
           </div>
         </div>
-        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-          <label for="trucking" class="col-sm-2 col-form-label">Trucking</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" id="trucking" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="trucking" required value="<?= number_format($data['trucking'], 0, ',', '.') ?>">
-          </div>
-          <label for="trunkingVat" class="col-sm-1 col-form-label">V.A.T</label>
-          <div class="col-sm-2">
-            <div class="input-group">
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="trunkingVat" required value="<?= $data['trunkingVat'] ?>">
-              <span class="input-group-text">%</span>
+
+        <?php
+        foreach ($data['payment'] as $customField) {
+        ?>
+          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+            <div class="col-sm-3 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>">
+            </div>
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="updateAmountText(this)">
+            </div>
+            <div class="col-sm-2 d-flex pb-2">
+              <label for="customVat" class="col-form-label">V.A.T</label>
+              <div class="input-group ps-2">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" required value="<?= $customField['vat'] ?>">
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+              <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+                <option value="cont" <?= $customField['contSet'] === 'cont' ? 'selected' : '' ?>>Cont</option>
+                <option value="set" <?= $customField['contSet'] === 'set' ? 'selected' : '' ?>>Set</option>
+              </select>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customIncl[]" <?= $customField['incl'] == 'on' ? 'checked' : '' ?>>
+              <label class="form-check-label">INCL</label>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customExcl[]" <?= $customField['excl'] == 'on' ? 'checked' : '' ?>>
+              <label class="form-check-label">EXCL</label>
+            </div>
+            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
             </div>
           </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="trunkingIncl" name="trunkingIncl" <?= $data['trunkingIncl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="trunkingIncl">
-              INCL
-            </label>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="trunkingExcl" name="trunkingExcl" <?= $data['trunkingExcl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="trunkingExcl">
-              EXCL
-            </label>
-          </div>
-        </div>
-        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-          <label for="stuffing" class="col-sm-2 col-form-label">Stuffing & customs & Phyto</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" id="stuffing" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="stuffing" required value="<?= number_format($data['stuffing'], 0, ',', '.') ?>">
-          </div>
-          <label for="stuffingVat" class="col-sm-1 col-form-label">V.A.T</label>
-          <div class="col-sm-2">
-            <div class="input-group">
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="stuffingVat" required value="<?= $data['stuffingVat'] ?>">
-              <span class="input-group-text">%</span>
-            </div>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="stuffingIncl" name="stuffingIncl" <?= $data['stuffingIncl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="stuffingIncl">
-              INCL
-            </label>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="stuffingExcl" name="stuffingExcl" <?= $data['stuffingExcl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="stuffingExcl">
-              EXCL
-            </label>
-          </div>
-        </div>
-        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-          <label for="liftOnOff" class="col-sm-2 col-form-label">Lift on/off</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" id="liftOnOff" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="liftOnOff" required value="<?= number_format($data['liftOnOff'], 0, ',', '.') ?>">
-          </div>
-          <label for="liftOnOffVat" class="col-sm-1 col-form-label">V.A.T</label>
-          <div class="col-sm-2">
-            <div class="input-group">
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="liftOnOffVat" required value="<?= $data['liftOnOffVat'] ?>">
-              <span class="input-group-text">%</span>
-            </div>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="liftOnOffIncl" name="liftOnOffIncl" <?= $data['liftOnOffIncl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="liftOnOffIncl">
-              INCL
-            </label>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="liftOnOffExcl" name="liftOnOffExcl" <?= $data['liftOnOffExcl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="liftOnOffExcl">
-              EXCL
-            </label>
-          </div>
-        </div>
-        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-          <label for="chiHo" class="col-sm-2 col-form-label">Chi hộ</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" id="chiHo" placeholder="EX: 1.000.000" oninput="updateAmountText(this)" name="chiHo" required value="<?= number_format($data['chiHo'], 0, ',', '.') ?>">
-          </div>
-          <label for="chiHoVat" class="col-sm-1 col-form-label">V.A.T</label>
-          <div class="col-sm-2">
-            <div class="input-group">
-              <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" name="chiHoVat" required value="<?= $data['chiHoVat'] ?>">
-              <span class="input-group-text">%</span>
-            </div>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="chiHoIncl" name="chiHoIncl" <?= $data['chiHoIncl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="chiHoIncl">
-              INCL
-            </label>
-          </div>
-          <div class="form-check col-sm-2 d-flex gap-2 align-items-center">
-            <input class="form-check-input" type="checkbox" id="chiHoExcl" name="chiHoExcl" <?= $data['chiHoExcl'] == 'on' ? 'checked' : ''; ?>>
-            <label class="form-check-label" for="chiHoExcl">
-              EXCL
-            </label>
-          </div>
-        </div>
+        <?php
+        }
+        ?>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button>
       </div>
 
       <div>
@@ -538,8 +481,10 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control expense-payee" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
                 <?php
-                if (!empty($expense['expense_file'])) {
-                  echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                if (!empty($expense['expense_files'])) {
+                  foreach ($expense['expense_files'] as $file) {
+                    echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                  }
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
@@ -822,6 +767,14 @@ if ($instructionNo !== null) {
           directorForm.classList.add("was-validated");
         } else {
           e.preventDefault();
+
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+              checkbox.checked = true;
+              checkbox.value = "off";
+            }
+          });
 
           const formData = new FormData(directorForm);
           const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP

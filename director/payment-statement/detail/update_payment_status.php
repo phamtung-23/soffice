@@ -84,32 +84,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
       $entry['expenses'] = $newExpenses;
 
+      $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
+
       // Additional fields
       foreach ($_POST as $key => $value) {
         if ($key == "leader" || $key == "sale" || $key == "approval_status" || $key == "message" || $key == "instruction_no") {
           continue;
-        } elseif (!in_array($key, ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc'])) {
+        } elseif (!in_array($key, $fieldIgnore)) {
           $entry[$key] = is_array($value) ? $value : trim($value);
         }
       }
 
-      $entry['trucking'] = (float)str_replace('.', '', $_POST['trucking']);
-      $entry['stuffing'] = (float)str_replace('.', '', $_POST['stuffing']);
-      $entry['liftOnOff'] = (float)str_replace('.', '', $_POST['liftOnOff']);
-      $entry['chiHo'] = (float)str_replace('.', '', $_POST['chiHo']);
+      // get data payment
+      // Extract custom fields
+      $customFieldNames = $_POST['customFieldName'] ?? [];
+      $customFields = $_POST['customField'] ?? [];
+      $customVats = $_POST['customVat'] ?? [];
+      $customContSetRadios = $_POST['customContSet'] ?? [];
+      $customIncl = $_POST['customIncl'] ?? [];
+      $customExcl = $_POST['customExcl'] ?? [];
 
+      // Prepare an array to store custom fields
+      $customData = [];
 
-      $entry['trunkingIncl'] = isset($_POST['trunkingIncl']) ? $_POST['trunkingIncl'] : "";
-      $entry['trunkingExcl'] = isset($_POST['trunkingExcl']) ? $_POST['trunkingExcl'] : "";
-      $entry['stuffingIncl'] = isset($_POST['stuffingIncl']) ? $_POST['stuffingIncl'] : "";
-      $entry['stuffingExcl'] = isset($_POST['stuffingExcl']) ? $_POST['stuffingExcl'] : "";
-      $entry['liftOnOffIncl'] = isset($_POST['liftOnOffIncl']) ? $_POST['liftOnOffIncl'] : "";
-      $entry['liftOnOffExcl'] = isset($_POST['liftOnOffExcl']) ? $_POST['liftOnOffExcl'] : "";
-      $entry['chiHoIncl'] = isset($_POST['chiHoIncl']) ? $_POST['chiHoIncl'] : "";
-      $entry['chiHoExcl'] = isset($_POST['chiHoExcl']) ? $_POST['chiHoExcl'] : "";
+      logEntry("customInclude: " . json_encode($customIncl));
+      logEntry("customExcl: " . json_encode($customExcl));
 
+      foreach ($customFieldNames as $index => $name) {
+        logEntry("Processing custom field: $name");
+        $customData[] = [
+          'name' => $name,
+          'value' => (float)str_replace('.', '', $customFields[$index]),
+          'vat' => $customVats[$index] ?? '',
+          'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
+          'incl' => $customIncl[$index] ?? '',
+          'excl' => $customExcl[$index] ?? ''
+        ];
+      }
+      // Save to entry
+      $entry['payment'] = $customData;
+
+      // Update total actual
       $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
 
+      // Update approval status
       foreach ($entry['approval'] as &$approval) {
         if ($approval['role'] === 'director') {
           $approval['status'] = $status;

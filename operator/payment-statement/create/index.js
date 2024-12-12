@@ -105,10 +105,10 @@ submitForm.addEventListener("submit", function (event) {
     // disable the submit button
     submitBtn.disabled = true;
     const formData = new FormData(submitForm);
-    // // Log each key-value pair for debugging
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(`${key}:`, value);
-    // }
+    // Log each key-value pair for debugging
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
 
     fetch("submit_payment.php", {
       method: "POST",
@@ -156,7 +156,7 @@ document.getElementById("addRowPayment").addEventListener("click", function () {
             <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
           </div>
           <div class="col-sm-2 pb-2">
-            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required>
+            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="toggleExpenseFields(this)">
           </div>
           <div class="col-sm-2 d-flex pb-2">
             <label for="customVat" class="col-form-label">V.A.T</label>

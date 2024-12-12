@@ -355,7 +355,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
             <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
           </div>
           <div class="col-sm-2 pb-2">
-            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required>
+            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="toggleExpenseFields(this)">
           </div>
           <div class="col-sm-2 d-flex pb-2">
             <label for="customVat" class="col-form-label">V.A.T</label>

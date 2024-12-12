@@ -53,8 +53,8 @@ foreach ($jsonData as &$entry) {
 
     $month = date('m'); // Lấy tháng hiện tại
     $year = date('Y');  // Lấy năm hiện tại
-    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
-    $entry['file_path'] = $pdfFileName;
+    // $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
+    // $entry['file_path'] = $pdfFileName;
     foreach ($entry['approval'] as &$approval) {
       if ($approval['role'] === 'director') {
         $approval['email'] = $_SESSION['user_id'];

@@ -320,6 +320,71 @@ if ($instructionNo !== null) {
         </div>
       </div>
 
+      <!-- II. PAYMENT INFORMATION -->
+      <div id="payment-info-container">
+        <h6>II. PICK UP/DELIVERY INFORMATION:</h6>
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" required>
+          </div>
+        </div>
+
+        <div class="row mb-3 mt-3 ps-4">
+          <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" required>
+          </div>
+
+          <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct'] ?? '' ?>">
+          </div>
+        </div>
+
+        <?php
+        foreach ($data['payment'] as $customField) {
+        ?>
+          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+            <div class="col-sm-3 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>">
+            </div>
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+            </div>
+            <div class="col-sm-2 d-flex pb-2">
+              <label for="customVat" class="col-form-label">V.A.T</label>
+              <div class="input-group ps-2">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" required value="<?= $customField['vat'] ?>">
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+              <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+                <option value="cont" <?= $customField['contSet'] === 'cont' ? 'selected' : '' ?>>Cont</option>
+                <option value="set" <?= $customField['contSet'] === 'set' ? 'selected' : '' ?>>Set</option>
+              </select>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customIncl[]" <?= $customField['incl'] == 'on' ? 'checked' : '' ?>>
+              <label class="form-check-label">INCL</label>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customExcl[]" <?= $customField['excl'] == 'on' ? 'checked' : '' ?>>
+              <label class="form-check-label">EXCL</label>
+            </div>
+            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+            </div>
+          </div>
+        <?php
+        }
+        ?>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button>
+      </div>
+
       <div>
         <h6>III. OPERATION INFORMATION</h6>
 
@@ -364,10 +429,13 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
-                <td><input class="form-control" type="file" id="formFile" name="expense_file[]"></td>
+                <td><input class="form-control" type="file" id="formFile" name="expense_file[0][]" multiple></td>
                 <?php
-                if (!empty($expense['expense_file'])) {
-                  echo "<td><a href=\"../../../database/payment/uploads/" . $expense['expense_file'] . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                if (!empty($expense['expense_files'])) {
+                  foreach ($expense['expense_files'] as $file) {
+                    echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                  }
+                 
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
@@ -467,6 +535,12 @@ if ($instructionNo !== null) {
 
       if (currentInput.value) {
         const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
+        // check if not a number
+        if (isNaN(advanceAmount)) {
+          alert('Vui lòng nhập số');
+          currentInput.value = '';
+          return;
+        }
         currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
       }
     }
@@ -565,6 +639,15 @@ if ($instructionNo !== null) {
     function handleApprovePayment(status, message = '') {
       leaderForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+          if (!checkbox.checked) {
+            checkbox.checked = true;
+            checkbox.value = "off";
+          }
+        });
+
         const formData = new FormData(leaderForm);
         const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
         formData.append('instruction_no', instructionNo);
@@ -636,6 +719,72 @@ if ($instructionNo !== null) {
             tuChoiBtn.disabled = false;
           });
       });
+    }
+
+    document.getElementById("addRowPayment").addEventListener("click", function() {
+      // Lấy container chứa các hàng hiện tại
+      const container = document.getElementById("payment-info-container");
+
+      // Tạo một hàng mới
+      const newRow = document.createElement("div");
+      newRow.classList.add(
+        "row",
+        "mb-3",
+        "mt-3",
+        "ps-4",
+        "d-flex",
+        "align-items-center"
+      );
+
+      // Nội dung HTML của hàng mới
+      newRow.innerHTML = `
+      <div class="col-sm-3 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
+            </div>
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="toggleExpenseFields(this)">
+            </div>
+            <div class="col-sm-2 d-flex pb-2">
+              <label for="customVat" class="col-form-label">V.A.T</label>
+              <div class="input-group ps-2">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" required>
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+              <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+                <option selected disabled value="">Choose Cont/Set</option>
+                <option value="cont">Cont</option>
+                <option value="set">Set</option>
+              </select>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customIncl[]">
+              <label class="form-check-label">
+                INCL
+              </label>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customExcl[]">
+              <label class="form-check-label">
+                EXCL
+              </label>
+            </div>
+            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+            </div>
+    `;
+
+      // Thêm hàng mới vào container
+      container.appendChild(newRow);
+    });
+
+    function deleteRowPayment(button) {
+      // Find the parent row (div) containing the button and remove it
+      const row = button.closest(".row");
+      if (row) {
+        row.remove();
+      }
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

@@ -128,3 +128,70 @@ function toggleMenu() {
   var menu = document.querySelector(".menu");
   menu.classList.toggle("responsive");
 }
+
+document.getElementById("addRowPayment").addEventListener("click", function () {
+  // Lấy container chứa các hàng hiện tại
+  const container = document.getElementById("payment-info-container");
+
+  // Tạo một hàng mới
+  const newRow = document.createElement("div");
+  newRow.classList.add(
+    "row",
+    "mb-3",
+    "mt-3",
+    "ps-4",
+    "d-flex",
+    "align-items-center"
+  );
+
+  // Nội dung HTML của hàng mới
+  newRow.innerHTML = `
+      <div class="col-sm-3 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
+            </div>
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="updateAmountText(this)">
+            </div>
+            <div class="col-sm-2 d-flex pb-2">
+              <label for="customVat" class="col-form-label">V.A.T</label>
+              <div class="input-group ps-2">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" required>
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
+              <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+                <option selected disabled value="">Choose Cont/Set</option>
+                <option value="cont">Cont</option>
+                <option value="set">Set</option>
+              </select>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customIncl[]">
+              <label class="form-check-label">
+                INCL
+              </label>
+            </div>
+            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
+              <input class="form-check-input" type="checkbox" name="customExcl[]">
+              <label class="form-check-label">
+                EXCL
+              </label>
+            </div>
+            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+            </div>
+    `;
+
+  // Thêm hàng mới vào container
+  container.appendChild(newRow);
+});
+
+function deleteRowPayment(button) {
+  // Find the parent row (div) containing the button and remove it
+  const row = button.closest(".row");
+  if (row) {
+    row.remove();
+  }
+}
+

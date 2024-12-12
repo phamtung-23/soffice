@@ -68,20 +68,58 @@ foreach ($jsonDataUser as $user) {
 // Lấy ngày hiện tại
 $date = date('d/m/Y'); // Format ngày: Ngày/Tháng/Năm
 
-// data from request
-$trunkingIncl = $request['trunkingIncl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$trunkingExcl = $request['trunkingExcl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$stuffingIncl = $request['stuffingIncl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$stuffingExcl = $request['stuffingExcl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$liftOnOffIncl = $request['liftOnOffIncl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$liftOnOffExcl = $request['liftOnOffExcl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$chiHoIncl = $request['chiHoIncl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
-$chiHoExcl = $request['chiHoExcl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
+// Tạo nội dung cho bảng payment
+$rowsPaymentTable = "";
+foreach ($request['payment'] as $payment) {
+  // check incl or excl is checked
+  $inclChecked = $payment['incl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
 
-$truckingFormatCurrency = (!empty($request['trucking']) ? number_format($request['trucking'], 0, ",", ".") : "");
-$stuffingFormatCurrency = (!empty($request['stuffing']) ? number_format($request['stuffing'], 0, ",", ".") : "");
-$liftOnOffFormatCurrency = (!empty($request['liftOnOff']) ? number_format($request['liftOnOff'], 0, ",", ".") : "");
-$chiHoFormatCurrency = (!empty($request['chiHo']) ? number_format($request['chiHo'], 0, ",", ".") : "");
+  $exclChecked = $payment['excl'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
+
+  $formatNumber = number_format($payment['value'], 0, ",", ".");
+
+  $rowsPaymentTable = $rowsPaymentTable . "
+    <table class='line-item-table'>
+        <tr>
+            <td class='cell-item'>
+                <div class='form-group'>
+                    <label for='payment-content'>{$payment['name']}:</label>
+                    <span>{$formatNumber}</span>
+                </div>
+            </td>
+            <td>
+                <div class='form-group'>
+                    <label for='payment-content'>V.A.T:</label>
+                    <span>{$payment['vat']} %</span>
+                </div>
+            </td>
+            <td>
+                <div class='form-group'>
+                    <label for='payment-content'>Cont/Set:</label>
+                    <span>{$payment['contSet']}</span>
+                </div>
+            </td>
+            <td>
+              <div class='form-group'>
+                  {$inclChecked}
+                  <label class='form-check-label' for='trunkingIncl'>
+                  INCL
+                  </label>
+              </div>
+            </td>
+            <td>
+              <div class='form-group'>
+                  {$exclChecked}
+                  <label class='form-check-label' for='trunkingExcl'>
+                    EXCL
+                  </label>
+              </div>
+            </td>
+        </tr>
+    </table>
+  ";
+}
+
 
 $rowsTable = "";
 
@@ -90,7 +128,7 @@ if (count($request['expenses']) > 0) {
     $item = $request['expenses'][$i];
     $index = $i + 1;
     $amount = (!empty($item['expense_amount']) ? number_format($item['expense_amount'], 0, ",", ".") : "");
-    $rowsTable = $rowsTable."
+    $rowsTable = $rowsTable . "
     <tr>
       <td class='line-item'>{$index}</td>
       <td class='line-item'>{$item['expense_kind']}</td>
@@ -331,138 +369,7 @@ $htmlContent = "
               </td>
           </tr>
       </table>
-
-      <table class='line-item-table'>
-          <tr>
-              <td class='cell-item'>
-                  <div class='form-group'>
-                      <label for='payment-content'>Trucking:</label>
-                      <span>{$truckingFormatCurrency}</span>
-                  </div>
-              </td>
-              <td>
-                  <div class='form-group'>
-                      <label for='payment-content'>V.A.T:</label>
-                      <span>{$request['trunkingVat']} %</span>
-                  </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                  {$trunkingIncl}
-                  <label class='form-check-label' for='trunkingIncl'>
-                  INCL
-                  </label>
-                </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$trunkingExcl}
-                    <label class='form-check-label' for='trunkingExcl'>
-                      EXCL
-                    </label>
-                </div>
-              </td>
-          </tr>
-      </table>
-
-      <table class='line-item-table'>
-          <tr>
-              <td class='cell-item'>
-                  <div class='form-group'>
-                    <label for='payment-content'>Stuffing & customs & Phyto:</label>
-                    <span>{$stuffingFormatCurrency}</span>
-                </div>
-              </td>
-              <td>
-                  <div class='form-group'>
-                      <label for='payment-content'>V.A.T:</label>
-                      <span>{$request['stuffingVat']} %</span>
-                  </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$stuffingIncl}
-                    <label class='form-check-label' for='trunkingIncl'>
-                    INCL
-                    </label>
-                </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$stuffingExcl}
-                    <label class='form-check-label' for='trunkingExcl'>
-                      EXCL
-                    </label>
-                </div>
-              </td>
-          </tr>
-      </table>
-      
-      <table class='line-item-table'>
-          <tr>
-              <td class='cell-item'>
-                  <div class='form-group'>
-                      <label for='payment-content'>Lift on/off:</label>
-                      <span>{$liftOnOffFormatCurrency}</span>
-                  </div>
-              </td>
-              <td>
-                  <div class='form-group'>
-                      <label for='payment-content'>V.A.T:</label>
-                      <span>{$request['liftOnOffVat']} %</span>
-                  </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$liftOnOffIncl}
-                    <label class='form-check-label' for='trunkingIncl'>
-                    INCL
-                    </label>
-                </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$liftOnOffExcl}
-                    <label class='form-check-label' for='trunkingExcl'>
-                      EXCL
-                    </label>
-                </div>
-              </td>
-          </tr>
-      </table>
-      
-      <table class='line-item-table'>
-          <tr>
-              <td class='cell-item'>
-                  <div class='form-group'>
-                      <label for='payment-content'>Chi hộ:</label>
-                      <span>{$chiHoFormatCurrency}</span>
-                  </div>
-              </td>
-              <td>
-                  <div class='form-group'>
-                      <label for='payment-content'>V.A.T:</label>
-                      <span>{$request['chiHoVat']} %</span>
-                  </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$chiHoIncl}
-                    <label class='form-check-label' for='trunkingIncl'>
-                    INCL
-                    </label>
-                </div>
-              </td>
-              <td>
-                <div class='form-group'>
-                    {$chiHoExcl}
-                    <label class='form-check-label' for='trunkingExcl'>
-                      EXCL
-                    </label>
-                </div>
-              </td>
-          </tr>
-      </table>
+      {$rowsPaymentTable}
   </div>
 
   <div class='form-section'>
