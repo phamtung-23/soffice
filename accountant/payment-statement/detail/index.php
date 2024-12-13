@@ -477,9 +477,11 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
                 <?php
                 if (!empty($expense['expense_files'])) {
+                  echo "<td>";
                   foreach ($expense['expense_files'] as $file) {
-                    echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                    echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
                   }
+                  echo "</tr>";
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
@@ -587,6 +589,11 @@ if ($instructionNo !== null) {
     const advanceAmountText = convertNumberToTextVND(advanceAmount);
     document.getElementById('soTienBangChu').value = advanceAmountText;
 
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector('.menu');
+      menu.classList.toggle('responsive');
+    }
 
     function updateAmountText(currentInput) {
       const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy

@@ -429,9 +429,11 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
                 <?php
                 if (!empty($expense['expense_files'])) {
+                  echo "<td>";
                   foreach ($expense['expense_files'] as $file) {
-                    echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                    echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
                   }
+                  echo "</tr>";
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }

@@ -4,12 +4,40 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
 require '../../vendor/autoload.php'; // Đảm bảo đường dẫn tới mPDF chính xác
-
+include('../../../helper/payment.php');
 
 // Include PHPMailer's classes
 require '../../mailer/src/Exception.php';
 require '../../mailer/src/PHPMailer.php';
 require '../../mailer/src/SMTP.php';
+require '../../../library/google_api/vendor/autoload.php'; // Đảm bảo đường dẫn đúng
+
+function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
+{
+  $client = new Google_Client();
+  $client->setAuthConfig('gdcredentials.json'); // Đường dẫn tới file credential
+  $client->addScope(Google_Service_Drive::DRIVE_FILE);
+
+  $service = new Google_Service_Drive($client);
+
+  $fileMetadata = new Google_Service_Drive_DriveFile([
+    'name' => $fileName,
+    'parents' => [$folderId]
+  ]);
+
+  $content = file_get_contents($filePath);
+
+  try {
+    $file = $service->files->create($fileMetadata, [
+      'data' => $content,
+      'mimeType' => mime_content_type($filePath),
+      'uploadType' => 'multipart'
+    ]);
+    return "https://drive.google.com/file/d/" . $file->id . "/view";
+  } catch (Exception $e) {
+    return null;
+  }
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -476,14 +504,27 @@ try {
   $mpdf->Output($pdfPath, 'F'); // Lưu file PDF
 
 
-  // // Gửi email với file PDF
-  // sendEmailWithAttachment($pdfPath, $pdfFileName, $sale_email);
-
+  // upload google drive
+  $folderId = '1nZyy6HPZco3vNB9YwhgxC8lAGWJFnj-L';
+  $linkImg = uploadFileToGoogleDrive($pdfPath, $pdfFileName, $folderId);
+  if ($linkImg) {
+    unlink($pdfPath);
+  }
+  // update database file path by instruction_no
+  $request['file_path'] = $linkImg;
+  $filePathDataList = '../../../database/payment_'.$currentYear.'.json';
+  $jsonDataList = json_decode(file_get_contents($filePathDataList), true);
+  foreach ($jsonDataList as &$entry) {
+    if ($entry['instruction_no'] == $request['instruction_no']) {
+      $entry['file_path'] = $linkImg;
+    }
+  }
+  file_put_contents($filePathDataList, json_encode($jsonDataList, JSON_PRETTY_PRINT));
 
   // Trả về đường dẫn file PDF
   echo json_encode([
     'success' => true,
-    'pdfUrl' => 'pdfs/' . $pdfFileName
+    'pdfUrl' => $linkImg
   ]);
 } catch (\Mpdf\MpdfException $e) {
   // Xử lý lỗi mPDF
@@ -491,45 +532,4 @@ try {
     'success' => false,
     'message' => 'Lỗi khi tạo PDF: ' . $e->getMessage()
   ]);
-}
-
-
-
-
-
-function sendEmailWithAttachment($filePath, $fileName, $sale_email)
-{
-  $mail = new PHPMailer();
-  try {
-    //$mail->SMTPDebug = 2; 
-    //$mail->Debugoutput = 'html';
-    // Cấu hình server SMTP
-    $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com'; // Thay bằng SMTP host của bạn
-    $mail->SMTPAuth = true;
-    $mail->Username = 'nguyenlonggm2021@gmail.com'; // Thay bằng email của bạn
-    $mail->Password = 'hnuozppidlbfkmlm'; // Thay bằng mật khẩu email của bạn
-    $mail->SMTPSecure = 'tls'; // Có thể thử với SSL nếu cần
-    $mail->Port = 587; // Sử dụng cổng TLS 587
-
-    // Người gửi và người nhận
-    $mail->setFrom('vip@cloud.info.vn', 'Voffice');
-    $mail->addAddress($sale_email); // Địa chỉ người nhận
-    $mail->CharSet = 'UTF-8';
-    $mail->Encoding = 'base64';
-    $mail->Subject = '=?UTF-8?B?' . base64_encode($mail->Subject) . '?=';
-    // Tiêu đề và nội dung email
-    $mail->Subject = 'Đề nghị tạm ứng';
-    $mail->Body = 'Xin vui lòng xem file đính kèm.';
-    $mail->addAttachment($filePath, $fileName); // Đính kèm tệp
-
-    // Gửi email
-    if (!$mail->send()) {
-      echo "Không thể gửi email. Lỗi: {$mail->ErrorInfo}";
-    } else {
-      echo "Email đã được gửi thành công!";
-    }
-  } catch (Exception $e) {
-    echo "Không thể gửi email. Lỗi: {$mail->ErrorInfo}";
-  }
 }

@@ -1,3 +1,7 @@
 /database/pdfs/
 /database/pdfs_bk/
 /database/payment/
+/library/
+/operator/payment-statement/create/gdcredentials.json
+/director/payment-statement/detail/gdcredentials.json
+/accountant/payment-statement/detail/gdcredentials.json

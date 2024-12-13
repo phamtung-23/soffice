@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
           $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
           $soHoaDon = $_POST['so_hoa_don'][$i] ?? $entry['expenses'][$i]['so_hoa_don'] ?? "";
-          $expenseFile = $entry['expenses'][$i]['expense_file'] ?? "";
+          $expenseFile = $entry['expenses'][$i]['expense_files'] ?? "";
           // Store expense data
           $expense = [
             'expense_kind' => $_POST['expense_kind'][$i] ?? $entry['expenses'][$i]['expense_kind'] ?? null,
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'so_hoa_don' => $soHoaDon,
             'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
             'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
-            'expense_file' => $expenseFile
+            'expense_files' => $expenseFile
           ];
 
           $newExpenses[] = $expense;

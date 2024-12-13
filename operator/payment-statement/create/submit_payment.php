@@ -8,6 +8,34 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
 
 include('../../../helper/payment.php');
 include('../../../helper/general.php');
+require '../../../library/google_api/vendor/autoload.php'; // Đảm bảo đường dẫn đúng
+
+function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
+{
+  $client = new Google_Client();
+  $client->setAuthConfig('gdcredentials.json'); // Đường dẫn tới file credential
+  $client->addScope(Google_Service_Drive::DRIVE_FILE);
+
+  $service = new Google_Service_Drive($client);
+
+  $fileMetadata = new Google_Service_Drive_DriveFile([
+    'name' => $fileName,
+    'parents' => [$folderId]
+  ]);
+
+  $content = file_get_contents($filePath);
+
+  try {
+    $file = $service->files->create($fileMetadata, [
+      'data' => $content,
+      'mimeType' => mime_content_type($filePath),
+      'uploadType' => 'multipart'
+    ]);
+    return "https://drive.google.com/file/d/" . $file->id . "/view";
+  } catch (Exception $e) {
+    return null;
+  }
+}
 
 header('Content-Type: application/json');
 
@@ -80,13 +108,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $originalFileName = pathinfo($fileName, PATHINFO_FILENAME);
             $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
             $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
-            $uniqueFileName = uniqid() . "_" . $formattedFileName . "." . $fileExtension;
+            $uniqueFileName = "Payment".uniqid() . "_" . $formattedFileName . "." . $fileExtension;
             $targetFilePath = $targetDir . $uniqueFileName;
 
-            if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
-              $expenseFiles[] = $uniqueFileName;
-            } else {
-              $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
+            // if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
+            //   $expenseFiles[] = $uniqueFileName;
+            // } else {
+            //   $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
+            // }
+
+            $folderId = '1nZyy6HPZco3vNB9YwhgxC8lAGWJFnj-L';
+            $fileTmpName = $uploadedFilesTmp[$fileIndex];
+            if (move_uploaded_file($fileTmpName, $targetFilePath)) {
+              // get file name = stationName + fileKey + index + fileName
+              $fileNameGGDrive = $uniqueFileName;
+              $linkImg = uploadFileToGoogleDrive($targetFilePath, $fileNameGGDrive, $folderId);
+              if ($linkImg) {
+                $expenseFiles[] = $linkImg;
+                unlink($targetFilePath);
+              }else{
+                $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
+                // remove file if upload fail
+                unlink($targetFilePath);
+              }
             }
           }
         }

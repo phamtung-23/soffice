@@ -155,11 +155,11 @@ function getApprovalStatus($item)
               echo "<td>" . (!empty($request['approval'][2]['time']) ? date("d/m/Y", strtotime($request['approval'][2]['time'])) : "") . "</td>";
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
               echo "<td>" . getApprovalStatus($request) . "</td>";
-              if (!empty($request['file_path'])) {
+              if (!empty($request['file_path_operator'])) {
                 if ($request['approval'][3]['status'] === 'approved') {
-                  echo "<td><a href=\"../../../database/payment/exports/operator/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+                  echo "<td><a href=\"" . $request['file_path_operator'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
                 } else {
-                  echo "<td><a href=\"../../../database/payment/exports/operator/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+                  echo "<td><a href=\"" . $request['file_path_operator'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
                 }
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename

@@ -300,3 +300,23 @@ function getAllDataFiles($directory)
   return ['status' => 'success', 'data' => $data];
 }
 
+
+function updateJsonData($filePath, $instructionNo, $newData) {
+  // Read the JSON file
+  $json = file_get_contents($filePath);
+  $data = json_decode($json, true);
+
+  // Find the entry with the matching instruction_no
+  foreach ($data as &$entry) {
+      if ($entry['instruction_no'] == $instructionNo) {
+          // Update the necessary fields
+          foreach ($newData as $key => $value) {
+              $entry[$key] = $value;
+          }
+          break;
+      }
+  }
+
+  // Save the updated JSON back to the file
+  file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+}

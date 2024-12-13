@@ -115,7 +115,7 @@ sort($years);
                 request.approval[0].status,
                 request.approval[1].status,
                 request.approval[2].status,
-                `<a href=\"../../../database/payment/exports/${request.file_path}\" target=\"_blank\">Xem Phiếu</a>`
+                `<a href=\"${request.file_path}\" target=\"_blank\">Xem Phiếu</a>`
               ];
 
               cells.forEach(cell => {

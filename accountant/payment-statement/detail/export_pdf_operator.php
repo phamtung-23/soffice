@@ -10,6 +10,34 @@ require '../../../director/vendor/autoload.php'; // Đảm bảo đường dẫn
 require '../../../director/mailer/src/Exception.php';
 require '../../../director/mailer/src/PHPMailer.php';
 require '../../../director/mailer/src/SMTP.php';
+require '../../../library/google_api/vendor/autoload.php'; // Đảm bảo đường dẫn đúng
+
+function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
+{
+  $client = new Google_Client();
+  $client->setAuthConfig('gdcredentials.json'); // Đường dẫn tới file credential
+  $client->addScope(Google_Service_Drive::DRIVE_FILE);
+
+  $service = new Google_Service_Drive($client);
+
+  $fileMetadata = new Google_Service_Drive_DriveFile([
+    'name' => $fileName,
+    'parents' => [$folderId]
+  ]);
+
+  $content = file_get_contents($filePath);
+
+  try {
+    $file = $service->files->create($fileMetadata, [
+      'data' => $content,
+      'mimeType' => mime_content_type($filePath),
+      'uploadType' => 'multipart'
+    ]);
+    return "https://drive.google.com/file/d/" . $file->id . "/view";
+  } catch (Exception $e) {
+    return null;
+  }
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -411,14 +439,28 @@ try {
   $mpdf->Output($pdfPath, 'F'); // Lưu file PDF
 
 
-  // // Gửi email với file PDF
-  // sendEmailWithAttachment($pdfPath, $pdfFileName, $sale_email);
+  // upload google drive
+  $folderId = '1nZyy6HPZco3vNB9YwhgxC8lAGWJFnj-L';
+  $linkImg = uploadFileToGoogleDrive($pdfPath, $pdfFileName, $folderId);
+  if ($linkImg) {
+    unlink($pdfPath);
+  }
+  // update database file path by instruction_no
+  $request['file_path'] = $linkImg;
+  $filePathDataList = '../../../database/payment_'.$currentYear.'.json';
+  $jsonDataList = json_decode(file_get_contents($filePathDataList), true);
+  foreach ($jsonDataList as &$entry) {
+    if ($entry['instruction_no'] == $request['instruction_no']) {
+      $entry['file_path_operator'] = $linkImg;
+    }
+  }
+  file_put_contents($filePathDataList, json_encode($jsonDataList, JSON_PRETTY_PRINT));
 
 
   // Trả về đường dẫn file PDF
   echo json_encode([
     'success' => true,
-    'pdfUrl' => 'pdfs/' . $pdfFileName
+    'pdfUrl' => $linkImg
   ]);
 } catch (\Mpdf\MpdfException $e) {
   // Xử lý lỗi mPDF

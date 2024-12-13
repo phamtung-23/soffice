@@ -482,7 +482,7 @@ function getApprovalStatus($item)
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
               echo "<td>" . getApprovalStatus($request) . "</td>";
               if (!empty($request['file_path'])) {
-                echo "<td><a href=\"../database/payment/exports/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+                echo "<td><a href=\"" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
               }
