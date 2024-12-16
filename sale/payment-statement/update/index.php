@@ -25,7 +25,7 @@ echo '<script>console.log(' . json_encode($isUpdate) . ')</script>';
 $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
 
-$filePathPayment = "../../../database/payment/data/$year/";
+$filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
 $filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
 $paymentIdRes = getDataFromJson($filePathPaymentID);
 $paymentId = $paymentIdRes['data'];

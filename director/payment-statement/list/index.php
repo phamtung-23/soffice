@@ -18,17 +18,17 @@ $userRole = $_SESSION['role'];
 $currentYear = date("Y");
 // Đọc các năm từ tệp JSON trong thư mục
 $years = [];
-$directoriesName = getDirectories('../../../database/payment/data');
+$directoriesName = getDirectories('../../../../../private_data/soffice_database/payment/data');
 // Xóa trùng lặp và sắp xếp các năm
 $years = array_unique($directoriesName);
 sort($years);
 
-$filePath = "../../../database/payment/status/$currentYear/status.json";
+$filePath = "../../../../../private_data/soffice_database/payment/status/$currentYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
 $paymentPendingLeaderStatus = $paymentDataStatus['pending_director'];
 
-$filePathPayment = "../../../database/payment/data/$currentYear/";
+$filePathPayment = "../../../../../private_data/soffice_database/payment/data/$currentYear/";
 
 $paymentPendingData = [];
 foreach ($paymentPendingLeaderStatus['ids'] as $id) {
@@ -40,12 +40,12 @@ foreach ($paymentPendingLeaderStatus['ids'] as $id) {
 
 function getDataByYear($year)
 {
-  $filePath = "../../../database/payment/status/$year/status.json";
+  $filePath = "../../../../../private_data/soffice_database/payment/status/$year/status.json";
   $paymentDataStatusRes = getDataFromJson($filePath);
   $paymentDataStatus = $paymentDataStatusRes['data'];
   $paymentPendingLeaderStatus = $paymentDataStatus['pending_director'];
 
-  $filePathPayment = "../../../database/payment/data/$year/";
+  $filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
 
   $paymentPendingData = [];
   foreach ($paymentPendingLeaderStatus['ids'] as $id) {

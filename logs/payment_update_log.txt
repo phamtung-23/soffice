@@ -43,3 +43,21 @@
 [2024-12-16 16:46:01] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
 [2024-12-16 16:46:01] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
 [2024-12-16 16:46:01] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 17:10:44] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-16 17:10:44] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-16 17:10:44] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-16 17:11:40] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 17:11:40] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 17:11:40] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 17:13:14] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 17:13:14] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 17:13:14] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 17:13:30] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 17:13:30] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 17:13:30] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 17:13:30] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 17:13:30] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 17:13:30] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 17:15:05] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 17:15:05] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 17:15:05] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst

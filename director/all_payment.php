@@ -24,7 +24,7 @@ if (isset($_POST['year'])) {
 
 // Read data from the selected JSON file
 // $file = "../database/payment_$selectedYear.json";
-$directory = "../database/payment/data/$selectedYear";
+$directory = "../../../private_data/soffice_database/payment/data/$selectedYear";
 
 $resData =  getAllDataFiles($directory);
 $filteredRequests = [];
@@ -34,7 +34,7 @@ if ($resData['status'] === 'success') {
   $filteredRequests = $requests;
 }
 
-$directoriesName = getDirectories('../database/payment/data');
+$directoriesName = getDirectories('../../../private_data/soffice_database/payment/data');
 
 function getApprovalStatus($item)
 {
@@ -482,7 +482,7 @@ function getApprovalStatus($item)
               echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
               echo "<td>" . getApprovalStatus($request) . "</td>";
               if (!empty($request['file_path'])) {
-                echo "<td><a href=\"../database/payment/exports/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
+                echo "<td><a href=\"../../../private_data/soffice_database/payment/exports/" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
               }

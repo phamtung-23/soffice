@@ -31,7 +31,7 @@ if ($instructionNo !== null) {
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
 
-  $filePathPayment = "../../../database/payment/data/$year/";
+  $filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
   $filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
   $paymentIdRes = getDataFromJson($filePathPaymentID);
   $paymentId = $paymentIdRes['data'];
@@ -434,7 +434,7 @@ if ($instructionNo !== null) {
                 <?php
                 if (!empty($expense['expense_files'])) {
                   foreach ($expense['expense_files'] as $file) {
-                    echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                    echo "<td><a href=\"../../../../../private_data/soffice_database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
                   }
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename

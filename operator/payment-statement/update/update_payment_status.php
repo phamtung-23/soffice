@@ -33,7 +33,7 @@ if ($instructionNo === null || $status === null) {
 
 // Define file path
 $year = date('Y');
-$filePath = "../../../database/payment/data/$year/payment_$instructionNo.json";
+$filePath = "../../../../../private_data/soffice_database/payment/data/$year/payment_$instructionNo.json";
 
 // Check if file exists
 if (!file_exists($filePath)) {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Update the status for the matching instruction number
   $updated = false;
   $errors = [];
-  $targetDir = '../../../database/payment/uploads/';
+  $targetDir = '../../../../../private_data/soffice_database/payment/uploads/';
 
   // Create uploads directory if not exists
   if (!is_dir($targetDir)) {
@@ -182,11 +182,11 @@ if (!empty($errors)) {
 
 if ($updated) {
   // update payment status
-  $statusFilePath = '../../../database/payment/status/' . $year . '';
+  $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year . '';
   updateStatusFile('leader', $status, $instructionNo, $statusFilePath);
   updateStatusFile('sale', $status, $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
-  $directory = '../../../database/payment/data/'.$year;
+  $directory = '../../../../../private_data/soffice_database/payment/data/'.$year;
   $res = updateDataToJson($entry, $directory, 'payment_'.$instructionNo);
 
   echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $res['data'] ?? []]);

@@ -30,7 +30,7 @@ if ($instructionNo !== null) {
   $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
-  $filePathPayment = "../../../database/payment/data/$year/";
+  $filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
   $filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
   $paymentIdRes = getDataFromJson($filePathPaymentID);
   $paymentId = $paymentIdRes['data'];

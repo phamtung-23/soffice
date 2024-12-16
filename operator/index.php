@@ -83,7 +83,7 @@ $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối'
 
 // get payment status data
 
-$filePath = "../database/payment/status/$selectedYear/status.json";
+$filePath = "../../../private_data/soffice_database/payment/status/$selectedYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
 

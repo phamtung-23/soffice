@@ -37,7 +37,7 @@ if ($instructionNo === null || $status === null) {
 
 // Define file path
 $year = date('Y');
-$filePath = "../../../database/payment/data/$year/payment_$instructionNo.json";
+$filePath = "../../../../../private_data/soffice_database/payment/data/$year/payment_$instructionNo.json";
 
 // Check if file exists
 if (!file_exists($filePath)) {
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   }
 
   // Read and increment ID
-  $idFile = '../../../database/payment/v_id.json';
+  $idFile = '../../../../../private_data/soffice_database/payment/v_id.json';
   $jsonDataIdPayment = file_get_contents($idFile);
   $dataIdPayment = json_decode($jsonDataIdPayment, true);
   $newIdPayment = $dataIdPayment[$year]["id"] + 1;
@@ -184,11 +184,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($updated) {
   // update payment status
-  $statusFilePath = '../../../database/payment/status/' . $year . '';
+  $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year . '';
   updateStatusFile('director', 'approved', $instructionNo, $statusFilePath);
   updateStatusFile('accountant', 'pending', $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
-  $directory = '../../../database/payment/data/' . $year;
+  $directory = '../../../../../private_data/soffice_database/payment/data/' . $year;
   $res = updateDataToJson($entry, $directory, 'payment_' . $instructionNo);
   echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $res['data'] ?? []]);
 } else {

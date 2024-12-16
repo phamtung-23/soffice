@@ -79,7 +79,7 @@ $newInstructionNo = $newIdPayment;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $errors = [];
   $data = ['instruction_no' => $newInstructionNo, 'approval' => [], 'expenses' => []];
-  $targetDir = '../../../database/payment/uploads/';
+  $targetDir = '../../../../../private_data/soffice_database/payment/uploads/';
 
   // Create uploads directory if not exists
   if (!is_dir($targetDir)) {
@@ -233,14 +233,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   ];
 
   // update payment status
-  $statusFilePath = '../../../database/payment/status/' . $currentYear . '';
+  $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $currentYear . '';
   updateStatusFile('leader', 'pending', $data['id'], $statusFilePath);
 
   // Check for errors and handle accordingly
   if (!empty($errors)) {
     echo json_encode(['success' => false, 'error' => implode("\n", $errors)]);
   } else {
-    $directory = '../../../database/payment/data/' . $currentYear . '';
+    $directory = '../../../../../private_data/soffice_database/payment/data/' . $currentYear . '';
     $response = saveDataToJson($data, $directory, 'payment_' . $newIdPayment);
     echo json_encode(['success' => true, 'message' => 'Data submitted successfully!']);
   }

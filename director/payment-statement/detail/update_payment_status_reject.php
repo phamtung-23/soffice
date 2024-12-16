@@ -36,7 +36,7 @@ if ($instructionNo === null || $status === null) {
 
 // Define file path
 $year = date('Y');
-$filePath = "../../../database/payment/data/$year/payment_$instructionNo.json";
+$filePath = "../../../../../private_data/soffice_database/payment/data/$year/payment_$instructionNo.json";
 
 // Check if file exists
 if (!file_exists($filePath)) {
@@ -76,10 +76,10 @@ foreach ($entry['approval'] as &$approval) {
 
 if ($updated) {
   // update payment status
-  $statusFilePath = '../../../database/payment/status/' . $year . '';
+  $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year . '';
   updateStatusFile('director', 'rejected', $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
-  $directory = '../../../database/payment/data/' . $year;
+  $directory = '../../../../../private_data/soffice_database/payment/data/' . $year;
   $res = updateDataToJson($entry, $directory, 'payment_' . $instructionNo);
   echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $res['data'] ?? []]);
   logEntry("Payment status updated for instruction number: $instructionNo");

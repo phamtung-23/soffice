@@ -24,7 +24,7 @@ if (isset($_POST['year'])) {
 
 // Read data from the selected JSON file
 // $file = "../../../database/payment_$selectedYear.json";
-$directory = "../../../database/payment/data/$selectedYear";
+$directory = "../../../../../private_data/soffice_database/payment/data/$selectedYear";
 
 $resData =  getAllDataFiles($directory);
 $filteredRequests = [];
@@ -36,7 +36,7 @@ if ($resData['status'] === 'success') {
   });
 }
 
-$directoriesName = getDirectories('../../../database/payment/data');
+$directoriesName = getDirectories('../../../../../private_data/soffice_database/payment/data');
 
 // Get status of approval
 function getApprovalStatus($item)

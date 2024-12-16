@@ -72,7 +72,7 @@ $requestWaitingPay = $requestApprovedDirector - $requestPaid;
 $requestRefunded = getStatusCounts($requestData, 'payment_refund_status', 'Đã hoàn tiền');
 $requestWaitingRefund = $requestPaid - $requestRefunded;
 
-$filePath = "../database/payment/status/$selectedYear/status.json";
+$filePath = "../../../private_data/soffice_database/payment/status/$selectedYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
 

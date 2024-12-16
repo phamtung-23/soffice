@@ -109,7 +109,7 @@ function countApprovalsByRoleSale($data, $role, $status)
 // $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
 // $requestWaitingLeader = getStatusCounts($requestData, 'check_status');
 
-$filePath = "../database/payment/status/$selectedYear/status.json";
+$filePath = "../../../private_data/soffice_database/payment/status/$selectedYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
 
@@ -123,7 +123,7 @@ $paymentApprovedSale =  isset($paymentDataStatus['approved_sale']) ? $paymentDat
 $paymentRejectedSale =  isset($paymentDataStatus['rejected_sale']) ? $paymentDataStatus['rejected_sale']['number'] : 0;
 $paymentTotal = $paymentApprovedLeader + $paymentRejectedLeader + $paymentWaitingLeader;
 
-$directoriesName = getDirectories('../database/payment/data');
+$directoriesName = getDirectories('../../../private_data/soffice_database/payment/data');
 
 ?>
 

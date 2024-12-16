@@ -482,7 +482,7 @@ $htmlContent = "
 ";
 
 // Tạo thư mục lưu PDF nếu chưa tồn tại
-$pdfDir = '../../../database/payment/exports/';
+$pdfDir = '../../../../../private_data/soffice_database/payment/exports/';
 if (!is_dir($pdfDir)) {
   mkdir($pdfDir, 0777, true);
 }
@@ -513,7 +513,7 @@ try {
   }
   // update database file path by instruction_no
   $request['file_path'] = $linkImg;
-  $directoryData = '../../../database/payment/data/' . $currentYear;
+  $directoryData = '../../../../../private_data/soffice_database/payment/data/' . $currentYear;
   $res = updateDataToJson($request, $directoryData, 'payment_' . $request['instruction_no']);
 
   // Trả về đường dẫn file PDF

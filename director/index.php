@@ -101,7 +101,7 @@ $requestWaitingDirector = $requestApprovedLeader - $requestApprovedDirector - $r
 // $paymentRejectedSale =  isset($paymentData) ? countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected') : 0;
 // $paymentWaitingDirector =  isset($paymentData) ? countApprovalsByRoleDirector($paymentData, 'director', 'pending') : 0;
 
-$filePath = "../database/payment/status/$selectedYear/status.json";
+$filePath = "../../../private_data/soffice_database/payment/status/$selectedYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
 
