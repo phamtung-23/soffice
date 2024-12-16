@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
   exit();
 }
 
+include('../../../helper/general.php');
 
 // Lấy tên đầy đủ từ session
 $fullName = $_SESSION['full_name'];
@@ -29,28 +30,28 @@ if ($instructionNo !== null) {
   $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
+
+  $filePathPayment = "../../../database/payment/data/$year/";
+  $filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
+  $paymentIdRes = getDataFromJson($filePathPaymentID);
+  $paymentId = $paymentIdRes['data'];
+  // print_r(json_encode($paymentId));
+  $data = $paymentId;
+
   // Search for the entry with the matching InstructionNo
-  foreach ($jsonData as $entry) {
-    if ($entry['instruction_no'] == $instructionNo) {
-      $data = $entry;
-      // user data
-      $operatorUserData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['email'] == $entry['operator_email']) {
-          $operatorUserData = $user;
-          break;
-        }
-      }
+  $operatorUserData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['email'] == $data['operator_email']) {
+      $operatorUserData = $user;
+      break;
+    }
+  }
 
-      // get leader data
-      $leaderData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'leader' && $user['email'] == $entry['approval'][0]['email']) {
-          $leaderData = $user;
-          break;
-        }
-      }
-
+  // get leader data
+  $leaderData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['role'] == 'leader' && $user['email'] == $data['approval'][0]['email']) {
+      $leaderData = $user;
       break;
     }
   }
@@ -435,7 +436,6 @@ if ($instructionNo !== null) {
                   foreach ($expense['expense_files'] as $file) {
                     echo "<td><a href=\"../../../database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
                   }
-                 
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
@@ -654,10 +654,10 @@ if ($instructionNo !== null) {
         formData.append('approval_status', status);
         formData.append('message', message);
 
-        // Log each key-value pair for debugging
-        for (const [key, value] of formData.entries()) {
-          console.log(`${key}:`, value);
-        }
+        // // Log each key-value pair for debugging
+        // for (const [key, value] of formData.entries()) {
+        //   console.log(`${key}:`, value);
+        // }
 
         // disable button
         pheDuyetBtn.disabled = true;

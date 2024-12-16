@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id'])) {
   exit();
 }
 
+include('../../../helper/general.php');
 
 // Lấy tên đầy đủ từ session
 $fullName = $_SESSION['full_name'];
@@ -17,16 +18,31 @@ $userRole = $_SESSION['role'];
 $currentYear = date("Y");
 // Đọc các năm từ tệp JSON trong thư mục
 $years = [];
-foreach (glob('../../../database/payment_*.json') as $filename) {
-  // Lấy năm từ tên tệp
-  if (preg_match('/payment_(\d{4})\.json/', basename($filename), $matches)) {
-    $years[] = $matches[1]; // Thêm năm vào mảng
-  }
+$directoriesName = getDirectories('../../../database/payment/data');
+// Xóa trùng lặp và sắp xếp các năm
+$years = array_unique($directoriesName);
+sort($years);
+
+$filePath = "../../../database/payment/status/$currentYear/status.json";
+$paymentDataStatusRes = getDataFromJson($filePath);
+$paymentDataStatus = $paymentDataStatusRes['data'];
+$paymentPendingLeaderStatus = $paymentDataStatus['pending_sale'];
+
+$filePathPayment = "../../../database/payment/data/$currentYear/";
+
+$paymentPendingData = [];
+foreach ($paymentPendingLeaderStatus['ids'] as $id) {
+  $filePathPaymentID = $filePathPayment . "payment_$id.json";
+  $paymentIdRes = getDataFromJson($filePathPaymentID);
+  $paymentId = $paymentIdRes['data'];
+  $paymentPendingData[] = $paymentId;
 }
 
-// Xóa trùng lặp và sắp xếp các năm
-$years = array_unique($years);
-sort($years);
+// print_r(json_encode($paymentPendingData));
+// save variable in javascript
+echo "<script>";
+echo "let paymentPendingData = " . json_encode($paymentPendingData) . ";";
+echo "</script>";
 
 
 ?>
@@ -78,54 +94,44 @@ sort($years);
       // const customerFilter = document.getElementById('customer-filter').value.toLowerCase();
       // const dateFilter = document.getElementById('date-filter').value;
 
-      fetch(`../../../database/payment_${year}.json`, {
-          cache: "no-store"
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          const tableBody = document.getElementById('requests-table-body');
-          tableBody.innerHTML = '';
+      const tableBody = document.getElementById('requests-table-body');
+      tableBody.innerHTML = '';
 
-          const validRequests = data.filter(request => {
-            return request.approval[1].status === 'pending' && request.approval[0].status === 'approved' && request.approval[1].email === userEmail;
+      const validRequests = paymentPendingData.filter(request => {
+        return request.approval[1].status === 'pending' && request.approval[0].status === 'approved' && request.approval[1].email === userEmail;
+      });
+
+      if (validRequests.length === 0) {
+        const noRequestsRow = document.createElement('tr');
+        noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
+        tableBody.appendChild(noRequestsRow);
+      } else {
+        validRequests.forEach(request => {
+          const row = document.createElement('tr');
+          row.setAttribute('id', 'request-row-' + request.id);
+          // console.log(request);
+          const cells = [
+            request.instruction_no,
+            request.operator_name,
+            request.shipper,
+            request.customs_manifest_on,
+            request.approval[0].status,
+            request.approval[1].status,
+            request.approval[2].status,
+          ];
+
+          cells.forEach(cell => {
+            const cellElement = document.createElement('td');
+            if (String(cell).includes('<a')) {
+              cellElement.innerHTML = cell;
+            } else {
+              cellElement.textContent = cell;
+            }
+            row.appendChild(cellElement);
           });
 
-          if (validRequests.length === 0) {
-            const noRequestsRow = document.createElement('tr');
-            noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
-            tableBody.appendChild(noRequestsRow);
-          } else {
-            validRequests.forEach(request => {
-              const row = document.createElement('tr');
-              row.setAttribute('id', 'request-row-' + request.id);
-              console.log(request);
-              const cells = [
-                request.instruction_no,
-                request.operator_name,
-                request.shipper,
-                request.customs_manifest_on,
-                request.approval[0].status,
-                request.approval[1].status,
-                request.approval[2].status,
-              ];
-
-              cells.forEach(cell => {
-                const cellElement = document.createElement('td');
-                if (String(cell).includes('<a')) {
-                  cellElement.innerHTML = cell;
-                } else {
-                  cellElement.textContent = cell;
-                }
-                row.appendChild(cellElement);
-              });
-
-              const actionsCell = document.createElement('td');
-              actionsCell.innerHTML = `
+          const actionsCell = document.createElement('td');
+          actionsCell.innerHTML = `
                   <button style="background-color: #808080;
                     color: white;
                     border: none;
@@ -134,17 +140,13 @@ sort($years);
                     cursor: pointer;" 
                   onclick="handleShowDetail(${request.instruction_no})">Điền thông tin</button>
               `;
-              row.appendChild(actionsCell);
+          row.appendChild(actionsCell);
 
-              tableBody.appendChild(row);
-            });
-          }
-
-          document.getElementById('requests').style.display = 'block';
-        })
-        .catch(error => {
-          console.error('Error loading requests:', error.message);
+          tableBody.appendChild(row);
         });
+      }
+
+      document.getElementById('requests').style.display = 'block';
     }
 
     function updateYear() {

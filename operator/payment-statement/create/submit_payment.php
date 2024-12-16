@@ -71,9 +71,9 @@ $sales = array_filter($users, fn($user) => $user['role'] === 'sale');
 $directorData = current(array_filter($users, fn($user) => $user['role'] == 'director'));
 
 // Initialize existing data array
-$existingData = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
-$lastInstructionNo = !empty($existingData) ? (int) max(array_column($existingData, 'instruction_no')) : 0;
-$newInstructionNo = $lastInstructionNo + 1;
+// $existingData = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
+// $lastInstructionNo = !empty($existingData) ? (int) max(array_column($existingData, 'instruction_no')) : 0;
+$newInstructionNo = $newIdPayment;
 
 // Check if form was submitted via POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $originalFileName = pathinfo($fileName, PATHINFO_FILENAME);
             $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
             $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
-            $uniqueFileName = "Payment".uniqid() . "_" . $formattedFileName . "." . $fileExtension;
+            $uniqueFileName = "Payment" . uniqid() . "_" . $formattedFileName . "." . $fileExtension;
             $targetFilePath = $targetDir . $uniqueFileName;
 
             // if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               if ($linkImg) {
                 $expenseFiles[] = $linkImg;
                 unlink($targetFilePath);
-              }else{
+              } else {
                 $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
                 // remove file if upload fail
                 unlink($targetFilePath);
@@ -223,12 +223,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $data['created_at'] = date('Y-m-d H:i:s');
   $data['id'] = $newIdPayment;
 
+  // add history
+  $data['history'] = [
+    [
+      'actor' => $email,
+      'time' => date('Y-m-d H:i:s'),
+      'action' => 'Operator created',
+    ]
+  ];
+
+  // update payment status
+  $statusFilePath = '../../../database/payment/status/' . $currentYear . '';
+  updateStatusFile('leader', 'pending', $data['id'], $statusFilePath);
+
   // Check for errors and handle accordingly
   if (!empty($errors)) {
     echo json_encode(['success' => false, 'error' => implode("\n", $errors)]);
   } else {
-    $existingData[] = $data;
-    file_put_contents($filePath, json_encode($existingData, JSON_PRETTY_PRINT));
+    $directory = '../../../database/payment/data/' . $currentYear . '';
+    $response = saveDataToJson($data, $directory, 'payment_' . $newIdPayment);
     echo json_encode(['success' => true, 'message' => 'Data submitted successfully!']);
   }
 }

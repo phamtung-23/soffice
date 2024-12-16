@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id'])) {
   exit();
 }
 
+include('../../../helper/general.php');
 
 // Lấy tên đầy đủ từ session
 $fullName = $_SESSION['full_name'];
@@ -17,17 +18,31 @@ $userRole = $_SESSION['role'];
 $currentYear = date("Y");
 // Đọc các năm từ tệp JSON trong thư mục
 $years = [];
-foreach (glob('../../../database/payment_*.json') as $filename) {
-  // Lấy năm từ tên tệp
-  if (preg_match('/payment_(\d{4})\.json/', basename($filename), $matches)) {
-    $years[] = $matches[1]; // Thêm năm vào mảng
-  }
-}
-
+$directoriesName = getDirectories('../../../database/payment/data');
 // Xóa trùng lặp và sắp xếp các năm
-$years = array_unique($years);
+$years = array_unique($directoriesName);
 sort($years);
 
+$filePath = "../../../database/payment/status/$currentYear/status.json";
+$paymentDataStatusRes = getDataFromJson($filePath);
+$paymentDataStatus = $paymentDataStatusRes['data'];
+$paymentPendingLeaderStatus = $paymentDataStatus['pending_accountant'];
+
+$filePathPayment = "../../../database/payment/data/$currentYear/";
+
+$paymentPendingData = [];
+foreach ($paymentPendingLeaderStatus['ids'] as $id) {
+  $filePathPaymentID = $filePathPayment . "payment_$id.json";
+  $paymentIdRes = getDataFromJson($filePathPaymentID);
+  $paymentId = $paymentIdRes['data'];
+  $paymentPendingData[] = $paymentId;
+}
+
+// print_r(json_encode($paymentPendingData));
+// save variable in javascript
+echo "<script>";
+echo "let paymentPendingData = " . json_encode($paymentPendingData) . ";";
+echo "</script>";
 
 ?>
 
@@ -78,58 +93,45 @@ sort($years);
       // const operatorFilter = document.getElementById('operator-filter').value.toLowerCase();
       // const customerFilter = document.getElementById('customer-filter').value.toLowerCase();
       // const dateFilter = document.getElementById('date-filter').value;
+      const tableBody = document.getElementById('requests-table-body');
+      tableBody.innerHTML = '';
 
-      fetch(`../../../database/payment_${year}.json`, {
-          cache: "no-store"
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          const tableBody = document.getElementById('requests-table-body');
-          tableBody.innerHTML = '';
+      const validRequests = paymentPendingData.filter(request => {
+        return request.approval[1].status === 'approved' && request.approval[0].status === 'approved' && request.approval[2].status === 'approved' && request.approval[3].status === 'pending';
+      });
 
-          const validRequests = data.filter(request => {
-            console.log(request);
-            return request.approval[1].status === 'approved' && request.approval[0].status === 'approved' && request.approval[2].status === 'approved' && request.approval[3].status === 'pending';
+      if (validRequests.length === 0) {
+        const noRequestsRow = document.createElement('tr');
+        noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
+        tableBody.appendChild(noRequestsRow);
+      } else {
+        validRequests.forEach(request => {
+          const row = document.createElement('tr');
+          row.setAttribute('id', 'request-row-' + request.id);
+          const cells = [
+            request.instruction_no,
+            request.operator_name,
+            request.shipper,
+            request.customs_manifest_on,
+            formatNumber(getFirstExpenseAmountWithPayee(request, 'ops').toString()),
+            request.approval[0].status,
+            request.approval[1].status,
+            request.approval[2].status,
+            `<a href=\"${request.file_path}\" target=\"_blank\">Xem Phiếu</a>`
+          ];
+
+          cells.forEach(cell => {
+            const cellElement = document.createElement('td');
+            if (String(cell).includes('<a')) {
+              cellElement.innerHTML = cell;
+            } else {
+              cellElement.textContent = cell;
+            }
+            row.appendChild(cellElement);
           });
 
-          if (validRequests.length === 0) {
-            const noRequestsRow = document.createElement('tr');
-            noRequestsRow.innerHTML = '<td colspan="12">Không có yêu cầu nào để hiển thị.</td>';
-            tableBody.appendChild(noRequestsRow);
-          } else {
-            validRequests.forEach(request => {
-              const row = document.createElement('tr');
-              row.setAttribute('id', 'request-row-' + request.id);
-              console.log(request);
-              const cells = [
-                request.instruction_no,
-                request.operator_name,
-                request.shipper,
-                request.customs_manifest_on,
-                formatNumber(getFirstExpenseAmountWithPayee(request, 'ops').toString()),
-                request.approval[0].status,
-                request.approval[1].status,
-                request.approval[2].status,
-                `<a href=\"${request.file_path}\" target=\"_blank\">Xem Phiếu</a>`
-              ];
-
-              cells.forEach(cell => {
-                const cellElement = document.createElement('td');
-                if (String(cell).includes('<a')) {
-                  cellElement.innerHTML = cell;
-                } else {
-                  cellElement.textContent = cell;
-                }
-                row.appendChild(cellElement);
-              });
-
-              const actionsCell = document.createElement('td');
-              actionsCell.innerHTML = `
+          const actionsCell = document.createElement('td');
+          actionsCell.innerHTML = `
                   <button style="background-color: #808080;
                     color: white;
                     border: none;
@@ -138,17 +140,13 @@ sort($years);
                     cursor: pointer;" 
                   onclick="handleShowDetail(${request.instruction_no})">Xem chi tiết</button>
               `;
-              row.appendChild(actionsCell);
+          row.appendChild(actionsCell);
 
-              tableBody.appendChild(row);
-            });
-          }
-
-          document.getElementById('requests').style.display = 'block';
-        })
-        .catch(error => {
-          console.error('Error loading requests:', error.message);
+          tableBody.appendChild(row);
         });
+      }
+
+      document.getElementById('requests').style.display = 'block';
     }
 
     function updateYear() {

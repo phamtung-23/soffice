@@ -1,15 +1,45 @@
-[2024-12-13 16:04:02] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
-[2024-12-13 16:04:02] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
-[2024-12-13 16:04:02] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
-[2024-12-13 16:04:08] /soffice/director/payment-statement/detail/export_pdf.php: item: {"instruction_no":6,"approval":[{"role":"leader","email":"leader1@gmail.com","status":"approved","time":"2024-12-13 15:05:43","comment":""},{"role":"sale","email":"sale1@gmail.com","status":"approved","time":"2024-12-13 15:06:52","comment":""},{"role":"director","email":"director@gmail.com","status":"approved","time":"2024-12-13 16:04:02","comment":""},{"role":"accountant","email":"","status":"pending","time":"","comment":""}],"expenses":[{"expense_kind":"tst","expense_amount":2222,"so_hoa_don":"hd001","expense_payee":"OPS","expense_doc":"","expense_files":["https:\/\/drive.google.com\/file\/d\/18IlEk7CZnyL5ehKIdBreuRO95hpbczYI\/view"]},{"expense_kind":"tst2","expense_amount":222222,"so_hoa_don":"hd002","expense_payee":"OPS","expense_doc":"","expense_files":["https:\/\/drive.google.com\/file\/d\/1bew0IO8q2lSwED3pmHd4cglOzd_JYTHZ\/view","https:\/\/drive.google.com\/file\/d\/1Drf-4tpe_WYNTJQaphPNiJvSUp3yWAjg\/view"]}],"shipper":"Neymar 123333","billTo":"1x40","volume":"1x400","payment_lo":"3333","loai_hinh":"nhap","delivery_address":"Quan 4 56","delivery_time":"2024-12-26","delivery_pct":"132455","customs_manifest_on":"12345642","total_actual":0,"received_back_on":"","by":"","payment":[{"name":"tesst","value":11111111,"vat":"2","contSet":"set","incl":"on","excl":"on"}],"operator_name":"Oper 1","operator_email":"oper1@gmail.com","created_at":"2024-12-13 14:56:10","id":213,"is_update":"false","amount":"224444","file_path":"Phieu de nghi thanh toan_id_213_time_12_2024.pdf"}
-[2024-12-13 16:04:08] /soffice/director/payment-statement/detail/export_pdf.php: Tạo file PDF: https://drive.google.com/file/d/1P8pontc5qIbslhAxUh-0C7ZuQr8p7XDQ/view
-[2024-12-13 16:04:08] /soffice/director/payment-statement/detail/export_pdf.php: Tạo file path: Phieu de nghi thanh toan_id_213_time_12_2024.pdf
-[2024-12-13 16:05:27] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
-[2024-12-13 16:05:27] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
-[2024-12-13 16:05:27] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
-[2024-12-13 16:07:09] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
-[2024-12-13 16:07:09] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
-[2024-12-13 16:07:09] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
-[2024-12-13 16:11:38] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
-[2024-12-13 16:11:38] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
-[2024-12-13 16:11:38] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:10:58] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:10:58] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:10:58] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:13:08] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:13:08] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:13:08] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:13:13] /soffice/director/payment-statement/detail/export_pdf.php: export pdf: https://drive.google.com/file/d/1lwhYRnv4wAG_rK6577mgVmwh7A7kAhmj/view
+[2024-12-16 15:13:16] /soffice/director/payment-statement/detail/export_pdf_operator.php: https://drive.google.com/file/d/1q07MfWt267b2bhVsP8Ox9JJ9BcJtIg8L/view
+[2024-12-16 15:14:43] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:14:43] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:14:43] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:14:48] /soffice/director/payment-statement/detail/export_pdf.php: export pdf: https://drive.google.com/file/d/1pe49nTtlqfmBGB0TQmJcpUAVJHKCkXVw/view
+[2024-12-16 15:14:52] /soffice/director/payment-statement/detail/export_pdf_operator.php: https://drive.google.com/file/d/1ypXueznBxqsfp45X-kEG0JtoOr3S8T7W/view
+[2024-12-16 15:14:52] /soffice/director/payment-statement/detail/export_pdf_operator.php: Payment status updated for instruction number: {"status":"success","data":{"instruction_no":230,"approval":[{"role":"leader","email":"leader1@gmail.com","status":"approved","time":"2024-12-14 16:48:12","comment":""},{"role":"sale","email":"sale1@gmail.com","status":"approved","time":"2024-12-14 17:27:02","comment":""},{"role":"director","email":"director@gmail.com","status":"approved","time":"2024-12-16 15:14:43","comment":""},{"role":"accountant","email":"","status":"pending","time":"","comment":""}],"expenses":[{"expense_kind":"tst","expense_amount":2222,"so_hoa_don":"","expense_payee":"OPS","expense_doc":"","expense_files":[]}],"shipper":"Messi Lionel","billTo":"1x40","volume":"1x400","payment_lo":"3333","loai_hinh":"nhap","delivery_address":"Quan 4 56","delivery_time":"2024-12-18","delivery_pct":"132455","customs_manifest_on":"12345642","total_actual":0,"received_back_on":"","by":"","payment":[{"name":"tesst","value":11111111,"vat":"2","contSet":"set","incl":"off","excl":"off"}],"operator_name":"Oper 1","operator_email":"oper1@gmail.com","created_at":"2024-12-13 17:00:51","id":230,"is_update":"false","amount":"2.222","file_path":"https:\/\/drive.google.com\/file\/d\/1ypXueznBxqsfp45X-kEG0JtoOr3S8T7W\/view","amountWords":"Hai ng\u00e0n, hai tr\u0103m hai m\u01b0\u01a1i hai \u0111\u1ed3ng"}}
+[2024-12-16 15:18:09] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:18:09] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:18:09] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:18:14] /soffice/director/payment-statement/detail/export_pdf.php: export pdf: https://drive.google.com/file/d/14JD3Nl9QbWxPiUUYmcqpjny9XntAcU8M/view
+[2024-12-16 15:20:39] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:20:39] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:20:39] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:20:44] /soffice/director/payment-statement/detail/export_pdf.php: export pdf: https://drive.google.com/file/d/1EYwXxa1D2ISgIgszXMfroxbjqweXwFqr/view
+[2024-12-16 15:21:41] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:21:41] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:21:41] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:22:49] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 15:22:49] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 15:22:49] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 15:23:43] /soffice/director/payment-statement/detail/update_payment_status_reject.php: Payment status updated for instruction number: 235
+[2024-12-16 16:03:48] /soffice/operator/payment-statement/update/update_payment_status.php: uploadedFiles: []
+[2024-12-16 16:26:49] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 16:26:49] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 16:26:49] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 16:27:51] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-16 16:27:51] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-16 16:27:51] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 16:33:25] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-16 16:33:25] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["on"]
+[2024-12-16 16:33:25] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-16 16:43:45] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 16:43:45] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
+[2024-12-16 16:43:45] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-16 16:46:01] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-16 16:46:01] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["on"]
+[2024-12-16 16:46:01] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst

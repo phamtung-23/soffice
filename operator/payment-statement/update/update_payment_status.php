@@ -6,6 +6,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
   exit();
 }
 
+include('../../../helper/general.php');
+
 function logEntry($message)
 {
   $logFile = '../../../logs/payment_update_log.txt';
@@ -31,7 +33,7 @@ if ($instructionNo === null || $status === null) {
 
 // Define file path
 $year = date('Y');
-$filePath = "../../../database/payment_$year.json";
+$filePath = "../../../database/payment/data/$year/payment_$instructionNo.json";
 
 // Check if file exists
 if (!file_exists($filePath)) {
@@ -40,7 +42,8 @@ if (!file_exists($filePath)) {
 }
 
 // Load JSON data
-$jsonData = json_decode(file_get_contents($filePath), true);
+$paymentIdRes = getDataFromJson($filePath);
+$entry = $paymentIdRes['data'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Update the status for the matching instruction number
@@ -53,125 +56,123 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     mkdir($targetDir, 0777, true);
   }
 
-  foreach ($jsonData as &$entry) {
-    if ($entry['instruction_no'] == $instructionNo) {
-      logEntry("Operator $instructionNo");
-      // Collect expense information
-      $newExpenses = [];
-      if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
-        for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-          $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i]);
-          $soHoaDon = $_POST['so_hoa_don'][$i];
-          $uploadedFiles = $_FILES['expense_file']['name'][$i] == [""] ? [] : $_FILES['expense_file']['name'][$i];
-          $uploadedFilesTmp = $_FILES['expense_file']['tmp_name'][$i] ?? [];
-          $expenseFiles = $entry['expenses'][$i]['expense_files'] ?? [];
+  // Collect expense information
+  $newExpenses = [];
+  if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
+    for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
+      $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i]);
+      $soHoaDon = $_POST['so_hoa_don'][$i];
+      $uploadedFiles = $_FILES['expense_file']['name'][$i] == [""] ? [] : $_FILES['expense_file']['name'][$i];
+      $uploadedFilesTmp = $_FILES['expense_file']['tmp_name'][$i] ?? [];
+      $expenseFiles = $entry['expenses'][$i]['expense_files'] ?? [];
 
-          logEntry("uploadedFiles: " . json_encode($uploadedFiles));
+      logEntry("uploadedFiles: " . json_encode($uploadedFiles));
 
-          // Check conditional file upload requirement
-          if (!empty($soHoaDon) && empty($uploadedFiles) && empty($expenseFiles)) {
-            $errors[] = "Vui lòng tải tệp cho hóa đơn số {$soHoaDon}.";
-            continue;
-          }
+      // Check conditional file upload requirement
+      if (!empty($soHoaDon) && empty($uploadedFiles) && empty($expenseFiles)) {
+        $errors[] = "Vui lòng tải tệp cho hóa đơn số {$soHoaDon}.";
+        continue;
+      }
 
-          // Process multiple files for this expense row
-          if (!empty($uploadedFiles)) {
-            foreach ($uploadedFiles as $fileIndex => $fileName) {
-              if ($_FILES['expense_file']['error'][$i][$fileIndex] === UPLOAD_ERR_OK) {
-                $originalFileName = pathinfo($fileName, PATHINFO_FILENAME);
-                $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
-                $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
-                $uniqueFileName = uniqid() . "_" . $formattedFileName . "." . $fileExtension;
-                $targetFilePath = $targetDir . $uniqueFileName;
+      // Process multiple files for this expense row
+      if (!empty($uploadedFiles)) {
+        foreach ($uploadedFiles as $fileIndex => $fileName) {
+          if ($_FILES['expense_file']['error'][$i][$fileIndex] === UPLOAD_ERR_OK) {
+            $originalFileName = pathinfo($fileName, PATHINFO_FILENAME);
+            $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+            $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
+            $uniqueFileName = uniqid() . "_" . $formattedFileName . "." . $fileExtension;
+            $targetFilePath = $targetDir . $uniqueFileName;
 
-                if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
-                  $expenseFiles[] = $uniqueFileName;
-                } else {
-                  $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
-                }
-              }
+            if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
+              $expenseFiles[] = $uniqueFileName;
+            } else {
+              $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
             }
           }
-
-          // Store expense data
-          $expense = [
-            'expense_kind' => $_POST['expense_kind'][$i],
-            'expense_amount' => $expenseAmount,
-            'so_hoa_don' => $soHoaDon,
-            'expense_payee' => $_POST['expense_payee'][$i],
-            'expense_doc' => $_POST['expense_doc'][$i],
-            'expense_files' => $expenseFiles // Store all uploaded files for this expense
-          ];
-
-          $newExpenses[] = $expense;
         }
       }
 
-      if (empty($newExpenses)) {
-        $newExpenses = $entry['expenses'];
-      }
+      // Store expense data
+      $expense = [
+        'expense_kind' => $_POST['expense_kind'][$i],
+        'expense_amount' => $expenseAmount,
+        'so_hoa_don' => $soHoaDon,
+        'expense_payee' => $_POST['expense_payee'][$i],
+        'expense_doc' => $_POST['expense_doc'][$i],
+        'expense_files' => $expenseFiles // Store all uploaded files for this expense
+      ];
 
-      $entry['expenses'] = $newExpenses;
+      $newExpenses[] = $expense;
+    }
+  }
 
-      $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
+  if (empty($newExpenses)) {
+    $newExpenses = $entry['expenses'];
+  }
 
-      // Additional fields
-      foreach ($_POST as $key => $value) {
-        if ($key == "leader" || $key == "sale" || $key == "approval_status" || $key == "message" || $key == "instruction_no") {
-          continue;
-        } elseif (!in_array($key, $fieldIgnore)) {
-          $entry[$key] = is_array($value) ? $value : trim($value);
-        }
-      }
+  $entry['expenses'] = $newExpenses;
 
-      // get data payment
-      // Extract custom fields
-      $customFieldNames = $_POST['customFieldName'] ?? [];
-      $customFields = $_POST['customField'] ?? [];
-      $customVats = $_POST['customVat'] ?? [];
-      $customContSetRadios = $_POST['customContSet'] ?? [];
-      $customIncl = $_POST['customIncl'] ?? [];
-      $customExcl = $_POST['customExcl'] ?? [];
+  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
 
-      // Prepare an array to store custom fields
-      $customData = [];
+  // Additional fields
+  foreach ($_POST as $key => $value) {
+    if ($key == "leader" || $key == "sale" || $key == "approval_status" || $key == "message" || $key == "instruction_no") {
+      continue;
+    } elseif (!in_array($key, $fieldIgnore)) {
+      $entry[$key] = is_array($value) ? $value : trim($value);
+    }
+  }
 
-      logEntry("customInclude: " . json_encode($customIncl));
-      logEntry("customExcl: " . json_encode($customExcl));
+  // get data payment
+  // Extract custom fields
+  $customFieldNames = $_POST['customFieldName'] ?? [];
+  $customFields = $_POST['customField'] ?? [];
+  $customVats = $_POST['customVat'] ?? [];
+  $customContSetRadios = $_POST['customContSet'] ?? [];
+  $customIncl = $_POST['customIncl'] ?? [];
+  $customExcl = $_POST['customExcl'] ?? [];
 
-      foreach ($customFieldNames as $index => $name) {
-        logEntry("Processing custom field: $name");
-        $customData[] = [
-          'name' => $name,
-          'value' => (float)str_replace('.', '', $customFields[$index]),
-          'vat' => $customVats[$index] ?? '',
-          'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
-          'incl' => $customIncl[$index] ?? '',
-          'excl' => $customExcl[$index] ?? ''
-        ];
-      }
+  // Prepare an array to store custom fields
+  $customData = [];
 
-      if (empty($customData)) {
-        $customData = $entry['payment'];
-      }
-      // Save to entry
-      $entry['payment'] = $customData;
+  // logEntry("customInclude: " . json_encode($customIncl));
+  // logEntry("customExcl: " . json_encode($customExcl));
 
-      $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
-      $entry['updated_at'] = date("Y-m-d H:i:s");
+  foreach ($customFieldNames as $index => $name) {
+    $customData[] = [
+      'name' => $name,
+      'value' => (float)str_replace('.', '', $customFields[$index]),
+      'vat' => $customVats[$index] ?? '',
+      'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
+      'incl' => $customIncl[$index] ?? '',
+      'excl' => $customExcl[$index] ?? ''
+    ];
+  }
 
-      foreach ($entry['approval'] as &$approval) {
-        if (in_array($approval['role'], ['leader', 'sale'])) {
-          $approval['status'] = $status;
-          $updated = true;
-        }
-      }
-      break;
+  if (empty($customData)) {
+    $customData = $entry['payment'];
+  }
+  // Save to entry
+  $entry['payment'] = $customData;
+
+  $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
+  $entry['updated_at'] = date("Y-m-d H:i:s");
+
+  // add history
+  $entry['history'][] = [
+    'actor' => $_SESSION['user_id'],
+    'time' => date('Y-m-d H:i:s'),
+    'action' => 'Operator updated',
+];
+
+  foreach ($entry['approval'] as &$approval) {
+    if (in_array($approval['role'], ['leader', 'sale'])) {
+      $approval['status'] = $status;
+      $updated = true;
     }
   }
 }
-
-logEntry(json_encode($errors));
 
 if (!empty($errors)) {
   echo json_encode(['success' => false, 'message' => implode("\n", $errors)]);
@@ -180,18 +181,15 @@ if (!empty($errors)) {
 
 
 if ($updated) {
+  // update payment status
+  $statusFilePath = '../../../database/payment/status/' . $year . '';
+  updateStatusFile('leader', $status, $instructionNo, $statusFilePath);
+  updateStatusFile('sale', $status, $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
-  foreach ($jsonData as &$entry) {
-    if ($entry['instruction_no'] == $instructionNo) {
-      $updatedData = $entry;
-      break;
-    }
-  }
-  // Save the updated JSON data back to the file
-  file_put_contents($filePath, json_encode($jsonData, JSON_PRETTY_PRINT));
-  logEntry("Operator $instructionNo updated successfully");
+  $directory = '../../../database/payment/data/'.$year;
+  $res = updateDataToJson($entry, $directory, 'payment_'.$instructionNo);
 
-  echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $updatedData]);
+  echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $res['data'] ?? []]);
 } else {
   logEntry("Operator $instructionNo update failed");
   echo json_encode(['success' => false, 'message' => 'Approval entry not found or already updated']);

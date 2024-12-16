@@ -13,7 +13,7 @@ $fullName = $_SESSION['full_name'];
 $email = $_SESSION['user_id'];
 $userRole = $_SESSION['role'];
 
-
+include('../../../helper/general.php');
 
 // Get InstructionNo from URL
 $instructionNo = isset($_GET['instruction_no']) ? $_GET['instruction_no'] : null;
@@ -25,42 +25,41 @@ echo '<script>console.log(' . json_encode($isUpdate) . ')</script>';
 $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
 
+$filePathPayment = "../../../database/payment/data/$year/";
+$filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
+$paymentIdRes = getDataFromJson($filePathPaymentID);
+$paymentId = $paymentIdRes['data'];
+// print_r(json_encode($paymentId));
+$data = $paymentId;
+
 if ($instructionNo !== null) {
   // Load and decode JSON data
   $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
   // Search for the entry with the matching InstructionNo
-  foreach ($jsonData as $entry) {
-    if ($entry['instruction_no'] == $instructionNo) {
-      $data = $entry;
-      // user data
-      $operatorUserData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['email'] == $entry['operator_email']) {
-          $operatorUserData = $user;
-          break;
-        }
-      }
+  $operatorUserData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['email'] == $data['operator_email']) {
+      $operatorUserData = $user;
+      break;
+    }
+  }
 
-      // get leader data
-      $leaderData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'leader' && $user['email'] == $entry['approval'][0]['email']) {
-          $leaderData = $user;
-          break;
-        }
-      }
+  // get leader data
+  $leaderData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['role'] == 'leader' && $user['email'] == $data['approval'][0]['email']) {
+      $leaderData = $user;
+      break;
+    }
+  }
 
-      // get director data
-      $directorData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'director' && $user['email'] == $entry['approval'][2]['email']) {
-          $directorData = $user;
-          break;
-        }
-      }
-
+  // get director data
+  $directorData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['role'] == 'director' && $user['email'] == $data['approval'][2]['email']) {
+      $directorData = $user;
       break;
     }
   }
@@ -434,7 +433,7 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index ?></td>
                 <td><input type="text" class="form-control" name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" name="expense_amount[]" required id="expenses_amount"  value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)"></td>
+                <td><input type="text" class="form-control" name="expense_amount[]" required id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>

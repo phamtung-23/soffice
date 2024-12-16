@@ -6,6 +6,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
   exit();
 }
 
+include '../../../helper/general.php';
+
 header('Content-Type: application/json');
 
 // Get data from POST request
@@ -22,7 +24,7 @@ if ($instructionNo === null || $status === null) {
 
 // Define file path
 $year = date('Y');
-$filePath = "../../../database/payment_$year.json";
+$filePath = "../../../database/payment/data/$year/payment_$instructionNo.json";
 
 // Check if file exists
 if (!file_exists($filePath)) {
@@ -31,42 +33,41 @@ if (!file_exists($filePath)) {
 }
 
 // Load JSON data
-$jsonData = json_decode(file_get_contents($filePath), true);
+$paymentIdRes = getDataFromJson($filePath);
+$entry = $paymentIdRes['data'];
 
 // Update the status for the matching instruction number
 $updated = false;
-foreach ($jsonData as &$entry) {
-  if ($entry['instruction_no'] == $instructionNo) {
+// $month = date('m'); // Lấy tháng hiện tại
+// $year = date('Y');  // Lấy năm hiện tại
+// $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
+// $entry['file_path'] = $pdfFileName;
 
-    $month = date('m'); // Lấy tháng hiện tại
-    $year = date('Y');  // Lấy năm hiện tại
-    $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
-    $entry['file_path'] = $pdfFileName;
-    foreach ($entry['approval'] as &$approval) {
-      if ($approval['role'] === 'sale') {
-        $approval['status'] = $status;
-        $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
-        $approval['comment'] = $message;
-        $updated = true;
-        break;
-      }
-    }
+// add history
+$entry['history'][] = [
+  'actor' => $_SESSION['user_id'],
+  'time' => date('Y-m-d H:i:s'),
+  'action' => 'Sale approved',
+];
+
+foreach ($entry['approval'] as &$approval) {
+  if ($approval['role'] === 'sale') {
+    $approval['status'] = $status;
+    $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
+    $approval['comment'] = $message;
+    $updated = true;
     break;
   }
 }
 
 if ($updated) {
+  // update payment status
+  $statusFilePath = '../../../database/payment/status/' . $year . '';
+  updateStatusFile('sale', 'rejected', $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
-  foreach ($jsonData as &$entry) {
-    if ($entry['instruction_no'] == $instructionNo) {
-      $updatedData = $entry;
-      break;
-    }
-  }
-  file_put_contents($filePath, json_encode($jsonData, JSON_PRETTY_PRINT));
-  echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $updatedData]);
+  $directory = '../../../database/payment/data/' . $year;
+  $res = updateDataToJson($entry, $directory, 'payment_' . $instructionNo);
+  echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $res['data'] ?? []]);
 } else {
   echo json_encode(['success' => false, 'message' => 'Approval entry not found or already updated']);
 }
-
-?>

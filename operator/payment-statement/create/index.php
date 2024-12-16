@@ -26,13 +26,6 @@ if (!file_exists($idFile)) {
   die("File id_payment.json không tồn tại.");
 }
 
-// Read and increment ID
-$jsonDataIdPayment = file_get_contents($idFile);
-$dataIdPayment = json_decode($jsonDataIdPayment, true);
-$newIdPayment = $dataIdPayment[$currentYear]["id"] + 1;
-$dataIdPayment[$currentYear]["id"] = $newIdPayment;
-file_put_contents($idFile, json_encode($dataIdPayment));
-
 // Read user data and filter roles
 $usersData = file_get_contents($userFile);
 $users = json_decode($usersData, true);

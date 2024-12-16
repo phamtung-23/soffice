@@ -4,6 +4,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
 require '../../../director/vendor/autoload.php'; // Đảm bảo đường dẫn tới mPDF chính xác
+include('../../../helper/general.php');
 
 
 // Include PHPMailer's classes
@@ -515,14 +516,8 @@ try {
   }
   // update database file path by instruction_no
   $request['file_path'] = $linkImg;
-  $filePathDataList = '../../../database/payment_'.$currentYear.'.json';
-  $jsonDataList = json_decode(file_get_contents($filePathDataList), true);
-  foreach ($jsonDataList as &$entry) {
-    if ($entry['instruction_no'] == $request['instruction_no']) {
-      $entry['file_path'] = $linkImg;
-    }
-  }
-  file_put_contents($filePathDataList, json_encode($jsonDataList, JSON_PRETTY_PRINT));
+  $directoryData = '../../../database/payment/data/' . $currentYear;
+  $res = updateDataToJson($request, $directoryData, 'payment_' . $request['instruction_no']);
 
 
   // Trả về đường dẫn file PDF

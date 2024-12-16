@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
     exit();
 }
 
+include('../helper/general.php');
+
 // Retrieve full name and email from session
 $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
@@ -15,7 +17,7 @@ $userEmail = $_SESSION['user_id']; // operator_email matches user_id
 $selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
 
 // Function to read and filter data from JSON files
-function getDataFromJson($filePath)
+function getDataFromJsonRequest($filePath)
 {
     if (file_exists($filePath)) {
         $jsonData = file_get_contents($filePath);
@@ -29,8 +31,7 @@ $requestFile = "../database/request_$selectedYear.json";
 $paymentFile = "../database/payment_$selectedYear.json";
 $files = glob('../database/request_*.json');
 // Read and filter data
-$requestData = getDataFromJson($requestFile, $userEmail);
-$paymentData = getDataFromJson($paymentFile, $userEmail);
+$requestData = getDataFromJsonRequest($requestFile, $userEmail);
 
 // Function to get counts based on status
 
@@ -71,9 +72,13 @@ $requestWaitingPay = $requestApprovedDirector - $requestPaid;
 $requestRefunded = getStatusCounts($requestData, 'payment_refund_status', 'Đã hoàn tiền');
 $requestWaitingRefund = $requestPaid - $requestRefunded;
 
-$paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
-$paymentPaid = countApprovalsByRoleAndStatus($paymentData, 'accountant', 'approved');
-$paymentWaitingPay = $paymentApprovedDirector - $paymentPaid;
+$filePath = "../database/payment/status/$selectedYear/status.json";
+$paymentDataStatusRes = getDataFromJson($filePath);
+$paymentDataStatus = $paymentDataStatusRes['data'];
+
+$paymentApprovedDirector =  isset($paymentDataStatus['approved_director']) ? $paymentDataStatus['approved_director']['number'] : 0;
+$paymentPaid =  isset($paymentDataStatus['approved_accountant']) ? $paymentDataStatus['approved_accountant']['number'] : 0;
+$paymentWaitingPay =  isset($paymentDataStatus['pending_accountant']) ? $paymentDataStatus['pending_accountant']['number'] : 0;
 
 ?>
 

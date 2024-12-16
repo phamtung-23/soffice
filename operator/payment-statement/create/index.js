@@ -1,5 +1,5 @@
 // Initiate the page
-console.log("Hello from payment-statement create page");
+// console.log("Hello from payment-statement create page");
 
 // Fetch all the forms we want to apply custom Bootstrap validation styles to
 const forms = document.querySelectorAll(".needs-validation");
@@ -105,10 +105,10 @@ submitForm.addEventListener("submit", function (event) {
     // disable the submit button
     submitBtn.disabled = true;
     const formData = new FormData(submitForm);
-    // Log each key-value pair for debugging
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
+    // // Log each key-value pair for debugging
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}:`, value);
+    // }
 
     fetch("submit_payment.php", {
       method: "POST",

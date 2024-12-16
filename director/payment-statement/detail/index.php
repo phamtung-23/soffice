@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
   exit();
 }
 
+include('../../../helper/general.php');
 
 // Lấy tên đầy đủ từ session
 $fullName = $_SESSION['full_name'];
@@ -29,46 +30,44 @@ if ($instructionNo !== null) {
   $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
-  // Search for the entry with the matching InstructionNo
-  foreach ($jsonData as $entry) {
-    if ($entry['instruction_no'] == $instructionNo) {
-      $data = $entry;
-      // user data
-      $operatorUserData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['email'] == $entry['operator_email']) {
-          $operatorUserData = $user;
-          break;
-        }
-      }
+  $filePathPayment = "../../../database/payment/data/$year/";
+  $filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
+  $paymentIdRes = getDataFromJson($filePathPaymentID);
+  $paymentId = $paymentIdRes['data'];
+  // print_r(json_encode($paymentId));
+  $data = $paymentId;
 
-      // get leader data
-      $leaderData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'leader' && $user['email'] == $entry['approval'][0]['email']) {
-          $leaderData = $user;
-          break;
-        }
-      }
+  $operatorUserData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['email'] == $data['operator_email']) {
+      $operatorUserData = $user;
+      break;
+    }
+  }
 
-      // get sale data
-      $saleUserData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'sale' && $user['email'] == $entry['approval'][1]['email']) {
-          $saleUserData = $user;
-          break;
-        }
-      }
+  // get leader data
+  $leaderData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['role'] == 'leader' && $user['email'] == $data['approval'][0]['email']) {
+      $leaderData = $user;
+      break;
+    }
+  }
 
-      // get leader data
-      $directorData = null;
-      foreach ($jsonDataUser as $user) {
-        if ($user['role'] == 'director' && $user['email'] == $_SESSION['user_id']) {
-          $directorData = $user;
-          break;
-        }
-      }
+  // get sale data
+  $saleUserData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['role'] == 'sale' && $user['email'] == $data['approval'][1]['email']) {
+      $saleUserData = $user;
+      break;
+    }
+  }
 
+  // get leader data
+  $directorData = null;
+  foreach ($jsonDataUser as $user) {
+    if ($user['role'] == 'director' && $user['email'] == $_SESSION['user_id']) {
+      $directorData = $user;
       break;
     }
   }
@@ -737,7 +736,7 @@ if ($instructionNo !== null) {
         }
       });
 
-      console.log('Total expense amount for payee "ops":', totalOpsAmount);
+      // console.log('Total expense amount for payee "ops":', totalOpsAmount);
       soTienInput.value = formatNumber(totalOpsAmount.toString());
       const totalOpsAmountText = convertNumberToTextVND(totalOpsAmount);
       soTienBangChuInput.value = totalOpsAmountText;
@@ -791,10 +790,10 @@ if ($instructionNo !== null) {
             formData.append('amount', amount);
           }
 
-          // Log each key-value pair for debugging
-          for (const [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-          }
+          // // Log each key-value pair for debugging
+          // for (const [key, value] of formData.entries()) {
+          //   console.log(`${key}:`, value);
+          // }
 
           // disable button 
           pheDuyetBtn.disabled = true;
@@ -809,7 +808,7 @@ if ($instructionNo !== null) {
             .then(async data => {
               if (data.success) {
                 // Tạo nội dung tin nhắn để gửi
-                console.log('data', data);
+                // console.log('data', data);
                 let telegramMessage = '';
                 if (status === 'approved') {
                   telegramMessage = `**Yêu cầu đã được Giám đốc phê duyệt!**\n` +
@@ -914,7 +913,7 @@ if ($instructionNo !== null) {
         .then(async data => {
           if (data.success) {
             // Tạo nội dung tin nhắn để gửi
-            console.log('data', data);
+            // console.log('data', data);
             let telegramMessage = '';
 
             telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
@@ -979,7 +978,7 @@ if ($instructionNo !== null) {
 
     async function fetchTemplateAndFill(request) {
       const pdfUrl = 'export_pdf.php'; // Đường dẫn đến file export_pdf.php
-      console.log('Request:', request);
+      // console.log('Request:', request);
 
       try {
         // Sử dụng fetch để gửi dữ liệu yêu cầu
@@ -998,7 +997,7 @@ if ($instructionNo !== null) {
 
     async function fetchTemplateAndFillForOperator(request) {
       const pdfUrl = 'export_pdf_operator.php'; // Đường dẫn đến file export_pdf.php
-      console.log('Request:', request);
+      // console.log('Request:', request);
 
       try {
         // Sử dụng fetch để gửi dữ liệu yêu cầu

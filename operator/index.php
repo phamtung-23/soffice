@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
     exit();
 }
 
+include('../helper/general.php');
+
 // Retrieve full name and email from session
 $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
@@ -17,7 +19,7 @@ $selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
 // echo $selectedYear;
 
 // Function to read and filter data from JSON files
-function getDataFromJson($filePath, $userEmail)
+function getDataFromJsonRequest($filePath, $userEmail)
 {
     if (file_exists($filePath)) {
         $jsonData = file_get_contents($filePath);
@@ -42,8 +44,8 @@ $paymentFile = "../database/payment_$selectedYear.json";
 $files = glob('../database/request_*.json');
 
 // Read and filter data
-$requestData = getDataFromJson($requestFile, $userEmail);
-$paymentData = getDataFromJson($paymentFile, $userEmail);
+$requestData = getDataFromJsonRequest($requestFile, $userEmail);
+// $paymentData = getDataFromJsonRequest($paymentFile, $userEmail);
 
 // echo json_encode($paymentData);
 
@@ -79,13 +81,20 @@ $requestApprovedDirector = getStatusCounts($requestData, 'status', 'Phê duyệt
 $requestRejectedLeader = getStatusCounts($requestData, 'check_status', 'Từ chối');
 $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
 
-$paymentTotal = count($paymentData);
-$paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved');
-$paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
-$paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
-$paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
-$paymentRejectedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected');
-$paymentApprovedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected');
+// get payment status data
+
+$filePath = "../database/payment/status/$selectedYear/status.json";
+$paymentDataStatusRes = getDataFromJson($filePath);
+$paymentDataStatus = $paymentDataStatusRes['data'];
+
+$paymentApprovedLeader =  isset($paymentDataStatus['approved_leader']) ? $paymentDataStatus['approved_leader']['number'] : 0;
+$paymentApprovedDirector =  isset($paymentDataStatus['approved_director']) ? $paymentDataStatus['approved_director']['number'] : 0;
+$paymentRejectedLeader =  isset($paymentDataStatus['rejected_leader']) ? $paymentDataStatus['rejected_leader']['number'] : 0;
+$paymentRejectedDirector =  isset($paymentDataStatus['rejected_director']) ? $paymentDataStatus['rejected_director']['number'] : 0;
+$paymentWaitingLeader =  isset($paymentDataStatus['pending_leader']) ? $paymentDataStatus['pending_leader']['number'] : 0;
+$paymentApprovedSale =  isset($paymentDataStatus['approved_sale']) ? $paymentDataStatus['approved_sale']['number'] : 0;
+$paymentRejectedSale =  isset($paymentDataStatus['rejected_sale']) ? $paymentDataStatus['rejected_sale']['number'] : 0;
+$paymentTotal = $paymentApprovedLeader + $paymentRejectedLeader + $paymentWaitingLeader;
 ?>
 
 <!DOCTYPE html>

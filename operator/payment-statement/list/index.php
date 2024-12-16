@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
   exit();
 }
 
+include('../../../helper/general.php');
+
 // Retrieve full name from session
 $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
@@ -21,19 +23,20 @@ if (isset($_POST['year'])) {
 }
 
 // Read data from the selected JSON file
-$file = "../../../database/payment_$selectedYear.json";
+// $file = "../../../database/payment_$selectedYear.json";
+$directory = "../../../database/payment/data/$selectedYear";
 
-if (file_exists($file)) {
-  $jsonData = file_get_contents($file);
-  $requests = json_decode($jsonData, true);
-
+$resData =  getAllDataFiles($directory);
+$filteredRequests = [];
+if ($resData['status'] === 'success') {
+  $requests = $resData['data'];
   // Filter requests to only those matching the operator's email
   $filteredRequests = array_filter($requests, function ($request) use ($userEmail) {
     return $request['operator_email'] === $userEmail;
   });
-} else {
-  $filteredRequests = [];
 }
+
+$directoriesName = getDirectories('../../../database/payment/data');
 
 // Get status of approval
 function getApprovalStatus($item)
@@ -102,12 +105,8 @@ function getApprovalStatus($item)
         <label for="year">Chọn năm:</label>
         <select id="year" name="year" onchange="this.form.submit()">
           <?php
-          foreach ($files as $file) {
-            preg_match('~payment_(\d{4})\.json~', $file, $matches);
-            if (isset($matches[1])) {
-              $year = $matches[1];
-              echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
-            }
+          foreach ($directoriesName as $directoryName) {
+            echo "<option value=\"$directoryName\" " . ($directoryName == $selectedYear ? 'selected' : '') . ">$directoryName</option>";
           }
           ?>
         </select>
@@ -171,7 +170,7 @@ function getApprovalStatus($item)
                     border-radius: 5px;
                     padding: 5px 10px;
                     cursor: pointer;' 
-                  onclick='handleShowDetail(". $request['instruction_no'] .")'>Chỉnh sửa</button></td>";
+                  onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chỉnh sửa</button></td>";
               } else {
                 echo "<td></td>";
               }

@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
     exit();
 }
 
+include('../helper/general.php');
+
 // Retrieve full name and email from session
 $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
@@ -15,7 +17,7 @@ $userEmail = $_SESSION['user_id']; // operator_email matches user_id
 $selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
 
 // Function to read and filter data from JSON files
-function getDataFromJson($filePath, $userEmail)
+function getDataFromJsonRequest($filePath, $userEmail)
 {
     if (file_exists($filePath)) {
         $jsonData = file_get_contents($filePath);
@@ -45,7 +47,7 @@ $requestFile = "../database/request_$selectedYear.json";
 $paymentFile = "../database/payment_$selectedYear.json";
 $files = glob('../database/request_*.json');
 // Read and filter data
-$requestData = getDataFromJson($requestFile, $userEmail);
+$requestData = getDataFromJsonRequest($requestFile, $userEmail);
 $paymentData = getDataFromPaymentJson($paymentFile);
 
 // Function to get counts based on status
@@ -107,14 +109,22 @@ function countApprovalsByRoleSale($data, $role, $status)
 // $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
 // $requestWaitingLeader = getStatusCounts($requestData, 'check_status');
 
-$paymentTotal = count($paymentData);
-$paymentApprovedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'approved');
-$paymentApprovedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'approved');
-$paymentRejectedLeader = countApprovalsByRoleAndStatus($paymentData, 'leader', 'rejected');
-$paymentRejectedDirector = countApprovalsByRoleAndStatus($paymentData, 'director', 'rejected');
-$paymentApprovedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'approved');
-$paymentRejectedSale = countApprovalsByRoleAndStatus($paymentData, 'sale', 'rejected');
-$paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending');
+$filePath = "../database/payment/status/$selectedYear/status.json";
+$paymentDataStatusRes = getDataFromJson($filePath);
+$paymentDataStatus = $paymentDataStatusRes['data'];
+
+$paymentApprovedLeader =  isset($paymentDataStatus['approved_leader']) ? $paymentDataStatus['approved_leader']['number'] : 0;
+$paymentApprovedDirector =  isset($paymentDataStatus['approved_director']) ? $paymentDataStatus['approved_director']['number'] : 0;
+$paymentRejectedLeader =  isset($paymentDataStatus['rejected_leader']) ? $paymentDataStatus['rejected_leader']['number'] : 0;
+$paymentRejectedDirector =  isset($paymentDataStatus['rejected_director']) ? $paymentDataStatus['rejected_director']['number'] : 0;
+$paymentWaitingLeader =  isset($paymentDataStatus['pending_leader']) ? $paymentDataStatus['pending_leader']['number'] : 0;
+$paymentWaitingSale =  isset($paymentDataStatus['pending_leader']) ? $paymentDataStatus['pending_sale']['number'] : 0;
+$paymentApprovedSale =  isset($paymentDataStatus['approved_sale']) ? $paymentDataStatus['approved_sale']['number'] : 0;
+$paymentRejectedSale =  isset($paymentDataStatus['rejected_sale']) ? $paymentDataStatus['rejected_sale']['number'] : 0;
+$paymentTotal = $paymentApprovedLeader + $paymentRejectedLeader + $paymentWaitingLeader;
+
+$directoriesName = getDirectories('../database/payment/data');
+
 ?>
 
 <!DOCTYPE html>
@@ -123,7 +133,7 @@ $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending'
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ Leader</title>
+    <title>Trang chủ Sale</title>
     <style>
         /* Basic styles for layout */
         * {
@@ -402,7 +412,7 @@ $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending'
 <body>
 
     <div class="header">
-        <h1>Leader Dashboard</h1>
+        <h1>Sale Dashboard</h1>
     </div>
 
     <div class="menu">
@@ -428,13 +438,8 @@ $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending'
             <label for="year">Chọn năm:</label>
             <select name="year" id="year" onchange="this.form.submit()">
                 <?php
-                foreach ($files as $file) {
-                    // Lấy năm từ tên file
-                    preg_match('~request_(\d{4})\.json~', $file, $matches);
-                    if (isset($matches[1])) {
-                        $year = $matches[1];
-                        echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
-                    }
+                foreach ($directoriesName as $directoryName) {
+                    echo "<option value=\"$directoryName\" " . ($directoryName == $selectedYear ? 'selected' : '') . ">$directoryName</option>";
                 }
                 ?>
             </select>
@@ -464,7 +469,7 @@ $paymentWaitingLeader = countApprovalsByRoleSale($paymentData, 'sale', 'pending'
                     <td><?php echo $paymentRejectedLeader; ?></td>
                     <td><?php echo $paymentRejectedSale; ?></td>
                     <td><?php echo $paymentRejectedDirector; ?></td>
-                    <td><?php echo $paymentWaitingLeader; ?></td>
+                    <td><?php echo $paymentWaitingSale; ?></td>
                     <td><a href="payment-statement/list">Quản lý phiếu thanh toán chờ duyệt</a></td>
                 </tr>
             </table>

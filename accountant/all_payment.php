@@ -7,12 +7,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
   exit();
 }
 
+include('../helper/general.php');
+
 // Retrieve full name from session
 $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
 
 // Read JSON files in the directory
-$files = glob('../database/payment_*.json');
+// $files = glob('../database/payment_*.json');
 $selectedYear = date('Y');
 
 // If a year is selected, update the year
@@ -21,17 +23,17 @@ if (isset($_POST['year'])) {
 }
 
 // Read data from the selected JSON file
-$file = "../database/payment_$selectedYear.json";
+$directory = "../database/payment/data/$selectedYear";
 
-if (file_exists($file)) {
-  $jsonData = file_get_contents($file);
-  $requests = json_decode($jsonData, true);
-
+$resData =  getAllDataFiles($directory);
+$filteredRequests = [];
+if ($resData['status'] === 'success') {
+  $requests = $resData['data'];
   // Filter requests to only those matching the operator's email
   $filteredRequests = $requests;
-} else {
-  $filteredRequests = [];
 }
+
+$directoriesName = getDirectories('../database/payment/data');
 
 function getApprovalStatus($item)
 {
@@ -429,12 +431,8 @@ function getApprovalStatus($item)
         <label for="year">Chọn năm:</label>
         <select id="year" name="year" onchange="this.form.submit()">
           <?php
-          foreach ($files as $file) {
-            preg_match('~request_(\d{4})\.json~', $file, $matches);
-            if (isset($matches[1])) {
-              $year = $matches[1];
-              echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
-            }
+          foreach ($directoriesName as $directoryName) {
+            echo "<option value=\"$directoryName\" " . ($directoryName == $selectedYear ? 'selected' : '') . ">$directoryName</option>";
           }
           ?>
         </select>

@@ -142,30 +142,30 @@ function getDataByStationName($stationName)
 
 
 
-function getApprovalStatus($approval)
-{
-  $levelName = [
-    'bod_pro_gis' => 'BoD GIS Province',
-    'office_gis' => 'Head ELE GIS',
-    'office_vtc' => 'Head ELE VTC',
-  ];
-  // Check the approval status
-  $updateTime = '';
-  foreach ($approval as $item) {
-    // check if update time is valid
-    if ($item['updateTime'] !== '') {
-      $updateTime = $item['updateTime'];
-    }
-    if ($item['status'] === 'rejected') {
-      return ['status' => 'Rejected', 'role' => $levelName[$item['role']], 'updateTime' => $updateTime];
-    }
-    if ($item['status'] === 'pending') {
-      return ['status' => 'Pending', 'role' => $levelName[$item['role']], 'updateTime' => $updateTime];
-    }
-  }
+// function getApprovalStatus($approval)
+// {
+//   $levelName = [
+//     'bod_pro_gis' => 'BoD GIS Province',
+//     'office_gis' => 'Head ELE GIS',
+//     'office_vtc' => 'Head ELE VTC',
+//   ];
+//   // Check the approval status
+//   $updateTime = '';
+//   foreach ($approval as $item) {
+//     // check if update time is valid
+//     if ($item['updateTime'] !== '') {
+//       $updateTime = $item['updateTime'];
+//     }
+//     if ($item['status'] === 'rejected') {
+//       return ['status' => 'Rejected', 'role' => $levelName[$item['role']], 'updateTime' => $updateTime];
+//     }
+//     if ($item['status'] === 'pending') {
+//       return ['status' => 'Pending', 'role' => $levelName[$item['role']], 'updateTime' => $updateTime];
+//     }
+//   }
 
-  return ['status' => 'Approved', 'role' => $levelName[$item['role']], 'updateTime' => $updateTime];
-}
+//   return ['status' => 'Approved', 'role' => $levelName[$item['role']], 'updateTime' => $updateTime];
+// }
 
 // get the approval status by role
 function getApprovalStatusByRole($approval, $role)
@@ -301,22 +301,89 @@ function getAllDataFiles($directory)
 }
 
 
-function updateJsonData($filePath, $instructionNo, $newData) {
+function updateJsonData($filePath, $instructionNo, $newData)
+{
   // Read the JSON file
   $json = file_get_contents($filePath);
   $data = json_decode($json, true);
 
   // Find the entry with the matching instruction_no
   foreach ($data as &$entry) {
-      if ($entry['instruction_no'] == $instructionNo) {
-          // Update the necessary fields
-          foreach ($newData as $key => $value) {
-              $entry[$key] = $value;
-          }
-          break;
+    if ($entry['instruction_no'] == $instructionNo) {
+      // Update the necessary fields
+      foreach ($newData as $key => $value) {
+        $entry[$key] = $value;
       }
+      break;
+    }
   }
 
   // Save the updated JSON back to the file
   file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+}
+
+// function get name of directory children in directory parent path
+function getDirectories($parentPath)
+{
+  $directories = glob($parentPath . '/*', GLOB_ONLYDIR);
+  $directoryNames = array_map('basename', $directories);
+  return $directoryNames;
+}
+
+
+function updateStatusFile($role, $status, $id, $directory)
+{
+  // convert id to string
+  $id = (string)$id;
+  // Ensure the directory exists
+  if (!is_dir($directory)) {
+    mkdir($directory, 0777, true);
+  }
+  $filePath = $directory . '/status.json';
+  // Check if the file exists, create it if not
+  if (!file_exists($filePath)) {
+    file_put_contents($filePath, json_encode([], JSON_PRETTY_PRINT));
+  }
+
+  // Load existing data from the file
+  $statusData = json_decode(file_get_contents($filePath), true);
+
+  // Get the new status key for the specific role
+  $newStatusKey = strtolower($status . '_' . $role);
+
+  // Ensure the new status key exists in the data
+  if (!isset($statusData[$newStatusKey])) {
+    $statusData[$newStatusKey] = [
+      'number' => 0,
+      'ids' => []
+    ];
+  }
+
+  // Find and remove the ID from the statuses of the same role only
+  foreach ($statusData as $key => &$value) {
+    // Check if the key belongs to the same role
+    if (strpos($key, '_' . $role) !== false && in_array($id, $value['ids'])) {
+      // Remove the ID from the previous status for the same role
+      $value['ids'] = array_filter($value['ids'], function ($existingId) use ($id) {
+        return $existingId !== $id;
+      });
+
+      // Decrease the number count if necessary
+      $value['number'] = count($value['ids']);
+    }
+  }
+
+  // Update the new status with the given ID for the specific role
+  $statusData[$newStatusKey]['ids'][] = $id;
+  $statusData[$newStatusKey]['number'] = count($statusData[$newStatusKey]['ids']);
+
+  // Save the updated status data back to the file
+  file_put_contents($filePath, json_encode($statusData, JSON_PRETTY_PRINT));
+}
+
+function formatNumberVID($input) {
+  // Pad the number with leading zeros up to a length of 4
+  $formattedNumber = str_pad($input, 4, '0', STR_PAD_LEFT);
+  // Prefix with 'V' and return the result
+  return 'V' . $formattedNumber;
 }
