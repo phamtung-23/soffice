@@ -153,20 +153,20 @@ document.getElementById("addRowPayment").addEventListener("click", function () {
   // Nội dung HTML của hàng mới
   newRow.innerHTML = `
     <div class="col-sm-3 pb-2">
-            <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
+            <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" >
           </div>
           <div class="col-sm-2 pb-2">
-            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="toggleExpenseFields(this)">
+            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
           </div>
           <div class="col-sm-2 d-flex pb-2">
             <label for="customVat" class="col-form-label">V.A.T</label>
             <div class="input-group ps-2">
-              <input type="text" class="form-control" name="customVat[]" placeholder="%" required>
+              <input type="text" class="form-control" name="customVat[]" placeholder="%" >
               <span class="input-group-text">%</span>
             </div>
           </div>
           <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-            <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+            <select class="form-select" aria-label="Default select example" name="customContSet[]" >
               <option selected disabled value="">Choose Cont/Set</option>
               <option value="cont">Cont</option>
               <option value="set">Set</option>

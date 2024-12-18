@@ -114,11 +114,25 @@ $filePath = "../../../private_data/soffice_database/payment/status/$selectedYear
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
 
+$filePathPayment = "../../../private_data/soffice_database/payment/data/$selectedYear/";
+$paymentPendingData = [];
+foreach ($paymentDataStatus['pending_leader']['ids'] as $id) {
+  $filePathPaymentID = $filePathPayment . "payment_$id.json";
+  $paymentIdRes = getDataFromJson($filePathPaymentID);
+  $paymentId = $paymentIdRes['data'];
+  $paymentPendingData[] = $paymentId;
+}
+// filter paymentPendingData with leader email
+$paymentPendingData = array_filter($paymentPendingData, function ($item) use ($userEmail) {
+    return $item['approval'][0]['email'] === $userEmail;
+});
+
 $paymentApprovedLeader =  isset($paymentDataStatus['approved_leader']) ? $paymentDataStatus['approved_leader']['number'] : 0;
 $paymentApprovedDirector =  isset($paymentDataStatus['approved_director']) ? $paymentDataStatus['approved_director']['number'] : 0;
 $paymentRejectedLeader =  isset($paymentDataStatus['rejected_leader']) ? $paymentDataStatus['rejected_leader']['number'] : 0;
 $paymentRejectedDirector =  isset($paymentDataStatus['rejected_director']) ? $paymentDataStatus['rejected_director']['number'] : 0;
-$paymentWaitingLeader =  isset($paymentDataStatus['pending_leader']) ? $paymentDataStatus['pending_leader']['number'] : 0;
+// get number of payment waiting leader from paymentPendingData
+$paymentWaitingLeader = count($paymentPendingData);
 $paymentApprovedSale =  isset($paymentDataStatus['approved_sale']) ? $paymentDataStatus['approved_sale']['number'] : 0;
 $paymentRejectedSale =  isset($paymentDataStatus['rejected_sale']) ? $paymentDataStatus['rejected_sale']['number'] : 0;
 $paymentTotal = $paymentApprovedLeader + $paymentRejectedLeader + $paymentWaitingLeader;

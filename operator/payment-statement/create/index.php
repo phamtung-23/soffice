@@ -327,38 +327,38 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" required>
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" >
           </div>
         </div>
 
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
           <div class="col-sm-4">
-            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" required>
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" >
           </div>
 
           <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" required value="<?php echo $data['delivery_pct'] ?? '' ?>">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct"  value="<?php echo $data['delivery_pct'] ?? '' ?>">
           </div>
         </div>
 
         <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
           <div class="col-sm-3 pb-2">
-            <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
+            <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" >
           </div>
           <div class="col-sm-2 pb-2">
-            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="toggleExpenseFields(this)">
+            <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
           </div>
           <div class="col-sm-2 d-flex pb-2">
             <label for="customVat" class="col-form-label">V.A.T</label>
             <div class="input-group ps-2">
-              <input type="text" class="form-control" name="customVat[]" placeholder="%" required>
+              <input type="text" class="form-control" name="customVat[]" placeholder="%" >
               <span class="input-group-text">%</span>
             </div>
           </div>
           <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-            <select class="form-select" aria-label="Default select example" name="customContSet[]" required>
+            <select class="form-select" aria-label="Default select example" name="customContSet[]" >
               <option selected disabled value="">Choose Cont/Set</option>
               <option value="cont">Cont</option>
               <option value="set">Set</option>

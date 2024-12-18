@@ -64,3 +64,26 @@
 [2024-12-18 03:41:41] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
 [2024-12-18 03:41:41] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
 [2024-12-18 03:41:41] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-18 18:09:10] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-18 18:09:10] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-18 18:09:10] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-18 18:10:15] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-18 18:10:15] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-18 18:10:15] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-18 18:12:29] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-18 18:12:29] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-18 18:12:29] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-18 18:18:03] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-18 18:18:03] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-18 18:18:03] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: 
+[2024-12-18 18:20:32] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-18 18:20:32] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-18 18:20:32] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: 
+[2024-12-18 18:22:36] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-18 18:22:36] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-18 18:22:36] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: 
+[2024-12-18 18:24:39] /soffice/operator/payment-statement/update/update_payment_status.php: uploadedFiles: ["fkr3ummxkaiuejp-9693.jpg"]
+[2024-12-18 18:29:38] /soffice/operator/payment-statement/update/update_payment_status.php: uploadedFiles: ["Leo_Messi_(cropped).jpg"]
+[2024-12-18 18:41:16] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-18 18:41:16] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-18 18:41:16] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: 
