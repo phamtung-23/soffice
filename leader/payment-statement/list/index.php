@@ -92,7 +92,9 @@ echo "</script>";
       tableBody.innerHTML = '';
 
       const validRequests = paymentPendingData.filter(request => {
-        return request.approval[0].status === 'pending' && request.approval[0].email === userEmail;
+        return request && // Check that the request is not null
+          request.approval[0].status === 'pending' &&
+          request.approval[0].email === userEmail;
       });
 
       if (validRequests.length === 0) {

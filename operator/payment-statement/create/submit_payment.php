@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             //   $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
             // }
 
-            $folderId = '1nZyy6HPZco3vNB9YwhgxC8lAGWJFnj-L';
+            $folderId = '175l19YFsHesJmn5yKVO8XV-H5RZp8ron';
             $fileTmpName = $uploadedFilesTmp[$fileIndex];
             if (move_uploaded_file($fileTmpName, $targetFilePath)) {
               // get file name = stationName + fileKey + index + fileName
