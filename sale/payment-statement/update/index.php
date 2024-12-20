@@ -355,11 +355,17 @@ if ($instructionNo !== null) {
         foreach ($data['payment'] as $customField) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <div class="col-sm-3 pb-2">
+            <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>">
             </div>
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="updateAmountText(this)">
+            </div>
+            <div class="col-sm-1 d-flex pb-2">
+              <label for="customUnit" class="col-form-label"></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>
@@ -419,7 +425,9 @@ if ($instructionNo !== null) {
               <th scope="col" colspan="2">Amount</th>
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+              <th scope="col" rowspan="2" class="align-middle">Upload file</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
+              <th scope="col" rowspan="2" class="align-middle">Action</th>
             </tr>
             <tr>
               <th>Actual</th>
@@ -431,23 +439,25 @@ if ($instructionNo !== null) {
             foreach ($data['expenses'] as $index => $expense) {
             ?>
               <tr>
-                <td><?= $index ?></td>
+                <td><?= $index + 1 ?></td>
                 <td><input type="text" class="form-control" name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_amount[]" required id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
+                <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple></td>
                 <?php
                 if (!empty($expense['expense_files'])) {
                   echo "<td>";
                   foreach ($expense['expense_files'] as $file) {
                     echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
                   }
-                  echo "</tr>";
+                  echo "</td>";
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
                 ?>
+                <td class="align-middle"></td>
               </tr>
             <?php
             }
@@ -456,9 +466,14 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
+              <td colspan="9" class="text-center">
+                <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
+              </td>
+            </tr>
+            <tr>
               <td colspan="2" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="updateAmountText(this)"></td>
-              <td>
+              <td colspan="3">
                 RECEIVED BACK ON: <input type="text" class="form-control" value="<?= $data['received_back_on'] ?>">
               </td>
               <td colspan="3">
@@ -725,6 +740,39 @@ if ($instructionNo !== null) {
         console.error(ex);
         return "";
       }
+    }
+
+    function addRow() {
+      const tableBody = document.querySelector(".tableBody");
+      const rowIndex = tableBody.rows.length;
+
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `
+        <td>${rowIndex + 1}</td>
+        <td><input type="text" name="expense_kind[]" class="form-control" required></td>
+        <td><input type="text" name="expense_amount[]" class="form-control" required oninput="updateAmountText(this)"></td>
+        <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
+        <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+        <td><input type="text" name="expense_doc[]" class="form-control"></td>
+        <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
+        <td></td>
+        <td class="align-middle">
+          <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
+        </td>
+      `;
+      tableBody.appendChild(newRow);
+    }
+
+    function deleteRow(button) {
+      const row = button.closest("tr");
+      // Remove the row from the table
+      row.remove();
+
+      // Re-number the rows after deletion
+      const tableBody = document.querySelector(".tableBody");
+      Array.from(tableBody.rows).forEach((row, index) => {
+        row.cells[0].textContent = index + 1;
+      });
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

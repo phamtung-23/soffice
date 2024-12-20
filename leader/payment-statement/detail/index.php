@@ -350,19 +350,19 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" >
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>">
           </div>
         </div>
 
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
           <div class="col-sm-4">
-            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" >
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>">
           </div>
 
           <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct"  value="<?php echo $data['delivery_pct'] ?? '' ?>">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" value="<?php echo $data['delivery_pct'] ?? '' ?>">
           </div>
         </div>
 
@@ -370,21 +370,27 @@ if ($instructionNo !== null) {
         foreach ($data['payment'] as $customField) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <div class="col-sm-3 pb-2">
-              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name"  value="<?= $customField['name'] ?>">
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" value="<?= $customField['name'] ?>">
             </div>
             <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+            </div>
+            <div class="col-sm-1 d-flex pb-2">
+              <label for="customUnit" class="col-form-label"></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>
               <div class="input-group ps-2">
-                <input type="text" class="form-control" name="customVat[]" placeholder="%"  value="<?= $customField['vat'] ?>">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" value="<?= $customField['vat'] ?>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-              <select class="form-select" aria-label="Default select example" name="customContSet[]" >
+              <select class="form-select" aria-label="Default select example" name="customContSet[]">
                 <option value="cont" <?= $customField['contSet'] === 'cont' ? 'selected' : '' ?>>Cont</option>
                 <option value="set" <?= $customField['contSet'] === 'set' ? 'selected' : '' ?>>Set</option>
               </select>

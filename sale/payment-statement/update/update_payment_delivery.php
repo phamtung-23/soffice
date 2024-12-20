@@ -8,6 +8,34 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
 
 include '../../../helper/payment.php';
 include '../../../helper/general.php';
+require '../../../library/google_api/vendor/autoload.php'; // Đảm bảo đường dẫn đúng
+
+function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
+{
+  $client = new Google_Client();
+  $client->setAuthConfig('gdcredentials.json'); // Đường dẫn tới file credential
+  $client->addScope(Google_Service_Drive::DRIVE_FILE);
+
+  $service = new Google_Service_Drive($client);
+
+  $fileMetadata = new Google_Service_Drive_DriveFile([
+    'name' => $fileName,
+    'parents' => [$folderId]
+  ]);
+
+  $content = file_get_contents($filePath);
+
+  try {
+    $file = $service->files->create($fileMetadata, [
+      'data' => $content,
+      'mimeType' => mime_content_type($filePath),
+      'uploadType' => 'multipart'
+    ]);
+    return "https://drive.google.com/file/d/" . $file->id . "/view";
+  } catch (Exception $e) {
+    return null;
+  }
+}
 
 header('Content-Type: application/json');
 
@@ -38,23 +66,77 @@ $paymentIdRes = getDataFromJson($filePath);
 $entry = $paymentIdRes['data'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  // Update the data for the matching instruction number
+  // Update the status for the matching instruction number
   $updated = false;
+  $errors = [];
+  $targetDir = '../../../../../private_data/soffice_database/payment/uploads/';
+
+  // Create uploads directory if not exists
+  if (!is_dir($targetDir)) {
+    mkdir($targetDir, 0777, true);
+  }
   // Collect expense information
   $newExpenses = [];
   if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
     for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-      $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i] ?? $entry['expenses'][$i]['expense_amount'] ?? "");
-      $soHoaDon = $_POST['so_hoa_don'][$i] ?? $entry['expenses'][$i]['so_hoa_don'] ?? "";
-      $expenseFile = $entry['expenses'][$i]['expense_files'] ?? [];
+      logEntry("expense_kind: " . $_POST['expense_kind'][$i]);
+      $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i]);
+      $soHoaDon = $_POST['so_hoa_don'][$i];
+      $uploadedFiles = $_FILES['expense_file']['name'][$i] == [""] ? [] : $_FILES['expense_file']['name'][$i];
+      $uploadedFilesTmp = $_FILES['expense_file']['tmp_name'][$i] ?? [];
+      $expenseFiles = $entry['expenses'][$i]['expense_files'] ?? [];
+
+      // logEntry("uploadedFiles: " . json_encode($uploadedFiles));
+
+      // Check conditional file upload requirement
+      if (!empty($soHoaDon) && empty($uploadedFiles) && empty($expenseFiles)) {
+        $errors[] = "Vui lòng tải tệp cho hóa đơn số {$soHoaDon}.";
+        continue;
+      }
+
+      // Process multiple files for this expense row
+      if (!empty($uploadedFiles)) {
+        foreach ($uploadedFiles as $fileIndex => $fileName) {
+          if ($_FILES['expense_file']['error'][$i][$fileIndex] === UPLOAD_ERR_OK) {
+            $originalFileName = pathinfo($fileName, PATHINFO_FILENAME);
+            $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+            $formattedFileName = preg_replace('/[^A-Za-z0-9]/', '_', $originalFileName);
+            $uniqueFileName = "Payment" . uniqid() . "_" . $formattedFileName . "." . $fileExtension;
+            $targetFilePath = $targetDir . $uniqueFileName;
+
+            // if (move_uploaded_file($uploadedFilesTmp[$fileIndex], $targetFilePath)) {
+            //   $expenseFiles[] = $uniqueFileName;
+            // } else {
+            //   $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
+            // }
+
+            $folderId = '175l19YFsHesJmn5yKVO8XV-H5RZp8ron';
+            $fileTmpName = $uploadedFilesTmp[$fileIndex];
+            if (move_uploaded_file($fileTmpName, $targetFilePath)) {
+              // get file name = stationName + fileKey + index + fileName
+              $fileNameGGDrive = $uniqueFileName;
+              $linkImg = uploadFileToGoogleDrive($targetFilePath, $fileNameGGDrive, $folderId);
+              if ($linkImg) {
+                $expenseFiles[] = $linkImg;
+                unlink($targetFilePath);
+              } else {
+                $errors[] = "Failed to upload file: {$fileName} for row " . ($i + 1);
+                // remove file if upload fail
+                unlink($targetFilePath);
+              }
+            }
+          }
+        }
+      }
+
       // Store expense data
       $expense = [
-        'expense_kind' => $_POST['expense_kind'][$i] ?? $entry['expenses'][$i]['expense_kind'] ?? null,
+        'expense_kind' => $_POST['expense_kind'][$i],
         'expense_amount' => $expenseAmount,
         'so_hoa_don' => $soHoaDon,
-        'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
-        'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
-        'expense_files' => $expenseFile
+        'expense_payee' => $_POST['expense_payee'][$i],
+        'expense_doc' => $_POST['expense_doc'][$i],
+        'expense_files' => $expenseFiles // Store all uploaded files for this expense
       ];
 
       $newExpenses[] = $expense;
@@ -85,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Extract custom fields
   $customFieldNames = $_POST['customFieldName'] ?? [];
   $customFields = $_POST['customField'] ?? [];
+  $customUnits = $_POST['customUnit'] ?? [];
   $customVats = $_POST['customVat'] ?? [];
   $customContSetRadios = $_POST['customContSet'] ?? [];
   $customIncl = $_POST['customIncl'] ?? [];
@@ -101,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $customData[] = [
       'name' => $name,
       'value' => (float)str_replace('.', '', $customFields[$index]),
+      'unit' => $customUnits[$index] ?? '',
       'vat' => $customVats[$index] ?? '',
       'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
       'incl' => $customIncl[$index] ?? '',
@@ -135,6 +219,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
   }
   $updated = true;
+}
+
+if (!empty($errors)) {
+  echo json_encode(['success' => false, 'message' => implode("\n", $errors)]);
+  exit();
 }
 
 

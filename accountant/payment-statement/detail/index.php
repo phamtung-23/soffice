@@ -397,11 +397,17 @@ if ($instructionNo !== null) {
         foreach ($data['payment'] as $customField) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <div class="col-sm-3 pb-2">
+            <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>" disabled>
             </div>
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" disabled>
+            </div>
+            <div class="col-sm-1 d-flex pb-2">
+              <label for="customUnit" class="col-form-label"></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>" disabled>
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>

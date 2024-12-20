@@ -82,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Extract custom fields
   $customFieldNames = $_POST['customFieldName'] ?? [];
   $customFields = $_POST['customField'] ?? [];
+  $customUnits = $_POST['customUnit'] ?? [];
   $customVats = $_POST['customVat'] ?? [];
   $customContSetRadios = $_POST['customContSet'] ?? [];
   $customIncl = $_POST['customIncl'] ?? [];
@@ -98,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $customData[] = [
       'name' => $name,
       'value' => (float)str_replace('.', '', $customFields[$index]),
+      'unit' => $customUnits[$index] ?? '',
       'vat' => $customVats[$index] ?? '',
       'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
       'incl' => $customIncl[$index] ?? '',

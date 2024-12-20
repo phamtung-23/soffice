@@ -115,6 +115,7 @@ foreach ($request['payment'] as $payment) {
                 <div class='form-group'>
                     <label for='payment-content'>{$payment['name']}:</label>
                     <span>{$formatNumber}</span>
+                    <span> {$payment['unit']}</span>
                 </div>
             </td>
             <td>

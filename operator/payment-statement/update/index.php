@@ -327,19 +327,19 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" >
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>">
           </div>
         </div>
 
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
           <div class="col-sm-4">
-            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" >
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>">
           </div>
 
           <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct"  value="<?php echo $data['delivery_pct'] ?? '' ?>">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" value="<?php echo $data['delivery_pct'] ?? '' ?>">
           </div>
         </div>
 
@@ -348,20 +348,20 @@ if ($instructionNo !== null) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <div class="col-sm-3 pb-2">
-              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name"  value="<?= $customField['name'] ?>">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" value="<?= $customField['name'] ?>">
             </div>
             <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>
               <div class="input-group ps-2">
-                <input type="text" class="form-control" name="customVat[]" placeholder="%"  value="<?= $customField['vat'] ?>">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" value="<?= $customField['vat'] ?>">
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-              <select class="form-select" aria-label="Default select example" name="customContSet[]" >
+              <select class="form-select" aria-label="Default select example" name="customContSet[]">
                 <option value="cont" <?= $customField['contSet'] === 'cont' ? 'selected' : '' ?>>Cont</option>
                 <option value="set" <?= $customField['contSet'] === 'set' ? 'selected' : '' ?>>Set</option>
               </select>
@@ -424,13 +424,13 @@ if ($instructionNo !== null) {
             foreach ($data['expenses'] as $index => $expense) {
             ?>
               <tr>
-                <td><?= $index ?></td>
+                <td><?= $index + 1 ?></td>
                 <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
                 <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
-                <td><input class="form-control" type="file" id="formFile" name="expense_file[0][]" multiple></td>
+                <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple></td>
                 <?php
                 if (!empty($expense['expense_files'])) {
                   foreach ($expense['expense_files'] as $file) {
@@ -450,6 +450,11 @@ if ($instructionNo !== null) {
 
             <!-- Additional rows as needed -->
           <tfoot>
+            <tr>
+              <td colspan="9" class="text-center">
+                <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
+              </td>
+            </tr>
             <tr>
               <td colspan="3" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
@@ -785,6 +790,39 @@ if ($instructionNo !== null) {
       if (row) {
         row.remove();
       }
+    }
+
+    function addRow() {
+      const tableBody = document.querySelector(".tableBody");
+      const rowIndex = tableBody.rows.length;
+
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `
+    <td>${rowIndex + 1}</td>
+    <td><input type="text" name="expense_kind[]" class="form-control" required></td>
+    <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+    <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
+    <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+    <td><input type="text" name="expense_doc[]" class="form-control"></td>
+    <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
+    <td></td>
+    <td class="align-middle">
+      <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
+    </td>
+  `;
+      tableBody.appendChild(newRow);
+    }
+
+    function deleteRow(button) {
+      const row = button.closest("tr");
+      // Remove the row from the table
+      row.remove();
+
+      // Re-number the rows after deletion
+      const tableBody = document.querySelector(".tableBody");
+      Array.from(tableBody.rows).forEach((row, index) => {
+        row.cells[0].textContent = index + 1;
+      });
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

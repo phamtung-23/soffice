@@ -146,11 +146,17 @@ document.getElementById("addRowPayment").addEventListener("click", function () {
 
   // Nội dung HTML của hàng mới
   newRow.innerHTML = `
-      <div class="col-sm-3 pb-2">
+      <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required>
             </div>
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required oninput="updateAmountText(this)">
+            </div>
+            <div class="col-sm-1 d-flex pb-2">
+              <label for="customUnit" class="col-form-label"></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" >
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>

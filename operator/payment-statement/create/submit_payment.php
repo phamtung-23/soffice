@@ -188,6 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $customFieldNames = $_POST['customFieldName'] ?? [];
   $customFields = $_POST['customField'] ?? [];
   $customVats = $_POST['customVat'] ?? [];
+  $customUnits = $_POST['customUnit'] ?? [];
   $customContSetRadios = $_POST['customContSet'] ?? [];
   $customIncl = $_POST['customIncl'] ?? [];
   $customExcl = $_POST['customExcl'] ?? [];
@@ -204,6 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       'name' => $name,
       'value' => (float)str_replace('.', '', $customFields[$index]),
       'vat' => $customVats[$index] ?? '',
+      'unit' => $customUnits[$index] ?? '',
       'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
       'incl' => $customIncl[$index] ?? '',
       'excl' => $customExcl[$index] ?? ''
