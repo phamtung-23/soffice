@@ -45,6 +45,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Basic styles for layout */
     * {

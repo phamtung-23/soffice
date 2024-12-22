@@ -163,17 +163,39 @@ function getApprovalStatus($item)
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
               }
-              if ($request['approval'][0]['status'] === 'rejected' || $request['approval'][1]['status'] === 'rejected') {
-                echo "<td><button style='background-color: #808080;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    padding: 5px 10px;
-                    cursor: pointer;' 
-                  onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chỉnh sửa</button></td>";
-              } else {
-                echo "<td></td>";
-              }
+                echo "<td>";
+                if ($request['approval'][0]['status'] === 'rejected' || $request['approval'][1]['status'] === 'rejected') {
+                  echo "<button style='background-color: #808080;
+                      width: 80px;
+                      margin: 2px;
+                      color: white;
+                      border: none;
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      cursor: pointer;' 
+                    onclick='handleShowEdit(" . $request['instruction_no'] . ")'>Chỉnh sửa</button>";
+                }
+                if ($request['approval'][2]['status'] === 'approved' && $request['approval'][0]['status'] !== 'rejected' && $request['approval'][1]['status'] !== 'rejected' && $request['approval'][3]['status'] !== 'rejected') {
+                  echo "<button style='background-color:rgba(4, 82, 21, 0.8);
+                      width: 80px;
+                      margin: 2px;
+                      color: white;
+                      border: none;
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      cursor: pointer;' 
+                    onclick='handleShowUpdate(" . $request['instruction_no'] . ")'>Cập nhật</button>";
+                }
+                echo "<button style='background-color:#808080;
+                      width: 80px;
+                      margin: 2px;
+                      color: white;
+                      border: none;
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      cursor: pointer;' 
+                    onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chi tiết</button>";
+                echo "</td>";
               echo "</tr>";
               // Add to total amount
               $totalAmount = !empty($request['amount']) ? $totalAmount + $request['amount'] : $totalAmount;
@@ -255,6 +277,14 @@ function getApprovalStatus($item)
     }
 
     function handleShowDetail(instructionNo) {
+      const year = getSelectedYear();
+      window.location.href = `../detail?instruction_no=${instructionNo}&year=${year}`;
+    }
+    function handleShowUpdate(instructionNo) {
+      const year = getSelectedYear();
+      window.location.href = `../edit?instruction_no=${instructionNo}&year=${year}`;
+    }
+    function handleShowEdit(instructionNo) {
       const year = getSelectedYear();
       window.location.href = `../update?instruction_no=${instructionNo}&year=${year}`;
     }

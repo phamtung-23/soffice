@@ -487,17 +487,26 @@ function getApprovalStatus($item)
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
               }
-              if ($request['approval'][2]['status'] === 'rejected') {
-                echo "<td><button style='background-color: #808080;
-                    color: white;
-                    border: none;
-                    border-radius: 5px;
-                    padding: 5px 10px;
-                    cursor: pointer;' 
-                  onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chỉnh sửa</button></td>";
-              } else {
-                echo "<td></td>";
-              }
+              echo '<td>';
+                if ($request['approval'][2]['status'] === 'rejected') {
+                  echo "<button style='background-color: #808080;
+                      color: white;
+                      margin: 2px;
+                      border: none;
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      cursor: pointer;' 
+                    onclick='handleShowUpdate(" . $request['instruction_no'] . ")'>Chỉnh sửa</button>";
+                }
+                echo "<button style='background-color:#808080;
+                      color: white;
+                      margin: 2px;
+                      border: none;
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      cursor: pointer;' 
+                    onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chi tiết</button>";
+              echo '</td>';
               echo "</tr>";
               // Add to total amount
               $totalAmount = !empty($request['amount']) ? $totalAmount + $request['amount'] : $totalAmount;
@@ -578,9 +587,13 @@ function getApprovalStatus($item)
       return yearSelect.value;
     }
 
-    function handleShowDetail(instructionNo) {
+    function handleShowUpdate(instructionNo) {
       const year = getSelectedYear();
       window.location.href = `./payment-statement/update?instruction_no=${instructionNo}&year=${year}&update=true`;
+    }
+    function handleShowDetail(instructionNo) {
+      const year = getSelectedYear();
+      window.location.href = `./payment-statement/detail?instruction_no=${instructionNo}&year=${year}&update=true`;
     }
 
     // Toggle the responsive class to show/hide the menu

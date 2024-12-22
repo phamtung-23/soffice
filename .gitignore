@@ -4,6 +4,9 @@
 /library/
 /operator/payment-statement/create/gdcredentials.json
 /operator/payment-statement/update/gdcredentials.json
+/operator/payment-statement/detail/gdcredentials.json
+/operator/payment-statement/edit/gdcredentials.json
 /sale/payment-statement/update/gdcredentials.json
 /director/payment-statement/detail/gdcredentials.json
 /accountant/payment-statement/detail/gdcredentials.json
+/accountant/payment-statement/update/gdcredentials.json

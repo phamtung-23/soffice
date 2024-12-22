@@ -3,14 +3,14 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-require '../../../director/vendor/autoload.php'; // Đảm bảo đường dẫn tới mPDF chính xác
+require '../../vendor/autoload.php'; // Đảm bảo đường dẫn tới mPDF chính xác
+include('../../../helper/payment.php');
 include('../../../helper/general.php');
 
-
 // Include PHPMailer's classes
-require '../../../director/mailer/src/Exception.php';
-require '../../../director/mailer/src/PHPMailer.php';
-require '../../../director/mailer/src/SMTP.php';
+require '../../mailer/src/Exception.php';
+require '../../mailer/src/PHPMailer.php';
+require '../../mailer/src/SMTP.php';
 require '../../../library/google_api/vendor/autoload.php'; // Đảm bảo đường dẫn đúng
 
 function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
@@ -107,7 +107,6 @@ foreach ($request['payment'] as $payment) {
 
   $formatNumber = number_format($payment['value'], 0, ",", ".");
 
-
   $rowsPaymentTable = $rowsPaymentTable . "
     <table class='line-item-table'>
         <tr>
@@ -151,6 +150,7 @@ foreach ($request['payment'] as $payment) {
   ";
 }
 
+
 $rowsTable = "";
 
 if (count($request['expenses']) > 0) {
@@ -158,11 +158,11 @@ if (count($request['expenses']) > 0) {
     $item = $request['expenses'][$i];
     $index = $i + 1;
     $amount = (!empty($item['expense_amount']) ? number_format($item['expense_amount'], 0, ",", ".") : "");
-    $rowsTable = $rowsTable."
+    $rowsTable = $rowsTable . "
     <tr>
       <td class='line-item'>{$index}</td>
       <td class='line-item'>{$item['expense_kind']}</td>
-      <td class='line-item'>$amount</td>
+      <td class='line-item'>{$amount}</td>
       <td class='line-item'>{$item['so_hoa_don']}</td>
       <td class='line-item'>{$item['expense_payee']}</td>
       <td class='line-item'>{$item['expense_doc']}</td>
@@ -177,18 +177,17 @@ $department = $request['department'] ?? 'Giao nhận';
 $formatTotal = (!empty($request['total_actual']) ? number_format($request['total_actual'], 0, ",", ".") : "");
 
 
+
 // Tạo tên file bằng hàm MD5 từ email của người dùng
 $operator_email_md5 = md5($request['operator_email']);
 $leader_email_md5 = md5($request['approval'][0]['email']);
 $sale_email_md5 = md5($request['approval'][1]['email']);
 $director_email_md5 = md5($request['approval'][2]['email']);
-$accountant_email_md5 = md5($request['approval'][3]['email']);
 
 $operator_signature_path = "/soffice/signatures/" . $operator_email_md5 . ".jpg";
 $leader_signature_path = "/soffice/signatures/" . $leader_email_md5 . ".jpg";
 $sale_signature_path = "/soffice/signatures/" . $sale_email_md5 . ".jpg";
 $director_signature_path = "/soffice/signatures/" . $director_email_md5 . ".jpg";
-$accountant_signature_path = "/soffice/signatures/" . $accountant_email_md5 . ".jpg";
 
 
 
@@ -337,11 +336,9 @@ $htmlContent = "
           <img src='$operator_signature_path' alt='Chữ ký Người đề nghị' style='width: 150px; height: auto;'>
         </td>
         <td style='with: 25%; text-align: center;'>
-          <img src='$leader_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
+          <img src='$sale_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
         </td>
-        <td style='with: 25%; text-align: center;'>
-          <img src='$accountant_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
-        </td>
+        <td style='with: 25%; text-align: center;'></td>
         <td style='with: 25%; text-align: center;'>
           <img src='$director_signature_path' alt='Chữ ký Người duyệt' style='width: 150px; height: auto;'>
         </td>
@@ -517,11 +514,8 @@ try {
   }
   // update database file path by instruction_no
   $request['file_path'] = $linkImg;
-  $request['amount'] = (float)str_replace('.', '', $request['amount'] ?? '0');
-
   $directoryData = '../../../../../private_data/soffice_database/payment/data/' . $currentYear;
   $res = updateDataToJson($request, $directoryData, 'payment_' . $request['instruction_no']);
-
 
   // Trả về đường dẫn file PDF
   echo json_encode([

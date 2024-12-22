@@ -348,11 +348,17 @@ if ($instructionNo !== null) {
         foreach ($data['payment'] as $customField) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <div class="col-sm-3 pb-2">
+            <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" value="<?= $customField['name'] ?>">
             </div>
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+            </div>
+            <div class="col-sm-1 d-flex pb-2">
+              <label for="customUnit" class="col-form-label"></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>
@@ -376,7 +382,7 @@ if ($instructionNo !== null) {
               <label class="form-check-label">EXCL</label>
             </div>
             <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
-              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+              <!-- <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button> -->
             </div>
           </div>
         <?php
@@ -433,16 +439,16 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
                 <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple></td>
                 <?php
+                echo "<td>";
                 if (!empty($expense['expense_files'])) {
                   foreach ($expense['expense_files'] as $file) {
-                    echo "<td><a href=\"../../../../../private_data/soffice_database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                    echo "<a href=\"../../../../../private_data/soffice_database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></br>";
                   }
-                } else {
-                  echo "<td></td>"; // Empty cell if there's no filename
-                }
+                } 
+                echo "</td>";
                 ?>
                 <td class="align-middle">
-                  <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
+                  <!-- <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button> -->
                 </td>
               </tr>
             <?php
@@ -471,6 +477,11 @@ if ($instructionNo !== null) {
 
           </tbody>
         </table>
+      </div>
+
+      <div class="mb-3">
+        <label for="update_text_info" class="form-label">Vui lòng điền đầy đủ thông tin đã cập nhật tại đây:</label>
+        <textarea class="form-control" id="update_text_info" name='update_text_info' rows="3" required></textarea>
       </div>
 
       <!-- Submission Button -->
@@ -644,113 +655,119 @@ if ($instructionNo !== null) {
 
     function handleApprovePayment(status, message = '') {
       leaderForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+        if (!leaderForm.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+          leaderForm.classList.add("was-validated");
+        } else {
 
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach((checkbox) => {
-          if (!checkbox.checked) {
-            checkbox.checked = true;
-            checkbox.value = "off";
-          }
-        });
+          e.preventDefault();
 
-        const formData = new FormData(leaderForm);
-        const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
-        formData.append('instruction_no', instructionNo);
-        formData.append('approval_status', status);
-        formData.append('message', message);
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+              checkbox.checked = true;
+              checkbox.value = "off";
+            }
+          });
 
-        // // Log each key-value pair for debugging
-        // for (const [key, value] of formData.entries()) {
-        //   console.log(`${key}:`, value);
-        // }
+          const formData = new FormData(leaderForm);
+          const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
+          formData.append('instruction_no', instructionNo);
+          formData.append('approval_status', status);
+          formData.append('message', message);
 
-        // disable button
-        pheDuyetBtn.disabled = true;
-        tuChoiBtn.disabled = true;
-
-        let timerInterval;
-        Swal.fire({
-          title: "Saving...!",
-          html: "Please wait for a moment.",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-          willClose: () => {
-            clearInterval(timerInterval);
-          }
-        }).then((result) => {
-          /* Read more about handling dismissals below */
-          // if (result.dismiss === Swal.DismissReason.timer) {
-          //     console.log("I was closed by the timer");
+          // // Log each key-value pair for debugging
+          // for (const [key, value] of formData.entries()) {
+          //   console.log(`${key}:`, value);
           // }
-        });
 
-        // Send data to the server using fetch
-        fetch('update_payment_status.php', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => response.json())
-          .then(async data => {
-            if (data.success) {
-              // Tạo nội dung tin nhắn để gửi
-              let telegramMessage = '';
+          // disable button
+          pheDuyetBtn.disabled = true;
+          tuChoiBtn.disabled = true;
 
-              telegramMessage = `**Yêu cầu mới cần phê duyệt!**\n` +
-                `ID yêu cầu: ${itemData.instruction_no}\n` +
-                `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
-                `Tên khách hàng: ${itemData.shipper}\n` +
-                `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người yêu cầu:  ${itemData.operator_name} - ${itemData.operator_email}\n` +
-                `Thời gian gửi: ${itemData.updated_at}`;
+          let timerInterval;
+          Swal.fire({
+              title: "Saving...!",
+              html: "Please wait for a moment.",
+              allowOutsideClick: false,
+              didOpen: () => {
+                  Swal.showLoading();
+              },
+              willClose: () => {
+                  clearInterval(timerInterval);
+              }
+          }).then((result) => {
+              /* Read more about handling dismissals below */
+              // if (result.dismiss === Swal.DismissReason.timer) {
+              //     console.log("I was closed by the timer");
+              // }
+          });
+
+          // Send data to the server using fetch
+          fetch('update_payment_status.php', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(async data => {
+              if (data.success) {
+                // Tạo nội dung tin nhắn để gửi
+                let telegramMessage = '';
+
+                telegramMessage = `**Yêu cầu mới cần phê duyệt!**\n` +
+                  `ID yêu cầu: ${itemData.instruction_no}\n` +
+                  `Người đề nghị: ${itemData.operator_name}\n` +
+                  `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+                  `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                  `Tên khách hàng: ${itemData.shipper}\n` +
+                  `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                  `Người yêu cầu:  ${itemData.operator_name} - ${itemData.operator_email}\n` +
+                  `Thời gian gửi: ${itemData.updated_at}`;
 
 
-              // Gửi tin nhắn đến Telegram
-              await fetch('../../../sendTelegram.php', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  message: telegramMessage,
-                  id_telegram: leaderData.phone // Truyền thêm thông tin operator_phone
-                })
-              });
+                // Gửi tin nhắn đến Telegram
+                await fetch('../../../sendTelegram.php', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: telegramMessage,
+                    id_telegram: leaderData.phone // Truyền thêm thông tin operator_phone
+                  })
+                });
 
-              Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Approval status updated successfully!',
-                showConfirmButton: false,
-                timer: 1500
-              }).then(() => {
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Success!',
+                  text: 'Approval status updated successfully!',
+                  showConfirmButton: false,
+                  timer: 1500
+                }).then(() => {
+                  // enable button
+                  pheDuyetBtn.disabled = false;
+                  tuChoiBtn.disabled = false;
+
+                  window.location.href = '../../index.php';
+                });
+              } else {
+                Swal.close();
+                alert("Failed to update approval status: " + data.message);
                 // enable button
                 pheDuyetBtn.disabled = false;
                 tuChoiBtn.disabled = false;
-
-                window.location.href = '../../index.php';
-              });
-            } else {
+              }
+            })
+            .catch(error => {
               Swal.close();
-              alert("Failed to update approval status: " + data.message);
+              alert("An error occurred. Please try again.");
               // enable button
               pheDuyetBtn.disabled = false;
               tuChoiBtn.disabled = false;
-            }
-          })
-          .catch(error => {
-            Swal.close();
-            console.error('Error:', error);
-            alert("An error occurred. Please try again.");
-            // enable button
-            pheDuyetBtn.disabled = false;
-            tuChoiBtn.disabled = false;
-          });
-      });
+            });
+        }
+      }, { once: true });
     }
 
     document.getElementById("addRowPayment").addEventListener("click", function() {

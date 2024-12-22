@@ -73,6 +73,13 @@ if ($instructionNo !== null) {
   }
 }
 
+$grouped_totals_data = [];
+if (isset($data['grouped_totals'])) {
+  $grouped_totals_data = $data['grouped_totals'];
+}
+// save to javascript
+echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) . ";</script>";
+
 
 ?>
 
@@ -414,7 +421,17 @@ if ($instructionNo !== null) {
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>" disabled>
             </div>
             <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" disabled>
+              <input type="text" class="form-control 
+                <?php
+                if (isset(($customField['value_old']))) {
+                  echo checkValueChange($customField['value_old'], $customField['value']);
+                }
+                ?>" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" disabled
+                <?php
+                if (isset(($customField['value_old']))) {
+                  echo 'data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Old value: ' . number_format($customField['value_old'], 0, ',', '.') . '"';
+                }
+                ?>>
             </div>
             <div class="col-sm-1 d-flex pb-2">
               <label for="customUnit" class="col-form-label"></label>
@@ -477,7 +494,7 @@ if ($instructionNo !== null) {
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
-              <!-- <th scope="col" rowspan="2" class="align-middle" style="width: 80px;">Chi tiền</th> -->
+              <th scope="col" rowspan="2" class="align-middle" style="width: 80px;">Chi tiền</th>
             </tr>
             <tr>
               <th>Actual</th>
@@ -491,11 +508,12 @@ if ($instructionNo !== null) {
               <tr data-payee="<?= $expense['expense_payee'] ?>">
                 <td><?= $index + 1 ?></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control expense-amount <?php
-                                                                          if (isset(($expense['expense_amount_old']))) {
-                                                                            echo checkValueChange($expense['expense_amount_old'], $expense['expense_amount']);
-                                                                          }
-                                                                          ?>" required id="expenses_amount" disabled value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>"
+                <td><input type="text" class="form-control expense-amount 
+                <?php
+                if (isset(($expense['expense_amount_old']))) {
+                  echo checkValueChange($expense['expense_amount_old'], $expense['expense_amount']);
+                }
+                ?>" required id="expenses_amount" disabled value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>"
                     <?php
                     if (isset(($expense['expense_amount_old']))) {
                       echo 'data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Old value: ' . number_format($expense['expense_amount_old'], 0, ',', '.') . '"';
@@ -513,9 +531,9 @@ if ($instructionNo !== null) {
                   }
                   ?>
                 </td>
-                <!-- <td>
+                <td>
                   <input class="form-check-input payee-checkbox" style="width: 25px; height: 25px;" type="checkbox" name="chi_tien[]" />
-                </td> -->
+                </td>
               </tr>
             <?php
             }
@@ -540,8 +558,8 @@ if ($instructionNo !== null) {
         </table>
 
         <!-- Grouped Totals Table -->
-        <h6 class="name-group-payee mt-3 text-success">DANH SÁCH ĐÃ CHI TIỀN</h6>
-        <table class="table table-bordered mb-4" id="grouped-totals-table">
+        <h6 class="name-group-payee-spend mt-3 text-success">DANH SÁCH ĐÃ CHI TIỀN</h6>
+        <table class="table table-bordered mb-4" id="grouped-totals-table-spend">
           <thead>
             <tr>
               <th scope="col">Payee</th>
@@ -557,7 +575,7 @@ if ($instructionNo !== null) {
                             <input type="text" class="form-control" value="'.$item['payee'].'" disabled>
                           </td>
                           <td class="">
-                            <input type="text" class="form-control" value="'.number_format($item['amount'], 0, ',', '.').'" disabled>
+                            <input type="text" class="form-control text-success" value="'.number_format($item['amount'], 0, ',', '.').'" disabled>
                           </td>
                         </tr>';
                 }
@@ -567,6 +585,22 @@ if ($instructionNo !== null) {
                       </tr>';
               }
             ?>
+            <!-- Dynamic Rows Will Be Added Here -->
+          </tbody>
+        </table>
+
+        <!-- Grouped Totals Table -->
+        <h6 class="name-group-payee mt-3 text-primary">DANH SACH SẼ CHI TIỀN</h6>
+        <table class="table table-bordered mb-4" id="grouped-totals-table">
+          <thead>
+            <tr>
+              <th scope="col">Payee</th>
+              <th scope="col">Dự kiến</th>
+              <th scope="col">Đã chi</th>
+              <th scope="col">Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
             <!-- Dynamic Rows Will Be Added Here -->
           </tbody>
         </table>
@@ -596,11 +630,11 @@ if ($instructionNo !== null) {
     </form>
     <div class="d-flex align-items-center justify-content-end gap-3">
       <div class="d-flex justify-content-end pb-3">
-        <!-- <button type="button" class="btn btn-success" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Chi Tiền</button> -->
+        <button type="submit" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModalReject">Từ chối</button>
       </div>
-      <!-- <div class="d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button>
-      </div> -->
+      <div class="d-flex justify-content-end pb-3">
+        <button type="button" class="btn btn-success" id="phe_duyet_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Chi Tiền</button>
+      </div>
 
     </div>
 
@@ -621,7 +655,7 @@ if ($instructionNo !== null) {
       </div>
     </div>
 
-    <!-- modal từ chối -->
+    <!-- modal xác nhận -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -644,6 +678,30 @@ if ($instructionNo !== null) {
         </div>
       </div>
     </div>
+
+    <!-- modal từ chối -->
+    <div class="modal fade" id="exampleModalReject" tabindex="-1" aria-labelledby="exampleModalRejectLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalRejectLabel">Từ chối</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label">Ghi chú:</label>
+                <textarea class="form-control" id="message-text-reject"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="rejectedSubmitButton">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <script src="./index.js"></script>
   <script>
@@ -651,7 +709,7 @@ if ($instructionNo !== null) {
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const directorData = <?= json_encode($directorData) ?>;
 
-    // const pheDuyetBtn = document.getElementById('phe_duyet_btn');
+    const pheDuyetBtn = document.getElementById('phe_duyet_btn');
     const tuChoiBtn = document.getElementById('tu_choi_btn');
 
     const expensesAmount = document.getElementById('expenses_amount');
@@ -701,6 +759,13 @@ if ($instructionNo !== null) {
       handleApprovePayment('approved', messageText);
       // Close the modal
       const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
+      modal.hide();
+    });
+    document.getElementById('rejectedSubmitButton').addEventListener('click', () => {
+      const messageText = document.getElementById('message-text-reject').value;
+      handleApprovePayment('rejected', messageText);
+      // Close the modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModalReject'));
       modal.hide();
     });
 
@@ -794,24 +859,25 @@ if ($instructionNo !== null) {
 
       let timerInterval;
       Swal.fire({
-          title: "Saving...!",
-          html: "Please wait for a moment.",
-          allowOutsideClick: false,
-          didOpen: () => {
-              Swal.showLoading();
-          },
-          willClose: () => {
-              clearInterval(timerInterval);
-          }
+        title: "Saving...!",
+        html: "Please wait for a moment.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
       }).then((result) => {
-          /* Read more about handling dismissals below */
-          // if (result.dismiss === Swal.DismissReason.timer) {
-          //     console.log("I was closed by the timer");
-          // }
+        /* Read more about handling dismissals below */
+        // if (result.dismiss === Swal.DismissReason.timer) {
+        //     console.log("I was closed by the timer");
+        // }
       });
 
       // disable button
       tuChoiBtn.disabled = true;
+      pheDuyetBtn.disabled = true;
 
       // Send data to the server using fetch
       fetch('update_payment_status.php', {
@@ -883,6 +949,7 @@ if ($instructionNo !== null) {
               timer: 1500
             }).then(() => {
               tuChoiBtn.disabled = false;
+              pheDuyetBtn.disabled = false;
               window.location.href = '../../index.php';
             });
             // alert("Approval status updated successfully!");
@@ -891,6 +958,7 @@ if ($instructionNo !== null) {
             alert("Failed to update approval status: " + data.message);
             // enable button
             tuChoiBtn.disabled = false;
+            pheDuyetBtn.disabled = false;
           }
         })
         .catch(error => {
@@ -899,6 +967,7 @@ if ($instructionNo !== null) {
           alert("An error occurred. Please try again.");
           // enable button
           tuChoiBtn.disabled = false;
+          pheDuyetBtn.disabled = false;
         });
     }
 
@@ -939,79 +1008,98 @@ if ($instructionNo !== null) {
       }
     }
 
-    // document.addEventListener('DOMContentLoaded', function() {
-    //   document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    //     .forEach(tooltip => {
-    //       new bootstrap.Tooltip(tooltip)
-    //     })
-    //   const checkboxes = document.querySelectorAll('.payee-checkbox');
-    //   const totalsTable = document.querySelector('#grouped-totals-table');
-    //   const nameGroupPayee = document.querySelector('.name-group-payee');
-    //   const totalsTableBody = totalsTable.querySelector('tbody');
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        .forEach(tooltip => {
+          new bootstrap.Tooltip(tooltip)
+        })
+      const checkboxes = document.querySelectorAll('.payee-checkbox');
+      const totalsTable = document.querySelector('#grouped-totals-table');
+      const nameGroupPayee = document.querySelector('.name-group-payee');
+      const totalsTableBody = totalsTable.querySelector('tbody');
 
-    //   // Initially hide the table and the name group
-    //   totalsTable.style.display = 'none';
-    //   nameGroupPayee.style.display = 'none';
+      // Initially hide the table and the name group
+      // totalsTable.style.display = 'none';
+      // nameGroupPayee.style.display = 'none';
 
-    //   checkboxes.forEach(checkbox => {
-    //     checkbox.addEventListener('change', calculateTotals);
-    //   });
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', calculateTotals);
+      });
 
-    //   function calculateTotals() {
-    //     const payeeTotals = {};
-    //     let hasChecked = false;
+      function calculateTotals() {
+        const payeeTotals = {};
+        let hasChecked = false;
 
-    //     // Calculate totals for checked rows
-    //     checkboxes.forEach(checkbox => {
-    //       if (checkbox.checked) {
-    //         hasChecked = true;
-    //         const row = checkbox.closest('tr');
-    //         const payee = row.getAttribute('data-payee');
-    //         const amount = parseFloat(
-    //           row.querySelector('.expense-amount').value.replace(/\./g, '').replace(',', '.')
-    //         );
+        // Calculate totals for checked rows
+        checkboxes.forEach(checkbox => {
+          if (checkbox.checked) {
+            hasChecked = true;
+            const row = checkbox.closest('tr');
+            const payee = row.getAttribute('data-payee');
+            const amount = parseFloat(
+              row.querySelector('.expense-amount').value.replace(/\./g, '').replace(',', '.')
+            );
 
-    //         if (!payeeTotals[payee]) {
-    //           payeeTotals[payee] = 0;
-    //         }
+            if (!payeeTotals[payee]) {
+              payeeTotals[payee] = 0;
+            }
 
-    //         payeeTotals[payee] += amount;
-    //       }
-    //     });
+            payeeTotals[payee] += amount;
+          }
+        });
 
-    //     // Update the table and name group visibility
-    //     if (hasChecked) {
-    //       totalsTable.style.display = ''; // Show the table
-    //       nameGroupPayee.style.display = ''; // Show the name group
-    //       updateTotalsTable(payeeTotals);
-    //     } else {
-    //       totalsTable.style.display = 'none'; // Hide the table
-    //       nameGroupPayee.style.display = 'none'; // Hide the name group
-    //     }
-    //   }
-    // 
-    //   function updateTotalsTable(totals) {
-    //     // Clear existing rows
-    //     totalsTableBody.innerHTML = '';
+        // Update the table and name group visibility
+        if (hasChecked) {
+          totalsTable.style.display = ''; // Show the table
+          nameGroupPayee.style.display = ''; // Show the name group
+          updateTotalsTable(payeeTotals);
+        } else {
+          // totalsTable.style.display = 'none'; // Hide the table
+          // nameGroupPayee.style.display = 'none'; // Hide the name group
+        }
+      }
 
-    //     // Populate new rows
-    //     Object.entries(totals).forEach(([payee, total]) => {
-    //       const row = document.createElement('tr');
-    //       row.innerHTML = `
-    //     <td class="">
-    //       <input type="text" class="form-control" value="${payee}" disabled>
-    //     </td>
-    //     <td class="">
-    //       <input type="text" class="form-control" value="${new Intl.NumberFormat('vi-VN', { 
-    //       style: 'decimal', 
-    //       minimumFractionDigits: 0 
-    //     }).format(total)}" disabled>
-    //     </td>
-    //   `;
-    //       totalsTableBody.appendChild(row);
-    //     });
-    //   }
-    // });
+      function updateTotalsTable(totals) {
+        // Clear existing rows
+        totalsTableBody.innerHTML = '';
+
+        // Populate new rows
+        Object.entries(totals).forEach(([payee, total]) => {
+          if (total <= 0) {
+            return;
+          }
+          // get data in grouped_totals_data array by payee
+          const payeeData = grouped_totals_data.find(item => item.payee === payee);
+          console.log(payeeData);
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="">
+              <input type="text" class="form-control" value="${payee}" disabled>
+            </td>
+            <td class="">
+              <input type="text" class="form-control text-danger" value="${new Intl.NumberFormat('vi-VN', { 
+              style: 'decimal', 
+              minimumFractionDigits: 0 
+            }).format(total)}" disabled>
+            </td>
+            <td>
+              <input type="text" class="form-control text-success" value="${new Intl.NumberFormat('vi-VN', { 
+              style: 'decimal', 
+              minimumFractionDigits: 0 
+            }).format(payeeData ? (payeeData.amount) : 0)}" disabled>
+            </td>
+            <td><input type="text" class="form-control" value="${new Intl.NumberFormat('vi-VN', { 
+              style: 'decimal', 
+              minimumFractionDigits: 0 
+            }).format(total)}" disabled></td>
+          `;
+          totalsTableBody.appendChild(row);
+        });
+      }
+
+      // updateTotalsTable(payeeTotals);
+    });
 
     // Function to get grouped totals from the table
     function getGroupedTotals() {

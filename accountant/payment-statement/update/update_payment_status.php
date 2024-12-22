@@ -24,7 +24,7 @@ if ($instructionNo === null || $status === null) {
 }
 
 // Validate grouped totals
-if (!is_array($groupedTotals) || count($groupedTotals) === 0) {
+if ((!is_array($groupedTotals) || count($groupedTotals) === 0) && $status !== 'rejected') {
   echo json_encode(['success' => false, 'message' => 'Vui lòng chọn nhóm chi tiền!']);
   exit();
 }
@@ -48,8 +48,6 @@ $updated = false;
 
 $month = date('m'); // Lấy tháng hiện tại
 $year = date('Y');  // Lấy năm hiện tại
-$pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
-$entry['file_path'] = $pdfFileName;
 
 foreach ($entry['approval'] as &$approval) {
   if ($approval['role'] === 'accountant') {
@@ -70,7 +68,12 @@ $entry['history'][] = [
 ];
 
 // Save grouped totals
-$entry['grouped_totals'] = $groupedTotals; // Add grouped totals to the JSON data
+if ($status === 'approved') {
+  $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
+
+  $entry['file_path'] = $pdfFileName;
+  $entry['grouped_totals'] = $groupedTotals; // Add grouped totals to the JSON data
+}
 
 if ($updated) {
   // Update payment status

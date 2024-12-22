@@ -2,7 +2,7 @@
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'leader') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -30,7 +30,6 @@ if ($instructionNo !== null) {
   $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
-
   $filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
   $filePathPaymentID = $filePathPayment . "payment_$instructionNo.json";
   $paymentIdRes = getDataFromJson($filePathPaymentID);
@@ -38,7 +37,6 @@ if ($instructionNo !== null) {
   // print_r(json_encode($paymentId));
   $data = $paymentId;
 
-  // Search for the entry with the matching InstructionNo
   $operatorUserData = null;
   foreach ($jsonDataUser as $user) {
     if ($user['email'] == $data['operator_email']) {
@@ -55,6 +53,31 @@ if ($instructionNo !== null) {
       break;
     }
   }
+  // // Search for the entry with the matching InstructionNo
+  // foreach ($jsonData as $entry) {
+  //   if ($entry['instruction_no'] == $instructionNo) {
+  //     $data = $entry;
+  //     // user data
+  //     $operatorUserData = null;
+  //     foreach ($jsonDataUser as $user) {
+  //       if ($user['email'] == $entry['operator_email']) {
+  //         $operatorUserData = $user;
+  //         break;
+  //       }
+  //     }
+
+  //     // get leader data
+  //     $leaderData = null;
+  //     foreach ($jsonDataUser as $user) {
+  //       if ($user['role'] == 'leader' && $user['email'] == $entry['approval'][0]['email']) {
+  //         $leaderData = $user;
+  //         break;
+  //       }
+  //     }
+
+  //     break;
+  //   }
+  // }
 }
 
 ?>
@@ -68,7 +91,6 @@ if ($instructionNo !== null) {
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Basic styles for layout */
     * {
@@ -245,7 +267,7 @@ if ($instructionNo !== null) {
 
 <body>
   <div class="header">
-    <h1>Operator Dashboard</h1>
+    <h1>Leader Dashboard</h1>
   </div>
 
   <div class="menu">
@@ -254,8 +276,8 @@ if ($instructionNo !== null) {
       <img src="../../../images/uniIcon.png" alt="Home Icon" class="menu-icon">
     </div>
     <a href="../../index.php">Home</a>
-    <a href="../../request.php">Tạo phiếu xin tạm ứng</a>
-    <a href="../../payment-statement/create">Tạo phiếu thanh toán</a>
+    <a href="../../all_request.php">Danh sách phiếu tạm ứng</a>
+    <a href="../../all_payment.php">Danh sách phiếu thanh toán</a>
     <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../../../logout.php" class="logout">Đăng xuất</a>
@@ -263,7 +285,7 @@ if ($instructionNo !== null) {
   <div class="container mt-5 mb-5">
     <form id="leader-form" class="needs-validation" novalidate>
       <div class="d-flex flex-column justify-content-center align-items-center">
-        <h3 class="fw-bold">CẬP NHẬT PHIẾU ĐỀ NGHỊ THANH TOÁN</h3>
+        <h3 class="fw-bold">PHIẾU ĐỀ NGHỊ THANH TOÁN</h3>
         <!-- <h5 class="mb-4">INLAND SERVICE INTERNAL INSTRUCTION</h5> -->
         <!-- <div class="row mb-3 w-50">
           <label for="instructionNo" class="col-sm-5 col-form-label pr-0 text-end">Instruction No: </label>
@@ -279,25 +301,25 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="shipper" class="col-sm-2 col-form-label">Shipper</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required value="<?= $data['shipper'] ?>">
+            <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required value="<?= $data['shipper'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="billTo" class="col-sm-2 col-form-label">Bill To</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required value="<?= $data['billTo'] ?>">
+            <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required value="<?= $data['billTo'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="volume" class="col-sm-2 col-form-label">Volume</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="volume" placeholder="" name="volume" required value="<?= $data['volume'] ?>">
+            <input type="text" class="form-control" id="volume" placeholder="" name="volume" required value="<?= $data['volume'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="payment_lo" class="col-sm-2 col-form-label">Lô</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required value="<?= $data['payment_lo'] ?>">
+            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required value="<?= $data['payment_lo'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
@@ -328,19 +350,19 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_address" class="col-sm-2 col-form-label">Address</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>">
+            <input type="text" class="form-control" id="delivery_address" placeholder="Ex: Đường abc, quận x, tp.HCM" name="delivery_address" value="<?php echo $data['delivery_address'] ?? '' ?>" disabled>
           </div>
         </div>
 
         <div class="row mb-3 mt-3 ps-4">
           <label for="delivery_time" class="col-sm-2 col-form-label">Time</label>
           <div class="col-sm-4">
-            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>">
+            <input type="date" class="form-control" id="delivery_time" placeholder="" name="delivery_time" value="<?php echo $data['delivery_time'] ?? '' ?>" disabled>
           </div>
 
           <label for="delivery_pct" class="col-sm-2 col-form-label">PCT</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" value="<?php echo $data['delivery_pct'] ?? '' ?>">
+            <input type="text" class="form-control" id="delivery_pct" placeholder="Ex: abc" name="delivery_pct" value="<?php echo $data['delivery_pct'] ?? '' ?>" disabled>
           </div>
         </div>
 
@@ -348,35 +370,41 @@ if ($instructionNo !== null) {
         foreach ($data['payment'] as $customField) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
-            <div class="col-sm-3 pb-2">
-              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" value="<?= $customField['name'] ?>">
+            <div class="col-sm-2 pb-2">
+              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" value="<?= $customField['name'] ?>" disabled>
             </div>
             <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)" disabled>
+            </div>
+            <div class="col-sm-1 d-flex pb-2">
+              <label for="customUnit" class="col-form-label"></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>" disabled>
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>
               <div class="input-group ps-2">
-                <input type="text" class="form-control" name="customVat[]" placeholder="%" value="<?= $customField['vat'] ?>">
+                <input type="text" class="form-control" name="customVat[]" placeholder="%" value="<?= $customField['vat'] ?>" disabled>
                 <span class="input-group-text">%</span>
               </div>
             </div>
             <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-              <select class="form-select" aria-label="Default select example" name="customContSet[]">
+              <select class="form-select" aria-label="Default select example" name="customContSet[]" disabled>
                 <option value="cont" <?= $customField['contSet'] === 'cont' ? 'selected' : '' ?>>Cont</option>
                 <option value="set" <?= $customField['contSet'] === 'set' ? 'selected' : '' ?>>Set</option>
               </select>
             </div>
             <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
-              <input class="form-check-input" type="checkbox" name="customIncl[]" <?= $customField['incl'] == 'on' ? 'checked' : '' ?>>
+              <input class="form-check-input" type="checkbox" name="customIncl[]" <?= $customField['incl'] == 'on' ? 'checked' : '' ?> disabled>
               <label class="form-check-label">INCL</label>
             </div>
             <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
-              <input class="form-check-input" type="checkbox" name="customExcl[]" <?= $customField['excl'] == 'on' ? 'checked' : '' ?>>
+              <input class="form-check-input" type="checkbox" name="customExcl[]" <?= $customField['excl'] == 'on' ? 'checked' : '' ?> disabled>
               <label class="form-check-label">EXCL</label>
             </div>
             <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
-              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
+              <!-- <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button> -->
             </div>
           </div>
         <?php
@@ -384,7 +412,7 @@ if ($instructionNo !== null) {
         ?>
       </div>
       <div>
-        <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button>
+        <!-- <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button> -->
       </div>
 
       <div>
@@ -393,12 +421,12 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="operatorName" class="col-sm-2 col-form-label">Operator</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $data['operator_name'] ?>">
+            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $data['operator_name'] ?>" disabled>
           </div>
 
           <label for="customs_manifest_on" class="col-sm-2 col-form-label">Customs manifest no</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required value="<?= $data['customs_manifest_on'] ?>">
+            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required value="<?= $data['customs_manifest_on'] ?>" disabled>
           </div>
         </div>
 
@@ -411,9 +439,7 @@ if ($instructionNo !== null) {
               <th scope="col" colspan="2">Amount</th>
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
-              <th scope="col" rowspan="2" class="align-middle">Upload new file</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
-              <th scope="col" rowspan="2" class="align-middle">Action</th>
             </tr>
             <tr>
               <th>Actual</th>
@@ -425,25 +451,23 @@ if ($instructionNo !== null) {
             foreach ($data['expenses'] as $index => $expense) {
             ?>
               <tr>
-                <td><?= $index + 1 ?></td>
-                <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)"></td>
-                <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
-                <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
-                <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
-                <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple></td>
+                <td><?= $index ?></td>
+                <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>" disabled></td>
+                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)" disabled></td>
+                <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>" disabled></td>
+                <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>" disabled></td>
+                <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>" disabled></td>
                 <?php
                 if (!empty($expense['expense_files'])) {
+                  echo "<td>";
                   foreach ($expense['expense_files'] as $file) {
-                    echo "<td><a href=\"../../../../../private_data/soffice_database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                    echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
                   }
+                  echo "</tr>";
                 } else {
                   echo "<td></td>"; // Empty cell if there's no filename
                 }
                 ?>
-                <td class="align-middle">
-                  <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
-                </td>
               </tr>
             <?php
             }
@@ -452,19 +476,14 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="9" class="text-center">
-                <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
+              <td colspan="2" class="text-end">TOTAL</td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" oninput="toggleExpenseFields(this)" value="<?= $data['total_actual'] ?>" disabled></td>
               <td></td>
               <td>
-                RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
+                RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
               <td colspan="3">
-                BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>">
+                BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>" disabled>
               </td>
             </tr>
           </tfoot>
@@ -476,10 +495,10 @@ if ($instructionNo !== null) {
       <!-- Submission Button -->
       <div class="d-flex align-items-center justify-content-end gap-3">
         <div class="d-flex justify-content-end pb-3">
-          <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Hủy bỏ</button>
+          <!-- <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button> -->
         </div>
         <div class="d-flex justify-content-end pb-3">
-          <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('pending')">Cập nhật</button>
+          <!-- <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button> -->
         </div>
 
       </div>
@@ -490,20 +509,20 @@ if ($instructionNo !== null) {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Hủy bỏ cập nhật</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận từ chối</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="message-text" class="col-form-label">Bạn có chắc chắn muốn hủy bỏ cập nhật?</label>
-                <!-- <textarea class="form-control" id="message-text"></textarea> -->
+                <label for="message-text" class="col-form-label">Lý do:</label>
+                <textarea class="form-control" id="message-text"></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            <button type="button" class="btn btn-primary" onclick="handleCancelUpdate()" id="rejectSubmitButton">Xác nhận</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="handleRejectPayment()" id="rejectSubmitButton">Submit</button>
           </div>
         </div>
       </div>
@@ -638,217 +657,155 @@ if ($instructionNo !== null) {
 
     const leaderForm = document.getElementById('leader-form');
 
-    function handleCancelUpdate() {
-      window.location.href = '../../index.php';
+    function handleRejectPayment() {
+      const messageText = document.getElementById('message-text').value;
+      const formData = new FormData();
+      formData.append('instruction_no', <?= json_encode($instructionNo) ?>);
+      formData.append('approval_status', 'rejected');
+      formData.append('message', messageText);
+
+      // send data to the server using fetch
+      fetch('update_payment_status.php', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Tạo nội dung tin nhắn để gửi
+            let telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
+              `ID yêu cầu: ${itemData.instruction_no}\n` +
+              `Người đề nghị: ${itemData.operator_name}\n` +
+              `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+              `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+              `Tên khách hàng: ${itemData.shipper}\n` +
+              `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+              `Lý do: **${messageText}**\n` +
+              `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+              `Thời gian từ chối: ${data.data.approval[0].time}`;
+
+            // Gửi tin nhắn đến Telegram
+            fetch('../../../sendTelegram.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: telegramMessage,
+                id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
+              })
+            });
+            alert("Approval status updated successfully!");
+            window.location.href = '../../index.php';
+          } else {
+            alert("Failed to update approval status: " + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert("An error occurred. Please try again.");
+        });
     }
 
     function handleApprovePayment(status, message = '') {
       leaderForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+        if (!leaderForm.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+          leaderForm.classList.add("was-validated");
+        } else {
+          e.preventDefault();
 
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach((checkbox) => {
-          if (!checkbox.checked) {
-            checkbox.checked = true;
-            checkbox.value = "off";
-          }
-        });
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+              checkbox.checked = true;
+              checkbox.value = "off";
+            }
+          });
 
-        const formData = new FormData(leaderForm);
-        const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
-        formData.append('instruction_no', instructionNo);
-        formData.append('approval_status', status);
-        formData.append('message', message);
+          const formData = new FormData(leaderForm);
+          const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
+          formData.append('instruction_no', instructionNo);
+          formData.append('approval_status', status);
+          formData.append('message', message);
 
-        // // Log each key-value pair for debugging
-        // for (const [key, value] of formData.entries()) {
-        //   console.log(`${key}:`, value);
-        // }
-
-        // disable button
-        pheDuyetBtn.disabled = true;
-        tuChoiBtn.disabled = true;
-
-        let timerInterval;
-        Swal.fire({
-          title: "Saving...!",
-          html: "Please wait for a moment.",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-          willClose: () => {
-            clearInterval(timerInterval);
-          }
-        }).then((result) => {
-          /* Read more about handling dismissals below */
-          // if (result.dismiss === Swal.DismissReason.timer) {
-          //     console.log("I was closed by the timer");
+          // // Log each key-value pair for debugging
+          // for (const [key, value] of formData.entries()) {
+          //   console.log(`${key}:`, value);
           // }
-        });
 
-        // Send data to the server using fetch
-        fetch('update_payment_status.php', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => response.json())
-          .then(async data => {
-            if (data.success) {
-              // Tạo nội dung tin nhắn để gửi
-              let telegramMessage = '';
+          // disable button
+          pheDuyetBtn.disabled = true;
+          tuChoiBtn.disabled = true;
 
-              telegramMessage = `**Yêu cầu mới cần phê duyệt!**\n` +
-                `ID yêu cầu: ${itemData.instruction_no}\n` +
-                `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
-                `Tên khách hàng: ${itemData.shipper}\n` +
-                `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người yêu cầu:  ${itemData.operator_name} - ${itemData.operator_email}\n` +
-                `Thời gian gửi: ${itemData.updated_at}`;
+          // Send data to the server using fetch
+          fetch('update_payment_status.php', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(async data => {
+              if (data.success) {
+                // Tạo nội dung tin nhắn để gửi
+                let telegramMessage = '';
+                if (status === 'approved') {
+                  telegramMessage = `**Yêu cầu đã được Leader phê duyệt!**\n` +
+                    `ID yêu cầu: ${itemData.instruction_no}\n` +
+                    `Người đề nghị: ${itemData.operator_name}\n` +
+                    `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+                    `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                    `Tên khách hàng: ${itemData.shipper}\n` +
+                    `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                    `Người phê duyệt:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+                    `Thời gian phê duyệt: ${data.data.approval[0].time}`;
+                } else {
+                  telegramMessage = `**Yêu cầu đã bị Leader từ chối!**\n` +
+                    `ID yêu cầu: ${itemData.instruction_no}\n` +
+                    `Người đề nghị: ${itemData.operator_name}\n` +
+                    `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
+                    `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
+                    `Tên khách hàng: ${itemData.shipper}\n` +
+                    `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                    `Lý do: **${message}**\n` +
+                    `Người từ chối:  ${leaderData.fullname} - ${itemData.approval[0].email}\n` +
+                    `Thời gian từ chối: ${data.data.approval[0].time}`;
+                }
 
+                // Gửi tin nhắn đến Telegram
+                await fetch('../../../sendTelegram.php', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: telegramMessage,
+                    id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
+                  })
+                });
 
-              // Gửi tin nhắn đến Telegram
-              await fetch('../../../sendTelegram.php', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  message: telegramMessage,
-                  id_telegram: leaderData.phone // Truyền thêm thông tin operator_phone
-                })
-              });
+                alert("Approval status updated successfully!");
 
-              Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Approval status updated successfully!',
-                showConfirmButton: false,
-                timer: 1500
-              }).then(() => {
                 // enable button
                 pheDuyetBtn.disabled = false;
                 tuChoiBtn.disabled = false;
 
                 window.location.href = '../../index.php';
-              });
-            } else {
-              Swal.close();
-              alert("Failed to update approval status: " + data.message);
+              } else {
+                alert("Failed to update approval status: " + data.message);
+                // enable button
+                pheDuyetBtn.disabled = false;
+                tuChoiBtn.disabled = false;
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert("An error occurred. Please try again.");
               // enable button
               pheDuyetBtn.disabled = false;
               tuChoiBtn.disabled = false;
-            }
-          })
-          .catch(error => {
-            Swal.close();
-            console.error('Error:', error);
-            alert("An error occurred. Please try again.");
-            // enable button
-            pheDuyetBtn.disabled = false;
-            tuChoiBtn.disabled = false;
-          });
-      });
-    }
-
-    document.getElementById("addRowPayment").addEventListener("click", function() {
-      // Lấy container chứa các hàng hiện tại
-      const container = document.getElementById("payment-info-container");
-
-      // Tạo một hàng mới
-      const newRow = document.createElement("div");
-      newRow.classList.add(
-        "row",
-        "mb-3",
-        "mt-3",
-        "ps-4",
-        "d-flex",
-        "align-items-center"
-      );
-
-      // Nội dung HTML của hàng mới
-      newRow.innerHTML = `
-      <div class="col-sm-3 pb-2">
-              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" >
-            </div>
-            <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
-            </div>
-            <div class="col-sm-2 d-flex pb-2">
-              <label for="customVat" class="col-form-label">V.A.T</label>
-              <div class="input-group ps-2">
-                <input type="text" class="form-control" name="customVat[]" placeholder="%" >
-                <span class="input-group-text">%</span>
-              </div>
-            </div>
-            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-              <select class="form-select" aria-label="Default select example" name="customContSet[]" >
-                <option selected disabled value="">Choose Cont/Set</option>
-                <option value="cont">Cont</option>
-                <option value="set">Set</option>
-              </select>
-            </div>
-            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
-              <input class="form-check-input" type="checkbox" name="customIncl[]">
-              <label class="form-check-label">
-                INCL
-              </label>
-            </div>
-            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
-              <input class="form-check-input" type="checkbox" name="customExcl[]">
-              <label class="form-check-label">
-                EXCL
-              </label>
-            </div>
-            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
-              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
-            </div>
-    `;
-
-      // Thêm hàng mới vào container
-      container.appendChild(newRow);
-    });
-
-    function deleteRowPayment(button) {
-      // Find the parent row (div) containing the button and remove it
-      const row = button.closest(".row");
-      if (row) {
-        row.remove();
-      }
-    }
-
-    function addRow() {
-      const tableBody = document.querySelector(".tableBody");
-      const rowIndex = tableBody.rows.length;
-
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-    <td>${rowIndex + 1}</td>
-    <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-    <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
-    <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-    <td><input type="text" name="expense_payee[]" class="form-control" required></td>
-    <td><input type="text" name="expense_doc[]" class="form-control"></td>
-    <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
-    <td></td>
-    <td class="align-middle">
-      <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
-    </td>
-  `;
-      tableBody.appendChild(newRow);
-    }
-
-    function deleteRow(button) {
-      const row = button.closest("tr");
-      // Remove the row from the table
-      row.remove();
-
-      // Re-number the rows after deletion
-      const tableBody = document.querySelector(".tableBody");
-      Array.from(tableBody.rows).forEach((row, index) => {
-        row.cells[0].textContent = index + 1;
+            });
+        }
       });
     }
   </script>

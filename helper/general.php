@@ -387,3 +387,12 @@ function formatNumberVID($input) {
   // Prefix with 'V' and return the result
   return 'V' . $formattedNumber;
 }
+
+// function check value change
+function checkValueChange($oldData, $newData)
+{
+  if ($oldData != $newData) {
+    return 'text-danger';
+  }
+  return '';
+}

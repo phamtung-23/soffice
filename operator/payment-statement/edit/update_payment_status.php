@@ -1,13 +1,12 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'operator') {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit();
 }
 
-include '../../../helper/payment.php';
-include '../../../helper/general.php';
+include('../../../helper/general.php');
 require '../../../library/google_api/vendor/autoload.php'; // Đảm bảo đường dẫn đúng
 
 function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
@@ -37,16 +36,25 @@ function uploadFileToGoogleDrive($filePath, $fileName, $folderId)
   }
 }
 
+function logEntry($message)
+{
+  $logFile = '../../../logs/payment_update_log.txt';
+  $timestamp = date("Y-m-d H:i:s");
+  // get full path
+  $filePath = $_SERVER['PHP_SELF'];
+  $logMessage = "[$timestamp] $filePath: $message\n";
+  file_put_contents($logFile, $logMessage, FILE_APPEND);
+}
+
 header('Content-Type: application/json');
 
 // Get data from POST request
 $instructionNo = $_POST['instruction_no'] ?? null;
-// $requestData = json_decode(file_get_contents("php://input"), true);
-// $data = $requestData['data'] ?? null;
-$isUpdate = isset($_POST['is_update']) ? $_POST['is_update'] : false;
+$status = $_POST['approval_status'] ?? null;
+$message = $_POST['message'] ?? null;
 
 // Check if instruction number and status are provided
-if ($instructionNo === null) {
+if ($instructionNo === null || $status === null) {
   echo json_encode(['success' => false, 'message' => 'Invalid data']);
   exit();
 }
@@ -75,18 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   if (!is_dir($targetDir)) {
     mkdir($targetDir, 0777, true);
   }
+
   // Collect expense information
   $newExpenses = [];
   if (isset($_POST['expense_kind'], $_POST['expense_amount'], $_POST['so_hoa_don'], $_POST['expense_payee'], $_POST['expense_doc'])) {
     for ($i = 0; $i < count($_POST['expense_kind']); $i++) {
-      logEntry("expense_kind: " . $_POST['expense_kind'][$i]);
       $expenseAmount = (float)str_replace('.', '', $_POST['expense_amount'][$i]);
       $soHoaDon = $_POST['so_hoa_don'][$i];
       $uploadedFiles = $_FILES['expense_file']['name'][$i] == [""] ? [] : $_FILES['expense_file']['name'][$i];
       $uploadedFilesTmp = $_FILES['expense_file']['tmp_name'][$i] ?? [];
       $expenseFiles = $entry['expenses'][$i]['expense_files'] ?? [];
 
-      // logEntry("uploadedFiles: " . json_encode($uploadedFiles));
+      logEntry("uploadedFiles: " . json_encode($uploadedFiles));
 
       // Check conditional file upload requirement
       if (!empty($soHoaDon) && empty($uploadedFiles) && empty($expenseFiles)) {
@@ -129,17 +137,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
       }
 
-      // Store expense data
       // if new expense_amount and old expense_amount are not the same
       if (isset($entry['expenses'][$i]) && $expenseAmount != $entry['expenses'][$i]['expense_amount']) {
         // add $expense with expense_amount_old, is_update = true, time_update=1
         $expense = [
-          'expense_kind' => $_POST['expense_kind'][$i] ?? $entry['expenses'][$i]['expense_kind'] ?? null,
+          'expense_kind' => $_POST['expense_kind'][$i],
           'expense_amount' => $expenseAmount,
           'so_hoa_don' => $soHoaDon,
-          'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
-          'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
-          'expense_files' => $expenseFiles,
+          'expense_payee' => $_POST['expense_payee'][$i],
+          'expense_doc' => $_POST['expense_doc'][$i],
+          'expense_files' => $expenseFiles, // Store all uploaded files for this expense
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => true,
           'time_update' => isset($entry['expenses'][$i]['time_update']) ? $entry['expenses'][$i]['time_update'] + 1 : 1
@@ -147,17 +154,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       } else {
         // Store expense data
         $expense = [
-          'expense_kind' => $_POST['expense_kind'][$i] ?? $entry['expenses'][$i]['expense_kind'] ?? null,
+          'expense_kind' => $_POST['expense_kind'][$i],
           'expense_amount' => $expenseAmount,
           'so_hoa_don' => $soHoaDon,
-          'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
-          'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
-          'expense_files' => $expenseFiles,
-          'expense_amount_old' => $entry['expenses'][$i]['expense_amount_old'] ?? $entry['expenses'][$i]['expense_amount'] ?? 0,
-          'is_update' => $entry['expenses'][$i]['is_update'] ?? false,
-          'time_update' => $entry['expenses'][$i]['time_update'] ?? 0
+          'expense_payee' => $_POST['expense_payee'][$i],
+          'expense_doc' => $_POST['expense_doc'][$i],
+          'expense_files' => $expenseFiles, // Store all uploaded files for this expense
+          'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
+          'is_update' => false,
+          'time_update' => 0
         ];
       }
+
 
       $newExpenses[] = $expense;
     }
@@ -179,9 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $entry[$key] = is_array($value) ? $value : trim($value);
     }
   }
-
-  $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
-
 
   // get data payment
   // Extract custom fields
@@ -223,41 +228,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       'contSet' => $newContSet,
       'incl' => $newIncl,
       'excl' => $newExcl,
-      'value_old' => $oldValue != $newValue ? $oldValue : $existingData['value_old'] ?? null,
-      'unit_old' => $oldUnit != $newUnit ? $oldUnit : $existingData['unit_old'] ?? null,
-      'vat_old' => $oldVat != $newVat ? $oldVat : $existingData['vat_old'] ?? null,
-      'is_update' => ($oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat) ? true : $existingData['is_update'] ?? false,
+      'value_old' => $oldValue != $newValue ? $oldValue : null,
+      'unit_old' => $oldUnit != $newUnit ? $oldUnit : null,
+      'vat_old' => $oldVat != $newVat ? $oldVat : null,
+      'is_update' => $oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat,
       'time_update' => isset($existingData['time_update']) ? $existingData['time_update'] + ($oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat ? 1 : 0) : ($oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat ? 1 : 0),
     ];
   }
+
+
+  if (empty($customData)) {
+    $customData = $entry['payment'];
+  }
   // Save to entry
   $entry['payment'] = $customData;
+
+  $entry['total_actual'] = (float)str_replace('.', '', $entry['total_actual'] ?? '0');
+  $entry['updated_at'] = date("Y-m-d H:i:s");
 
   // add history
   $entry['history'][] = [
     'actor' => $_SESSION['user_id'],
     'time' => date('Y-m-d H:i:s'),
-    'action' => 'Sale updated',
+    'action' => 'Operator updated',
   ];
 
   foreach ($entry['approval'] as &$approval) {
-    if ($isUpdate) {
-      if ($approval['role'] === 'sale' && $approval['email'] === $_SESSION['user_id']) {
-        $approval['status'] = 'approved';
-        $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
-      }
-      if ($approval['role'] === 'director') {
-        $approval['status'] = 'pending';
-      }
-    } else {
-      if ($approval['role'] === 'sale' && $approval['email'] === $_SESSION['user_id']) {
-        $approval['status'] = 'approved';
-        $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
-        break;
-      }
+    if (in_array($approval['role'], ['leader', 'sale', 'director', 'accountant'])) {
+      $approval['status'] = $status;
+      $updated = true;
     }
   }
-  $updated = true;
 }
 
 if (!empty($errors)) {
@@ -269,12 +270,16 @@ if (!empty($errors)) {
 if ($updated) {
   // update payment status
   $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year . '';
-  updateStatusFile('sale', 'approved', $instructionNo, $statusFilePath);
-  updateStatusFile('director', 'pending', $instructionNo, $statusFilePath);
+  updateStatusFile('leader', $status, $instructionNo, $statusFilePath);
+  updateStatusFile('sale', $status, $instructionNo, $statusFilePath);
+  updateStatusFile('director', 'updating', $instructionNo, $statusFilePath);
+  updateStatusFile('accountant', 'updating', $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
   $directory = '../../../../../private_data/soffice_database/payment/data/' . $year;
   $res = updateDataToJson($entry, $directory, 'payment_' . $instructionNo);
+
   echo json_encode(['success' => true, 'message' => 'Status updated successfully', 'data' => $res['data'] ?? []]);
 } else {
+  logEntry("Operator $instructionNo update failed");
   echo json_encode(['success' => false, 'message' => 'Approval entry not found or already updated']);
 }

@@ -76,6 +76,7 @@ if ($instructionNo !== null) {
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Basic styles for layout */
     * {
@@ -359,7 +360,17 @@ if ($instructionNo !== null) {
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>">
             </div>
             <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="updateAmountText(this)">
+              <input type="text" class="form-control 
+                <?php
+                if (isset(($customField['value_old']))) {
+                  echo checkValueChange($customField['value_old'], $customField['value']);
+                }
+                ?>" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="updateAmountText(this)"
+                <?php
+                if (isset(($customField['value_old']))) {
+                  echo 'data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Old value: ' . number_format($customField['value_old'], 0, ',', '.') . '"';
+                }
+                ?>>
             </div>
             <div class="col-sm-1 d-flex pb-2">
               <label for="customUnit" class="col-form-label"></label>
@@ -441,7 +452,17 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index + 1 ?></td>
                 <td><input type="text" class="form-control" name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" name="expense_amount[]" required id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)"></td>
+                <td><input type="text" class="form-control 
+                <?php
+                if (isset(($expense['expense_amount_old']))) {
+                  echo checkValueChange($expense['expense_amount_old'], $expense['expense_amount']);
+                }
+                ?>" name="expense_amount[]" required id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)"
+                    <?php
+                    if (isset(($expense['expense_amount_old']))) {
+                      echo 'data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Old value: ' . number_format($expense['expense_amount_old'], 0, ',', '.') . '"';
+                    }
+                    ?>></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
@@ -496,6 +517,23 @@ if ($instructionNo !== null) {
         </div>
       </div>
     </form>
+
+    <div class="mt-5">
+      <h6 class="text-success">UPDATE HISTORY</h6>
+      <div class="border rounded bg-body-secondary" style="height: 500px; overflow: auto;">
+        <?php
+        if (isset($data['history'])) {
+          // show history with format time: dd/mm/yyyy hh:mm:ss, email, action
+          foreach ($data['history'] as $update) {
+            echo "<div class='mb-3 mt-3 ps-4'>
+                    <p>{$update['time']} - {$update['actor']} - {$update['action']}</p>
+                  </div>
+                ";
+          }
+        }
+        ?>
+      </div>
+    </div>
     <!-- modal từ chối -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -527,6 +565,12 @@ if ($instructionNo !== null) {
   </div>
   <script src="./index.js"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        .forEach(tooltip => {
+          new bootstrap.Tooltip(tooltip)
+        })
+    });
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const leaderData = <?= json_encode($leaderData) ?>;
@@ -562,6 +606,24 @@ if ($instructionNo !== null) {
         message: message
       };
 
+      let timerInterval;
+      Swal.fire({
+        title: "Saving...!",
+        html: "Please wait for a moment.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        // if (result.dismiss === Swal.DismissReason.timer) {
+        //     console.log("I was closed by the timer");
+        // }
+      });
+
       // Send data to the server using fetch
       fetch('update_payment_status.php', {
           method: 'POST',
@@ -596,14 +658,23 @@ if ($instructionNo !== null) {
                 id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
               })
             });
-            alert("Payment rejected successfully!");
-            window.location.href = '../../index.php';
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: 'Approval status updated successfully!',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              window.location.href = '../../index.php';
+            });
+
           } else {
+            Swal.close();
             alert("Failed to reject payment: " + data.message);
           }
         })
         .catch(error => {
-          console.error('Error:', error);
+          Swal.close();
           alert("An error occurred. Please try again.");
         });
     }
@@ -637,7 +708,23 @@ if ($instructionNo !== null) {
         // const updateData = {
         //   data: data
         // };
-
+        let timerInterval;
+        Swal.fire({
+          title: "Saving...!",
+          html: "Please wait for a moment.",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          willClose: () => {
+            clearInterval(timerInterval);
+          }
+        }).then((result) => {
+          /* Read more about handling dismissals below */
+          // if (result.dismiss === Swal.DismissReason.timer) {
+          //     console.log("I was closed by the timer");
+          // }
+        });
         // Send data to the server using fetch
         fetch('update_payment_delivery.php', {
             method: 'POST',
@@ -646,18 +733,27 @@ if ($instructionNo !== null) {
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              alert("Delivery data updated successfully!");
-              // enable the submit button
-              trinhKiBtn.disabled = false;
-              window.location.href = isUpdate ? '../../all_payment.php' : '../../index.php';
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Approval status updated successfully!',
+                showConfirmButton: false,
+                timer: 1500
+              }).then(() => {
+                // enable the submit button
+                trinhKiBtn.disabled = false;
+                window.location.href = isUpdate ? '../../all_payment.php' : '../../index.php';
+              });
+
             } else {
+              Swal.close();
               alert("Failed to update approval status: " + data.message);
               // enable the submit button
               trinhKiBtn.disabled = false;
             }
           })
           .catch(error => {
-            console.error('Error:', error);
+            Swal.close();
             alert("An error occurred. Please try again.");
             // enable the submit button
             trinhKiBtn.disabled = false;

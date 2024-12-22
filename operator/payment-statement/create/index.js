@@ -110,6 +110,24 @@ submitForm.addEventListener("submit", function (event) {
     //   console.log(`${key}:`, value);
     // }
 
+    let timerInterval;
+    Swal.fire({
+        title: "Saving...!",
+        html: "Please wait for a moment.",
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        },
+        willClose: () => {
+            clearInterval(timerInterval);
+        }
+    }).then((result) => {
+        /* Read more about handling dismissals below */
+        // if (result.dismiss === Swal.DismissReason.timer) {
+        //     console.log("I was closed by the timer");
+        // }
+    });
+
     fetch("submit_payment.php", {
       method: "POST",
       body: formData,
@@ -117,17 +135,26 @@ submitForm.addEventListener("submit", function (event) {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert("Expenses saved successfully!");
-          // enable the submit button
-          submitBtn.disabled = false;
-          window.location.href = "../../index.php";
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Approval status updated successfully!',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            // enable the submit button
+            submitBtn.disabled = false;
+            window.location.href = "../../index.php";
+          });
         } else {
+          Swal.close();
           alert(data.error);
           // enable the submit button
           submitBtn.disabled = false;
         }
       })
       .catch((error) => {
+        Swal.close();
         console.error("Error:", error);
         // enable the submit button
         submitBtn.disabled = false;

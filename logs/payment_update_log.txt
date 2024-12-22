@@ -1,9 +1,256 @@
-[2024-12-19 17:50:14] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 22
-[2024-12-19 17:50:14] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 33
-[2024-12-19 17:50:14] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: ts 444
-[2024-12-19 17:53:02] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
-[2024-12-19 17:53:02] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 2
-[2024-12-19 17:53:02] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tssst 
-[2024-12-19 17:53:12] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
-[2024-12-19 17:53:12] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 2
-[2024-12-19 17:53:12] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tssst 
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":11111111,"vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":22222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":11111111,"unit_old":null,"vat_old":"2","is_update":true,"time_update":1}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":33333,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":11111111,"unit_old":null,"vat_old":"3","is_update":true,"time_update":1}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":10000000,"unit_old":null,"vat_old":"2","is_update":true,"time_update":1}
+[2024-12-21 05:20:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":20000000,"unit_old":null,"vat_old":"4","is_update":true,"time_update":1}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":11111111,"vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"vat":"2","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":3,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":11111111,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":2,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":11111111,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 05:23:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":11111111,"vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"vat":"2","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":22222,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":11111111,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":33333,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":11111111,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 05:24:28] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 05:47:32] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 05:47:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 05:47:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":11111111,"vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 05:47:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 05:47:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 05:47:32] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"vat":"2","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off"]
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off"]
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst 1
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: fsdfasdfasdf
+[2024-12-21 06:07:23] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: ádfasfd
+[2024-12-21 06:07:32] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-21 06:07:32] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-21 06:07:32] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:07:58] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-21 06:08:05] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-21 06:08:35] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-21 06:09:01] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-21 06:09:01] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-21 06:09:01] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off"]
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off"]
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst 1
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: fsdfasdfasdf
+[2024-12-21 06:09:22] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: ádfasfd
+[2024-12-21 06:09:39] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-21 06:09:39] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-21 06:09:39] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:09:55] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","off"]
+[2024-12-21 06:09:55] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-21 06:09:55] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 06:09:55] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst 1
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 18:58:15] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 18:58:26] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 19:03:35] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 19:05:09] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on"}
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on"}
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 19:05:38] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off"}
+[2024-12-21 19:15:34] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-21 19:15:34] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-21 19:15:34] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-21 19:16:21] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-21 19:16:21] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-21 19:16:21] /soffice/leader/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-21 19:17:20] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-21 19:17:20] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 2
+[2024-12-21 19:19:04] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-21 19:19:04] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-21 19:19:04] /soffice/director/payment-statement/detail/update_payment_status.php: Processing custom field: tesst
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off"]
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off"]
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:14:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off"]
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off"]
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:16:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off"]
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off"]
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:20:19] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off","on"]
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off","on"]
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":2222,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 06:34:15] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: []
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 2
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":2222,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:38:13] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tessst 10000","value":22222222,"unit":"VND","vat":"2","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 2
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":2222,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:39:45] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tessst 10000","value":22222222,"unit":"VND","vat":"2","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst 2
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tesst 3
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":2222,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 07:43:48] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tessst 10000","value":22222222,"unit":"VND","vat":"2","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","off","on","off","off","on","off"]
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on","on","off","off","on","on"]
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":1111,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":2222,"unit_old":null,"vat_old":null,"is_update":true,"time_update":1}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst 1","value":2222,"unit":"","vat":"3","contSet":"set","incl":"off","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"unit":"","vat":"2","contSet":"cont","incl":"on","excl":"on","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"fsdfasdfasdf","value":20000000,"unit":"","vat":"4","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"a\u0301dfasfd","value":5555555,"unit":"","vat":"2","contSet":"cont","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tessst 10000","value":22222222,"unit":"VND","vat":"2","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 08:03:30] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: []
+[2024-12-22 10:07:24] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off","on"]
+[2024-12-22 10:07:24] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["on","on"]
+[2024-12-22 10:07:24] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:07:24] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst 1
+[2024-12-22 10:08:36] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off","on"]
+[2024-12-22 10:08:36] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["on","on"]
+[2024-12-22 10:08:36] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:08:36] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst 1
+[2024-12-22 10:10:22] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:10:22] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-22 10:10:22] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:10:35] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:10:35] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-22 10:10:35] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:11:35] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:11:35] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-22 10:11:35] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:11:43] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:11:43] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-22 10:11:43] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:12:20] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:12:20] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-22 10:12:20] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:12:44] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:12:44] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["on"]
+[2024-12-22 10:12:44] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:12:50] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-22 10:12:50] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["on"]
+[2024-12-22 10:12:50] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-22 10:18:16] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on"]
+[2024-12-22 10:18:16] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-22 10:18:16] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","unit":"VND","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-22 10:18:30] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: []
+[2024-12-22 10:18:30] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: []
+[2024-12-22 10:18:48] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:18:48] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:18:48] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","unit":"VND","contSet":"cont","incl":"on","excl":"off"}
+[2024-12-22 10:18:48] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: []
+[2024-12-22 10:22:05] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-22 10:22:05] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: Customs + Phí NH CSHT
+[2024-12-22 10:22:05] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:22:05] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: []
+[2024-12-22 10:22:34] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: tst
+[2024-12-22 10:22:34] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:22:34] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"4","contSet":"cont","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 10:26:03] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:26:03] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:26:03] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:26:03] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 10:26:33] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:26:33] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:26:33] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:26:33] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"4","contSet":"cont","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 10:45:51] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:45:51] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:45:51] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:45:51] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 10:49:24] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:49:24] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:49:24] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:49:24] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 10:54:01] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:54:01] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:54:01] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:54:01] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 10:59:07] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["on","on"]
+[2024-12-22 10:59:07] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off","on"]
+[2024-12-22 10:59:07] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 10:59:07] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 11:06:54] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-22 11:06:54] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-22 11:06:54] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 11:06:54] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
+[2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}

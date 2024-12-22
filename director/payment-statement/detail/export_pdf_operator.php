@@ -444,6 +444,8 @@ try {
   }
   // update database file path by instruction_no
   $requestFile['file_path_operator'] = $linkImg;
+  // convert amount to number
+  $request['amount'] = (float)str_replace('.', '', $request['amount'] ?? '0');
   $directoryData = '../../../../../private_data/soffice_database/payment/data/' . $currentYear;
   $res = updateDataToJson($requestFile, $directoryData, 'payment_' . $request['instruction_no']);
 

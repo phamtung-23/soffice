@@ -71,9 +71,9 @@ echo "</script>";
       return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    function handleShowDetail(instructionNo) {
+    function handleShowUpdate(instructionNo) {
       const year = getSelectedYear();
-      window.location.href = `../detail?instruction_no=${instructionNo}&year=${year}`;
+      window.location.href = `../update?instruction_no=${instructionNo}&year=${year}`;
     }
 
     function getFirstExpenseAmountWithPayee(item, payee) {
@@ -138,7 +138,7 @@ echo "</script>";
                     border-radius: 5px;
                     padding: 5px 10px;
                     cursor: pointer;" 
-                  onclick="handleShowDetail(${request.instruction_no})">Xem chi tiết</button>
+                  onclick="handleShowUpdate(${request.instruction_no})">Xem chi tiết</button>
               `;
           row.appendChild(actionsCell);
 

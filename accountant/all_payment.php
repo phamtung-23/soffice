@@ -454,10 +454,11 @@ function getApprovalStatus($item)
             <th>Thời gian kế toán duyệt</th>
             <th>Trạng thái</th>
             <th>Phiếu đã duyệt</th>
+            <th>Action</th>
           </tr>
           <tr>
             <!-- Add search inputs for each column -->
-            <?php for ($i = 0; $i < 12; $i++): ?>
+            <?php for ($i = 0; $i < 13; $i++): ?>
               <th><input type="text" placeholder="Tìm kiếm" /></th>
             <?php endfor; ?>
           </tr>
@@ -484,6 +485,16 @@ function getApprovalStatus($item)
               } else {
                 echo "<td></td>"; // Empty cell if there's no filename
               }
+              // Add button to show detail
+              echo "<td>";
+              echo "<button style='background-color:#808080;
+                      color: white;
+                      border: none;
+                      border-radius: 5px;
+                      padding: 5px 10px;
+                      cursor: pointer;' 
+                    onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chi tiết</button>";
+              echo "</td>";
               echo "</tr>";
               // Add to total amount
               $totalAmount = !empty($request['amount']) ? $totalAmount + $request['amount'] : $totalAmount;
@@ -588,6 +599,12 @@ function getApprovalStatus($item)
 
       // Update the total amount display
       document.getElementById('totalAmount').innerText = totalAmount.toLocaleString(); // Format for display
+    }
+
+    // Handle showing the detail of a request
+    function handleShowDetail(instructionNo) {
+      const year = <?=$selectedYear?>;
+      window.location.href = `./payment-statement/detail?instruction_no=${instructionNo}&year=${year}`;
     }
   </script>
 

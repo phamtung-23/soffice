@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
   echo json_encode(['success' => false, 'message' => 'Unauthorized']);
   exit();
 }
@@ -15,17 +15,10 @@ $data = json_decode(file_get_contents("php://input"), true);
 $instructionNo = $data['instruction_no'] ?? null;
 $status = $data['approval_status'] ?? null;
 $message = $data['message'] ?? null;
-$groupedTotals = $data['grouped_totals'] ?? null; // Get grouped totals from the request
 
 // Check if instruction number and status are provided
 if ($instructionNo === null || $status === null) {
   echo json_encode(['success' => false, 'message' => 'Invalid data']);
-  exit();
-}
-
-// Validate grouped totals
-if (!is_array($groupedTotals) || count($groupedTotals) === 0) {
-  echo json_encode(['success' => false, 'message' => 'Vui lòng chọn nhóm chi tiền!']);
   exit();
 }
 
@@ -45,15 +38,20 @@ $entry = $paymentIdRes['data'];
 
 // Update the status for the matching instruction number
 $updated = false;
+// $month = date('m'); // Lấy tháng hiện tại
+// $year = date('Y');  // Lấy năm hiện tại
+// $pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
+// $entry['file_path'] = $pdfFileName;
 
-$month = date('m'); // Lấy tháng hiện tại
-$year = date('Y');  // Lấy năm hiện tại
-$pdfFileName = 'Phieu de nghi thanh toan_id_' . $entry['id'] . '_time_' . $month . '_' . $year . '.pdf';
-$entry['file_path'] = $pdfFileName;
+// add history
+$entry['history'][] = [
+  'actor' => $_SESSION['user_id'],
+  'time' => date('Y-m-d H:i:s'),
+  'action' => 'Sale approved',
+];
 
 foreach ($entry['approval'] as &$approval) {
-  if ($approval['role'] === 'accountant') {
-    $approval['email'] = $_SESSION['user_id'];
+  if ($approval['role'] === 'sale') {
     $approval['status'] = $status;
     $approval['time'] = date("Y-m-d H:i:s"); // Update with current timestamp
     $approval['comment'] = $message;
@@ -62,21 +60,10 @@ foreach ($entry['approval'] as &$approval) {
   }
 }
 
-// Add history
-$entry['history'][] = [
-  'actor' => $_SESSION['user_id'],
-  'time' => date('Y-m-d H:i:s'),
-  'action' => 'Accountant ' . $status,
-];
-
-// Save grouped totals
-$entry['grouped_totals'] = $groupedTotals; // Add grouped totals to the JSON data
-
 if ($updated) {
-  // Update payment status
-  $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year;
-  updateStatusFile('accountant', $status, $instructionNo, $statusFilePath);
-  
+  // update payment status
+  $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year . '';
+  updateStatusFile('sale', 'rejected', $instructionNo, $statusFilePath);
   // Save the updated JSON data back to the file
   $directory = '../../../../../private_data/soffice_database/payment/data/' . $year;
   $res = updateDataToJson($entry, $directory, 'payment_' . $instructionNo);

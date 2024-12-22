@@ -2,7 +2,7 @@
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -66,13 +66,12 @@ if ($instructionNo !== null) {
   // get leader data
   $directorData = null;
   foreach ($jsonDataUser as $user) {
-    if ($user['role'] == 'director' && $user['email'] == $data['approval'][2]['email']) {
+    if ($user['role'] == 'director' && $user['email'] == $_SESSION['user_id']) {
       $directorData = $user;
       break;
     }
   }
 }
-
 
 ?>
 
@@ -85,7 +84,6 @@ if ($instructionNo !== null) {
   <title>Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Basic styles for layout */
     * {
@@ -262,7 +260,7 @@ if ($instructionNo !== null) {
 
 <body>
   <div class="header">
-    <h1>Accountant Dashboard</h1>
+    <h1>Director Dashboard</h1>
   </div>
 
   <div class="menu">
@@ -276,10 +274,11 @@ if ($instructionNo !== null) {
     <a href="../../finance.php">Quản lý tài chính</a>
     <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="../../admin.php">Quản lý account</a>
     <a href="../../../logout.php" class="logout">Đăng xuất</a>
   </div>
   <div class="container mt-5 mb-5">
-    <form method="post" class="needs-validation" novalidate>
+    <form id="director-form" class="needs-validation" novalidate>
       <div class="d-flex flex-column justify-content-center align-items-center">
         <h3 class="fw-bold">PHIẾU ĐỀ NGHỊ THANH TOÁN</h3>
         <!-- <h5 class="mb-4">INLAND SERVICE INTERNAL INSTRUCTION</h5> -->
@@ -291,18 +290,6 @@ if ($instructionNo !== null) {
         </div> -->
       </div>
       <div>
-        <?php
-        if (isset($data['update_text_info'])) {
-        ?>
-          <div class="row mb-3 mt-3 ps-4">
-            <label for="update_text_info" class="col-sm-2 col-form-label">Nội dung cập nhật:</label>
-            <div class="col-sm-10">
-              <textarea class="form-control" id="update_text_info" name='update_text_info' rows="3" required disabled><?= $data['update_text_info'] ?></textarea>
-            </div>
-          </div>
-        <?php
-        }
-        ?>
         <div class="row mb-3 mt-3 ps-4">
           <label for="NguoiDeNghi" class="col-sm-2 col-form-label">Người đề nghị:</label>
           <div class="col-sm-10">
@@ -318,7 +305,7 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="soTien" class="col-sm-2 col-form-label">Số tiền:</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="soTien" name="soTien" required disabled value="<?= $data['amount'] ?>">
+            <input type="text" class="form-control" id="soTien" placeholder="Ex:1,000,000" name="soTien" required disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
@@ -341,25 +328,25 @@ if ($instructionNo !== null) {
         <div class="row mb-3 mt-3 ps-4">
           <label for="shipper" class="col-sm-2 col-form-label">Shipper</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required disabled value="<?= $data['shipper'] ?>">
+            <input type="text" class="form-control" id="shipper" placeholder="" name="shipper" required value="<?= $data['shipper'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="billTo" class="col-sm-2 col-form-label">Bill To</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required disabled value="<?= $data['billTo'] ?>">
+            <input type="text" class="form-control" id="billTo" placeholder="" name="billTo" required value="<?= $data['billTo'] ?>"disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="volume" class="col-sm-2 col-form-label">Volume</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="volume" placeholder="" name="volume" required disabled value="<?= $data['volume'] ?>">
+            <input type="text" class="form-control" id="volume" placeholder="" name="volume" required value="<?= $data['volume'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
           <label for="payment_lo" class="col-sm-2 col-form-label">Lô</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required disabled value="<?= $data['payment_lo'] ?>">
+            <input type="text" class="form-control" id="payment_lo" placeholder="" name="payment_lo" required value="<?= $data['payment_lo'] ?>" disabled>
           </div>
         </div>
         <div class="row mb-3 mt-3 ps-4">
@@ -414,7 +401,7 @@ if ($instructionNo !== null) {
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>" disabled>
             </div>
             <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" disabled>
+              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="updateAmountText(this)" disabled>
             </div>
             <div class="col-sm-1 d-flex pb-2">
               <label for="customUnit" class="col-form-label"></label>
@@ -444,11 +431,15 @@ if ($instructionNo !== null) {
               <label class="form-check-label">EXCL</label>
             </div>
             <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
+              <!-- <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button> -->
             </div>
           </div>
         <?php
         }
         ?>
+      </div>
+      <div>
+        <!-- <button type="button" class="btn btn-secondary w-100 mb-2" id="addRowPayment">Add Row</button> -->
       </div>
 
       <div>
@@ -477,7 +468,6 @@ if ($instructionNo !== null) {
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
-              <!-- <th scope="col" rowspan="2" class="align-middle" style="width: 80px;">Chi tiền</th> -->
             </tr>
             <tr>
               <th>Actual</th>
@@ -488,34 +478,24 @@ if ($instructionNo !== null) {
             <?php
             foreach ($data['expenses'] as $index => $expense) {
             ?>
-              <tr data-payee="<?= $expense['expense_payee'] ?>">
-                <td><?= $index + 1 ?></td>
-                <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control expense-amount <?php
-                                                                          if (isset(($expense['expense_amount_old']))) {
-                                                                            echo checkValueChange($expense['expense_amount_old'], $expense['expense_amount']);
-                                                                          }
-                                                                          ?>" required id="expenses_amount" disabled value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>"
-                    <?php
-                    if (isset(($expense['expense_amount_old']))) {
-                      echo 'data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Old value: ' . number_format($expense['expense_amount_old'], 0, ',', '.') . '"';
-                    }
-                    ?>></td>
-                <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
-                <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
-                <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
-                <td>
-                  <?php
-                  if (!empty($expense['expense_files'])) {
-                    foreach ($expense['expense_files'] as $file) {
-                      echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
-                    }
+              <tr>
+                <td><?= $index ?></td>
+                <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>" disabled></td>
+                <td><input type="text" class="form-control expense-amount" required name="expense_amount[]" id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" disabled></td>
+                <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>" disabled></td>
+                <td><input type="text" class="form-control expense-payee" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>" disabled></td>
+                <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>" disabled></td>
+                <?php
+                if (!empty($expense['expense_files'])) {
+                  echo "<td>";
+                  foreach ($expense['expense_files'] as $file) {
+                    echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
                   }
-                  ?>
-                </td>
-                <!-- <td>
-                  <input class="form-check-input payee-checkbox" style="width: 25px; height: 25px;" type="checkbox" name="chi_tien[]" />
-                </td> -->
+                  echo "</tr>";
+                } else {
+                  echo "<td></td>"; // Empty cell if there's no filename
+                }
+                ?>
               </tr>
             <?php
             }
@@ -525,7 +505,7 @@ if ($instructionNo !== null) {
           <tfoot>
             <tr>
               <td colspan="2" class="text-end">TOTAL</td>
-              <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" disabled></td>
+              <td><input type="text" name="total_actual" id="total_actual" class="form-control" oninput="updateAmountText(this)" value="<?= $data['total_actual'] ?>" disabled></td>
               <td></td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
@@ -539,45 +519,13 @@ if ($instructionNo !== null) {
           </tbody>
         </table>
 
-        <!-- Grouped Totals Table -->
-        <h6 class="name-group-payee mt-3 text-success">DANH SÁCH ĐÃ CHI TIỀN</h6>
-        <table class="table table-bordered mb-4" id="grouped-totals-table">
-          <thead>
-            <tr>
-              <th scope="col">Payee</th>
-              <th scope="col">Đã chi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php
-              if (isset($data['grouped_totals']) && count($data['grouped_totals']) > 0) {
-                foreach ($data['grouped_totals'] as $item) {
-                  echo '<tr>
-                          <td class="">
-                            <input type="text" class="form-control" value="'.$item['payee'].'" disabled>
-                          </td>
-                          <td class="">
-                            <input type="text" class="form-control" value="'.number_format($item['amount'], 0, ',', '.').'" disabled>
-                          </td>
-                        </tr>';
-                }
-              } else {
-                echo '<tr>
-                        <td colspan="2" class="text-center">No data available</td>
-                      </tr>';
-              }
-            ?>
-            <!-- Dynamic Rows Will Be Added Here -->
-          </tbody>
-        </table>
-
 
         <h6>DOCUMENTS REVERT</h6>
 
         <div class="row mb-3 mt-3 ps-4">
           <label for="operatorName" class="col-sm-1 col-form-label">Salesman:</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $leaderData['fullname'] ?>">
+            <input type="text" class="form-control" id="operatorName" name="operatorName" required disabled value="<?= $saleUserData['fullname'] ?>">
           </div>
 
           <label for="customs_manifest_on" class="col-sm-1 col-form-label">Date:</label>
@@ -587,59 +535,41 @@ if ($instructionNo !== null) {
 
           <label for="customs_manifest_on" class="col-sm-2 col-form-label">Approved by:</label>
           <div class="col-sm-3">
-            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $saleUserData['fullname'] ?>">
+            <input type="text" class="form-control" id="customs_manifest_on" placeholder="" name="customs_manifest_on" required disabled value="<?= $leaderData['fullname'] ?>">
           </div>
         </div>
       </div>
 
       <!-- Submission Button -->
+      <div class="d-flex align-items-center justify-content-end gap-3">
+        <div class="d-flex justify-content-end pb-3">
+          <!-- <button type="button" class="btn btn-danger" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Từ chối</button> -->
+        </div>
+        <div class="d-flex justify-content-end pb-3">
+          <!-- <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button> -->
+        </div>
+      </div>
     </form>
-    <div class="d-flex align-items-center justify-content-end gap-3">
-      <div class="d-flex justify-content-end pb-3">
-        <!-- <button type="button" class="btn btn-success" id="tu_choi_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">Chi Tiền</button> -->
-      </div>
-      <!-- <div class="d-flex justify-content-end pb-3">
-        <button type="submit" class="btn btn-success" id="phe_duyet_btn" onclick="handleApprovePayment('approved')">Phê duyệt</button>
-      </div> -->
-
-    </div>
-
-    <div class="mt-5">
-      <h6 class="text-success">UPDATE HISTORY</h6>
-      <div class="border rounded bg-body-secondary">
-        <?php
-        if (isset($data['history'])) {
-          // show history with format time: dd/mm/yyyy hh:mm:ss, email, action
-          foreach ($data['history'] as $update) {
-            echo "<div class='mb-3 mt-3 ps-4'>
-                    <p>{$update['time']} - {$update['actor']} - {$update['action']}</p>
-                  </div>
-                ";
-          }
-        }
-        ?>
-      </div>
-    </div>
 
     <!-- modal từ chối -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận chi tiền</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận từ chối</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <form>
               <div class="mb-3">
-                <label for="message-text" class="col-form-label">Ghi chú:</label>
+                <label for="message-text" class="col-form-label">Lý do:</label>
                 <textarea class="form-control" id="message-text"></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="approvedSubmitButton">Submit</button>
+            <button type="button" class="btn btn-primary" id="rejectSubmitButton">Submit</button>
           </div>
         </div>
       </div>
@@ -651,7 +581,7 @@ if ($instructionNo !== null) {
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
     const directorData = <?= json_encode($directorData) ?>;
 
-    // const pheDuyetBtn = document.getElementById('phe_duyet_btn');
+    const pheDuyetBtn = document.getElementById('phe_duyet_btn');
     const tuChoiBtn = document.getElementById('tu_choi_btn');
 
     const expensesAmount = document.getElementById('expenses_amount');
@@ -662,20 +592,9 @@ if ($instructionNo !== null) {
     const totalActualValue = totalActual.value;
     totalActual.value = formatNumber(totalActualValue);
 
-    const soTienDoc = document.getElementById('soTien');
-    const advanceAmount = soTienDoc.value;
-    soTienDoc.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-    const advanceAmountText = convertNumberToTextVND(advanceAmount);
-    document.getElementById('soTienBangChu').value = advanceAmountText;
-
-    // Toggle the responsive class to show/hide the menu
-    function toggleMenu() {
-      var menu = document.querySelector('.menu');
-      menu.classList.toggle('responsive');
-    }
-
     function updateAmountText(currentInput) {
-      const advanceAmount = currentInput.value.replace(/\./g, ''); // Loại bỏ dấu phẩy
+      //  Loại bỏ dấu cham '.' trong số
+      let advanceAmount = currentInput.value.replace(/\./g, '');
       // check if not a number
       if (isNaN(advanceAmount)) {
         alert('Vui lòng nhập số');
@@ -683,8 +602,6 @@ if ($instructionNo !== null) {
         return;
       }
       currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-      const advanceAmountText = convertNumberToTextVND(advanceAmount);
-      document.getElementById('soTienBangChu').value = advanceAmountText;
     }
 
     const exampleModal = document.getElementById('exampleModal')
@@ -696,9 +613,9 @@ if ($instructionNo !== null) {
       })
     }
 
-    document.getElementById('approvedSubmitButton').addEventListener('click', () => {
+    document.getElementById('rejectSubmitButton').addEventListener('click', () => {
       const messageText = document.getElementById('message-text').value;
-      handleApprovePayment('approved', messageText);
+      handleRejectPayment('rejected', messageText);
       // Close the modal
       const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
       modal.hide();
@@ -714,9 +631,9 @@ if ($instructionNo !== null) {
       return ''; // Return null if no matching expense is found
     }
 
-    function formatNumber(num) {
-      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+    // function formatNumber(num) {
+    //   return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // }
 
     function convertNumberToTextVND(total) {
       try {
@@ -781,40 +698,217 @@ if ($instructionNo !== null) {
       }
     }
 
-    function handleApprovePayment(status, message = '') {
-      const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
-      const grouped_totals = getGroupedTotals();
+    const directorForm = document.getElementById('director-form');
 
+    const soTienInput = document.getElementById('soTien');
+    const soTienBangChuInput = document.getElementById('soTienBangChu');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the total amount for "ops" payees
+      updateTotalOpsAmount();
+
+      // Initialize `data-prev-value` for all `expense-payee` inputs
+      document.querySelectorAll('.expense-payee').forEach(payeeInput => {
+        payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
+      });
+    });
+
+    document.addEventListener('input', function(event) {
+      if (event.target.classList.contains('expense-amount')) {
+        updateAmountText(event.target); // Format the input value
+        updateTotalOpsAmount(); // Recalculate the total
+      }
+
+      if (event.target.classList.contains('expense-payee')) {
+        handlePayeeChange(event.target);
+      }
+    });
+
+    function formatNumber(num) {
+      return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function updateTotalOpsAmount() {
+      const rows = document.querySelectorAll('.tableBody tr');
+      let totalOpsAmount = 0;
+
+      rows.forEach(row => {
+        const amountInput = row.querySelector('.expense-amount');
+        const payeeInput = row.querySelector('.expense-payee');
+
+        if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
+          const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
+          totalOpsAmount += amount;
+        }
+      });
+
+      // console.log('Total expense amount for payee "ops":', totalOpsAmount);
+      soTienInput.value = formatNumber(totalOpsAmount.toString());
+      const totalOpsAmountText = convertNumberToTextVND(totalOpsAmount);
+      soTienBangChuInput.value = totalOpsAmountText;
+    }
+
+    function handlePayeeChange(payeeInput) {
+      const row = payeeInput.closest('tr');
+      const amountInput = row.querySelector('.expense-amount');
+      const previousValue = payeeInput.getAttribute('data-prev-value') || '';
+      const newValue = payeeInput.value.trim().toLowerCase();
+      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
+
+      if (previousValue === 'ops' && newValue !== 'ops') {
+        updateTotalOpsAmount(); // Recalculate after removing 'ops'
+      } else if (previousValue !== 'ops' && newValue === 'ops') {
+        updateTotalOpsAmount(); // Recalculate after adding 'ops'
+      }
+
+      // Update the previous value
+      payeeInput.setAttribute('data-prev-value', newValue);
+    }
+
+
+    function handleApprovePayment(status, message = '') {
+      directorForm.addEventListener('submit', (e) => {
+        if (!directorForm.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+          directorForm.classList.add("was-validated");
+        } else {
+          e.preventDefault();
+
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach((checkbox) => {
+            if (!checkbox.checked) {
+              checkbox.checked = true;
+              checkbox.value = "off";
+            }
+          });
+
+          const formData = new FormData(directorForm);
+          const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
+
+          formData.append('instruction_no', instructionNo);
+          formData.append('approval_status', status);
+          formData.append('message', message);
+
+          if (status === 'approved') {
+            const amountString = document.getElementById('soTien').value.replace(/\./g, '');
+            const amount = parseInt(amountString);
+            formData.append('amount', amount);
+          }
+
+          // // Log each key-value pair for debugging
+          // for (const [key, value] of formData.entries()) {
+          //   console.log(`${key}:`, value);
+          // }
+
+          // disable button 
+          pheDuyetBtn.disabled = true;
+          tuChoiBtn.disabled = true;
+
+          // Send data to the server using fetch
+          fetch('update_payment_status.php', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(async data => {
+              if (data.success) {
+                // Tạo nội dung tin nhắn để gửi
+                // console.log('data', data);
+                let telegramMessage = '';
+                if (status === 'approved') {
+                  telegramMessage = `**Yêu cầu đã được Giám đốc phê duyệt!**\n` +
+                    `ID yêu cầu: ${itemData.instruction_no}\n` +
+                    `Người đề nghị: ${itemData.operator_name}\n` +
+                    `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
+                    `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
+                    `Tên khách hàng: ${itemData.shipper}\n` +
+                    `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                    `Người phê duyệt:  ${directorData.fullname} - ${data.data.approval[2].email}\n` +
+                    `Thời gian phê duyệt: ${itemData.approval[0].time}`;
+                } else {
+                  telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
+                    `ID yêu cầu: ${itemData.instruction_no}\n` +
+                    `Người đề nghị: ${itemData.operator_name}\n` +
+                    `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
+                    `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
+                    `Tên khách hàng: ${itemData.shipper}\n` +
+                    `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+                    `Lý do: **${message}**\n` +
+                    `Người từ chối:  ${directorData.fullname} - ${data.data.approval[2].email}\n` +
+                    `Thời gian từ chối: ${itemData.approval[0].time}`;
+                }
+
+                // Gửi tin nhắn đến Telegram
+                const res = await fetch('../../../sendTelegram.php', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    message: telegramMessage,
+                    id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
+                  })
+                });
+
+                // export pdf
+                if (res.status === 200 && data.data) {
+                  await fetchTemplateAndFill({
+                    ...data.data,
+                    amount: formatNumber((data.data.amount).toString()),
+                    amountWords: convertNumberToTextVND(data.data.amount),
+                  }); // Gọi hàm fill template+
+                  await fetchTemplateAndFillForOperator({
+                    ...data.data,
+                    amount: formatNumber((data.data.amount).toString()),
+                    amountWords: convertNumberToTextVND(data.data.amount),
+                  }); // Gọi hàm fill template+
+                }
+
+                alert("Approval status updated successfully!");
+                // enable button
+                pheDuyetBtn.disabled = false;
+                tuChoiBtn.disabled = false;
+
+                window.location.href = '../../index.php';
+              } else {
+                alert("Failed to update approval status: " + data.message);
+                // enable button
+                pheDuyetBtn.disabled = false;
+                tuChoiBtn.disabled = false;
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert("An error occurred. Please try again.");
+              // enable button
+              pheDuyetBtn.disabled = false;
+              tuChoiBtn.disabled = false;
+            });
+        }
+      });
+    }
+
+    function handleRejectPayment(status, message = '') {
+      const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
       const updateData = {
         instruction_no: instructionNo,
         approval_status: status,
-        message: message,
-        grouped_totals
+        message: message
       };
 
-      let timerInterval;
-      Swal.fire({
-          title: "Saving...!",
-          html: "Please wait for a moment.",
-          allowOutsideClick: false,
-          didOpen: () => {
-              Swal.showLoading();
-          },
-          willClose: () => {
-              clearInterval(timerInterval);
-          }
-      }).then((result) => {
-          /* Read more about handling dismissals below */
-          // if (result.dismiss === Swal.DismissReason.timer) {
-          //     console.log("I was closed by the timer");
-          // }
-      });
 
-      // disable button
+      const amountString = document.getElementById('soTien').value.replace(/\./g, '');
+      const amount = parseInt(amountString);
+      updateData.amount = amount ? amount : 0;
+
+
+      // disable button 
+      pheDuyetBtn.disabled = true;
       tuChoiBtn.disabled = true;
 
       // Send data to the server using fetch
-      fetch('update_payment_status.php', {
+      fetch('update_payment_status_reject.php', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -825,29 +919,20 @@ if ($instructionNo !== null) {
         .then(async data => {
           if (data.success) {
             // Tạo nội dung tin nhắn để gửi
+            // console.log('data', data);
             let telegramMessage = '';
-            if (status === 'approved') {
-              telegramMessage = `**Yêu cầu đã được Kế toán phê duyệt!**\n` +
-                `ID yêu cầu: ${itemData.instruction_no}\n` +
-                `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
-                `Tên khách hàng: ${itemData.shipper}\n` +
-                `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Người phê duyệt:  <?php echo $fullName; ?> - <?php echo $email; ?>\n` +
-                `Thời gian phê duyệt: ${data.data.approval[3].time}`;
-            } else {
-              telegramMessage = `**Yêu cầu đã bị Kế toán từ chối!**\n` +
-                `ID yêu cầu: ${itemData.instruction_no}\n` +
-                `Người đề nghị: ${itemData.operator_name}\n` +
-                `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
-                `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
-                `Tên khách hàng: ${itemData.shipper}\n` +
-                `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                `Lý do: **${message}**\n` +
-                `Người từ chối:  <?php echo $fullName; ?> - <?php echo $email; ?>\n` +
-                `Thời gian từ chối: ${data.data.approval[3].time}`;
-            }
+
+            telegramMessage = `**Yêu cầu đã bị Giám đốc từ chối!**\n` +
+              `ID yêu cầu: ${itemData.instruction_no}\n` +
+              `Người đề nghị: ${itemData.operator_name}\n` +
+              `Số tiền thanh toán: ${formatNumber((data.data.amount).toString())} VND\n` +
+              `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(data.data.amount)}\n` +
+              `Tên khách hàng: ${itemData.shipper}\n` +
+              `Số tờ khai: ${itemData.customs_manifest_on}\n` +
+              `Lý do: **${message}**\n` +
+              `Người từ chối:  <?= $fullName ?> - <?= $email ?>\n` +
+              `Thời gian từ chối: ${itemData.approval[0].time}`;
+
 
             // Gửi tin nhắn đến Telegram
             const res = await fetch('../../../sendTelegram.php', {
@@ -875,36 +960,31 @@ if ($instructionNo !== null) {
               }); // Gọi hàm fill template+
             }
 
-            Swal.fire({
-              icon: 'success',
-              title: 'Success!',
-              text: 'Approval status updated successfully!',
-              showConfirmButton: false,
-              timer: 1500
-            }).then(() => {
-              tuChoiBtn.disabled = false;
-              window.location.href = '../../index.php';
-            });
-            // alert("Approval status updated successfully!");
+            alert("Approval status updated successfully!");
+            // enable button
+            pheDuyetBtn.disabled = false;
+            tuChoiBtn.disabled = false;
+
+            window.location.href = '../../index.php';
           } else {
-            Swal.close();
             alert("Failed to update approval status: " + data.message);
             // enable button
+            pheDuyetBtn.disabled = false;
             tuChoiBtn.disabled = false;
           }
         })
         .catch(error => {
-          Swal.close();
           console.error('Error:', error);
           alert("An error occurred. Please try again.");
           // enable button
+          pheDuyetBtn.disabled = false;
           tuChoiBtn.disabled = false;
         });
     }
 
     async function fetchTemplateAndFill(request) {
       const pdfUrl = 'export_pdf.php'; // Đường dẫn đến file export_pdf.php
-      console.log('Request:', request);
+      // console.log('Request:', request);
 
       try {
         // Sử dụng fetch để gửi dữ liệu yêu cầu
@@ -920,9 +1000,10 @@ if ($instructionNo !== null) {
         console.error('Lỗi khi tạo PDF:', error);
       }
     }
+
     async function fetchTemplateAndFillForOperator(request) {
       const pdfUrl = 'export_pdf_operator.php'; // Đường dẫn đến file export_pdf.php
-      console.log('Request:', request);
+      // console.log('Request:', request);
 
       try {
         // Sử dụng fetch để gửi dữ liệu yêu cầu
@@ -937,97 +1018,6 @@ if ($instructionNo !== null) {
       } catch (error) {
         console.error('Lỗi khi tạo PDF:', error);
       }
-    }
-
-    // document.addEventListener('DOMContentLoaded', function() {
-    //   document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    //     .forEach(tooltip => {
-    //       new bootstrap.Tooltip(tooltip)
-    //     })
-    //   const checkboxes = document.querySelectorAll('.payee-checkbox');
-    //   const totalsTable = document.querySelector('#grouped-totals-table');
-    //   const nameGroupPayee = document.querySelector('.name-group-payee');
-    //   const totalsTableBody = totalsTable.querySelector('tbody');
-
-    //   // Initially hide the table and the name group
-    //   totalsTable.style.display = 'none';
-    //   nameGroupPayee.style.display = 'none';
-
-    //   checkboxes.forEach(checkbox => {
-    //     checkbox.addEventListener('change', calculateTotals);
-    //   });
-
-    //   function calculateTotals() {
-    //     const payeeTotals = {};
-    //     let hasChecked = false;
-
-    //     // Calculate totals for checked rows
-    //     checkboxes.forEach(checkbox => {
-    //       if (checkbox.checked) {
-    //         hasChecked = true;
-    //         const row = checkbox.closest('tr');
-    //         const payee = row.getAttribute('data-payee');
-    //         const amount = parseFloat(
-    //           row.querySelector('.expense-amount').value.replace(/\./g, '').replace(',', '.')
-    //         );
-
-    //         if (!payeeTotals[payee]) {
-    //           payeeTotals[payee] = 0;
-    //         }
-
-    //         payeeTotals[payee] += amount;
-    //       }
-    //     });
-
-    //     // Update the table and name group visibility
-    //     if (hasChecked) {
-    //       totalsTable.style.display = ''; // Show the table
-    //       nameGroupPayee.style.display = ''; // Show the name group
-    //       updateTotalsTable(payeeTotals);
-    //     } else {
-    //       totalsTable.style.display = 'none'; // Hide the table
-    //       nameGroupPayee.style.display = 'none'; // Hide the name group
-    //     }
-    //   }
-    // 
-    //   function updateTotalsTable(totals) {
-    //     // Clear existing rows
-    //     totalsTableBody.innerHTML = '';
-
-    //     // Populate new rows
-    //     Object.entries(totals).forEach(([payee, total]) => {
-    //       const row = document.createElement('tr');
-    //       row.innerHTML = `
-    //     <td class="">
-    //       <input type="text" class="form-control" value="${payee}" disabled>
-    //     </td>
-    //     <td class="">
-    //       <input type="text" class="form-control" value="${new Intl.NumberFormat('vi-VN', { 
-    //       style: 'decimal', 
-    //       minimumFractionDigits: 0 
-    //     }).format(total)}" disabled>
-    //     </td>
-    //   `;
-    //       totalsTableBody.appendChild(row);
-    //     });
-    //   }
-    // });
-
-    // Function to get grouped totals from the table
-    function getGroupedTotals() {
-      const groupedTotals = [];
-      const rows = document.querySelectorAll('#grouped-totals-table tbody tr');
-      rows.forEach(row => {
-        const payee = row.querySelector('td:nth-child(1) input').value;
-        const amount = parseFloat(
-          row.querySelector('td:nth-child(2) input').value.replace(/\./g, '').replace(',', '.')
-        );
-        groupedTotals.push({
-          payee,
-          amount
-        });
-      });
-      return groupedTotals;
     }
 
     // document.addEventListener('DOMContentLoaded', function() {

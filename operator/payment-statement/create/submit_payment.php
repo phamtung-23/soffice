@@ -61,7 +61,6 @@ $jsonDataIdPayment = file_get_contents($idFile);
 $dataIdPayment = json_decode($jsonDataIdPayment, true);
 $newIdPayment = $dataIdPayment[$currentYear]["id"] + 1;
 $dataIdPayment[$currentYear]["id"] = $newIdPayment;
-file_put_contents($idFile, json_encode($dataIdPayment));
 
 // Read user data and filter roles
 $usersData = file_get_contents($userFile);
@@ -242,6 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   if (!empty($errors)) {
     echo json_encode(['success' => false, 'error' => implode("\n", $errors)]);
   } else {
+    file_put_contents($idFile, json_encode($dataIdPayment));
     $directory = '../../../../../private_data/soffice_database/payment/data/' . $currentYear . '';
     $response = saveDataToJson($data, $directory, 'payment_' . $newIdPayment);
     echo json_encode(['success' => true, 'message' => 'Data submitted successfully!']);
