@@ -437,15 +437,15 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>" disabled></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>" disabled></td>
                 <!-- <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple disabled></td> -->
-                <?php
-                if (!empty($expense['expense_files'])) {
-                  foreach ($expense['expense_files'] as $file) {
-                    echo "<td><a href=\"../../../../../private_data/soffice_database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></td>";
+                <td>
+                  <?php
+                  if (!empty($expense['expense_files'])) {
+                    foreach ($expense['expense_files'] as $file) {
+                      echo "<a href=\"" . $file . "\" target=\"_blank\">Xem hóa đơn</a><br/>";
+                    }
                   }
-                } else {
-                  echo "<td></td>"; // Empty cell if there's no filename
-                }
-                ?>
+                  ?>
+                </td>
                 <!-- <td class="align-middle">
                   <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
                 </td> -->

@@ -168,6 +168,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     'action' => 'Leader ' . $status,
   ];
 
+  $infoSaleRes = getUserInfo($entry['approval'][1]['email']);
+  $infoSaleData = $infoSaleRes['data'];
+
   foreach ($entry['approval'] as &$approval) {
     if ($approval['role'] === 'leader' && $approval['email'] === $_SESSION['user_id']) {
       $approval['status'] = $status;
@@ -185,7 +188,12 @@ if ($updated) {
   $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $year . '';
   updateStatusFile('leader', $status, $instructionNo, $statusFilePath);
   if ($status === 'approved') {
-    updateStatusFile('sale', 'pending', $instructionNo, $statusFilePath);
+    if ($infoSaleData['role'] === 'director') {
+      updateStatusFile('sale', 'approved', $instructionNo, $statusFilePath);
+      updateStatusFile('director', 'pending', $instructionNo, $statusFilePath);
+    } else {
+      updateStatusFile('sale', 'pending', $instructionNo, $statusFilePath);
+    }
   }
   // Save the updated JSON data back to the file
   $directory = '../../../../../private_data/soffice_database/payment/data/' . $year;

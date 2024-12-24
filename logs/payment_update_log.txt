@@ -254,3 +254,33 @@
 [2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: uploadedFiles: []
 [2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
 [2024-12-22 11:12:40] /soffice/operator/payment-statement/edit/update_payment_status.php: existingData: {"name":"tets","value":333333,"unit":"VND","vat":"5","contSet":"set","incl":"on","excl":"on","value_old":0,"unit_old":"","vat_old":"","is_update":true,"time_update":1}
+[2024-12-24 14:54:20] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-24 14:54:20] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-24 14:54:20] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-24 15:06:36] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["on"]
+[2024-12-24 15:06:36] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-24 15:06:36] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-24 15:09:57] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-24 15:09:57] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-24 15:09:57] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-24 15:10:24] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-24 15:10:24] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-24 15:10:24] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","unit":"VND","contSet":"set","incl":"off","excl":"off"}
+[2024-12-24 15:16:34] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-24 15:16:34] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-24 15:16:34] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","unit":"VND","contSet":"set","incl":"off","excl":"off"}
+[2024-12-24 15:18:18] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-24 15:18:18] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-24 15:18:18] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","unit":"VND","contSet":"set","incl":"off","excl":"off"}
+[2024-12-24 15:21:14] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-24 15:21:14] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-24 15:21:14] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"set","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-24 15:21:14] /soffice/director/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-24 15:21:14] /soffice/director/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-24 15:21:14] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"unit":"VND","vat":"2","contSet":"set","incl":"off","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2024-12-24 15:22:16] /soffice/operator/payment-statement/create/submit_payment.php: customInclude: ["off"]
+[2024-12-24 15:22:16] /soffice/operator/payment-statement/create/submit_payment.php: customExcl: ["off"]
+[2024-12-24 15:22:16] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2024-12-24 15:22:50] /soffice/leader/payment-statement/detail/update_payment_status.php: customInclude: ["off"]
+[2024-12-24 15:22:50] /soffice/leader/payment-statement/detail/update_payment_status.php: customExcl: ["off"]
+[2024-12-24 15:22:50] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":11111111,"vat":"2","unit":"VND","contSet":"set","incl":"off","excl":"off"}

@@ -151,6 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
   // Additional fields
+  $saleIsDiRector = false;
   foreach ($_POST as $key => $value) {
     if ($key == "leader" || $key == "sale") {
 
@@ -158,8 +159,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $infoUserData = $infoUserRes['data'];
       // check user role is director
       if ($infoUserData['role'] === 'director') {
-        $data['approval'][0]['status'] = 'approved';
-        $data['approval'][0]['time'] = date('Y-m-d H:i:s');
+        // $data['approval'][0]['status'] = 'approved';
+        // $data['approval'][0]['time'] = date('Y-m-d H:i:s');
+        $saleIsDiRector = true;
 
         $data['approval'][] = [
           'role' => $key,
@@ -168,15 +170,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'time' => date('Y-m-d H:i:s'),
           'comment' => ''
         ];
+      } else {
+        $data['approval'][] = [
+          'role' => $key,
+          'email' => $value,
+          'status' => 'pending',
+          'time' => '',
+          'comment' => ''
+        ];
       }
-
-      $data['approval'][] = [
-        'role' => $key,
-        'email' => $value,
-        'status' => 'pending',
-        'time' => '',
-        'comment' => ''
-      ];
     } elseif (!in_array($key, $fieldIgnore)) {
       $data[$key] = is_array($value) ? $value : trim($value);
     }
@@ -236,6 +238,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // update payment status
   $statusFilePath = '../../../../../private_data/soffice_database/payment/status/' . $currentYear . '';
   updateStatusFile('leader', 'pending', $data['id'], $statusFilePath);
+
+  if ($saleIsDiRector) {
+    updateStatusFile('sale', 'approved', $data['id'], $statusFilePath);
+  }
 
   // Check for errors and handle accordingly
   if (!empty($errors)) {
