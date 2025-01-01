@@ -22,12 +22,12 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $data = null;
 
 // Define the path to the JSON file
-$filePath = '../../../database/payment_' . $year . '.json';
+// $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
 
 if ($instructionNo !== null) {
   // Load and decode JSON data
-  $jsonData = json_decode(file_get_contents($filePath), true);
+  // $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
 
@@ -345,19 +345,27 @@ if ($instructionNo !== null) {
         </div>
 
         <?php
-        foreach ($data['payment'] as $customField) {
+        foreach ($data['payment'] as $index => $customField) {
         ?>
-          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <div class="row mb-3 row-payment mt-3 ps-4 d-flex align-items-center">
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" value="<?= $customField['name'] ?>">
             </div>
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)">
             </div>
-            <div class="col-sm-1 d-flex pb-2">
-              <label for="customUnit" class="col-form-label"></label>
+            <div class="col-sm-1 d-flex pb-2 flex-column">
+              <!-- <label for="customUnit" class="col-form-label"></label>
               <div class="input-group">
                 <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
+              </div> -->
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_VND" value="VND" <?= $customField['unit'] == 'VND' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="customUnit_1_VND">VND</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_USD" value="USD" <?= $customField['unit'] == 'USD' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="customUnit_1_USD">USD</label>
               </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
@@ -417,6 +425,7 @@ if ($instructionNo !== null) {
               <th scope="col" colspan="2">Amount</th>
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+              <th scope="col" rowspan="2" class="align-middle">VAT</th>
               <th scope="col" rowspan="2" class="align-middle">Upload new file</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
               <th scope="col" rowspan="2" class="align-middle">Action</th>
@@ -433,10 +442,11 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index + 1 ?></td>
                 <td><input type="text" class="form-control" required name="expense_kind[]" value="<?= $expense['expense_kind'] ?>"></td>
-                <td><input type="text" class="form-control" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" class="form-control expense-amount" required name="expense_amount[]" id="expense_amount" value="<?= number_format($expense['expense_amount'], 0, ",", ".") ?>" oninput="toggleExpenseFields(this)"></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>"></td>
-                <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
+                <td><input type="text" class="form-control expense-payee" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>"></td>
+                <td class="text-center align-middle"><input class="form-check-input" type="checkbox" name="expense_vat[]" <?= $expense['expense_vat'] == 'on' ? 'checked' : '' ?>></td>
                 <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple></td>
                 <?php
                 echo "<td>";
@@ -444,7 +454,7 @@ if ($instructionNo !== null) {
                   foreach ($expense['expense_files'] as $file) {
                     echo "<a href=\"../../../../../private_data/soffice_database/payment/uploads/" . $file . "\" target=\"_blank\">Xem hóa đơn</a></br>";
                   }
-                } 
+                }
                 echo "</td>";
                 ?>
                 <td class="align-middle">
@@ -458,18 +468,19 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="9" class="text-center">
+              <td colspan="10" class="text-center">
                 <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
               </td>
             </tr>
             <tr>
               <td colspan="3" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)"></td>
-              <td></td>
-              <td>
+              <td colspan="2">
+                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total"></td>
+              <td colspan="2">
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>">
               </td>
-              <td colspan="3">
+              <td colspan="2">
                 BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>">
               </td>
             </tr>
@@ -520,7 +531,7 @@ if ($instructionNo !== null) {
       </div>
     </div>
   </div>
-  <script src="./index.js"></script>
+  <!-- <script src="./index.js"></script> -->
   <script>
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
@@ -536,6 +547,21 @@ if ($instructionNo !== null) {
     const totalActual = document.getElementById('total_actual');
     const totalActualValue = totalActual.value;
     totalActual.value = formatNumber(totalActualValue);
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
 
     const exampleModal = document.getElementById('exampleModal')
     if (exampleModal) {
@@ -688,20 +714,20 @@ if ($instructionNo !== null) {
 
           let timerInterval;
           Swal.fire({
-              title: "Saving...!",
-              html: "Please wait for a moment.",
-              allowOutsideClick: false,
-              didOpen: () => {
-                  Swal.showLoading();
-              },
-              willClose: () => {
-                  clearInterval(timerInterval);
-              }
+            title: "Saving...!",
+            html: "Please wait for a moment.",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+            willClose: () => {
+              clearInterval(timerInterval);
+            }
           }).then((result) => {
-              /* Read more about handling dismissals below */
-              // if (result.dismiss === Swal.DismissReason.timer) {
-              //     console.log("I was closed by the timer");
-              // }
+            /* Read more about handling dismissals below */
+            // if (result.dismiss === Swal.DismissReason.timer) {
+            //     console.log("I was closed by the timer");
+            // }
           });
 
           // Send data to the server using fetch
@@ -767,18 +793,22 @@ if ($instructionNo !== null) {
               tuChoiBtn.disabled = false;
             });
         }
-      }, { once: true });
+      }, {
+        once: true
+      });
     }
 
     document.getElementById("addRowPayment").addEventListener("click", function() {
       // Lấy container chứa các hàng hiện tại
       const container = document.getElementById("payment-info-container");
+      const rowCount = container.querySelectorAll(".row.mb-3.row-payment").length + 1;
 
       // Tạo một hàng mới
       const newRow = document.createElement("div");
       newRow.classList.add(
         "row",
         "mb-3",
+        "row-payment",
         "mt-3",
         "ps-4",
         "d-flex",
@@ -787,11 +817,21 @@ if ($instructionNo !== null) {
 
       // Nội dung HTML của hàng mới
       newRow.innerHTML = `
-      <div class="col-sm-3 pb-2">
+      <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" >
             </div>
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
+            </div>
+            <div class="col-sm-1 d-flex pb-2 flex-column">
+              <div class="form-check">
+                  <input class="form-check-input" type="radio" name="customUnit_${rowCount}" id="customUnit_${rowCount}_VND" value="VND" checked>
+                  <label class="form-check-label" for="customUnit_${rowCount}_VND">VND</label>
+              </div>
+              <div class="form-check">
+                  <input class="form-check-input" type="radio" name="customUnit_${rowCount}" id="customUnit_${rowCount}_USD" value="USD">
+                  <label class="form-check-label" for="customUnit_${rowCount}_USD">USD</label>
+              </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
               <label for="customVat" class="col-form-label">V.A.T</label>
@@ -844,10 +884,11 @@ if ($instructionNo !== null) {
       newRow.innerHTML = `
     <td>${rowIndex + 1}</td>
     <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-    <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+    <td><input type="text" name="expense_amount[]" class="form-control expense-amount" required oninput="toggleExpenseFields(this)"></td>
     <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-    <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+    <td><input type="text" name="expense_payee[]" class="form-control expense-payee" required></td>
     <td><input type="text" name="expense_doc[]" class="form-control"></td>
+    <td class="text-center align-middle"><input class="form-check-input" type="checkbox" name="expense_vat[]"></td>
     <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
     <td></td>
     <td class="align-middle">
@@ -867,6 +908,70 @@ if ($instructionNo !== null) {
       Array.from(tableBody.rows).forEach((row, index) => {
         row.cells[0].textContent = index + 1;
       });
+    }
+
+    // ========== UPDATE EXPENSE AMOUNTS FOR OPS PAYEES ==========
+    function updateAmountText(currentInput) {
+      const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
+      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    }
+
+    const soTienInput = document.getElementById('ops_total');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the total amount for "ops" payees
+      updateTotalOpsAmount();
+
+      // Initialize `data-prev-value` for all `expense-payee` inputs
+      document.querySelectorAll('.expense-payee').forEach(payeeInput => {
+        payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
+      });
+    });
+
+    document.addEventListener('input', function(event) {
+      if (event.target.classList.contains('expense-amount')) {
+        updateAmountText(event.target); // Format the input value
+        updateTotalOpsAmount(); // Recalculate the total
+      }
+
+      if (event.target.classList.contains('expense-payee')) {
+        handlePayeeChange(event.target);
+      }
+    });
+
+    function updateTotalOpsAmount() {
+      const rows = document.querySelectorAll('.tableBody tr');
+      let totalOpsAmount = 0;
+
+      rows.forEach(row => {
+        const amountInput = row.querySelector('.expense-amount');
+        const payeeInput = row.querySelector('.expense-payee');
+
+        if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
+          const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
+          totalOpsAmount += amount;
+        }
+      });
+
+      // console.log('Total expense amount for payee "ops":', totalOpsAmount);
+      soTienInput.value = formatNumber(totalOpsAmount.toString());
+    }
+
+    function handlePayeeChange(payeeInput) {
+      const row = payeeInput.closest('tr');
+      const amountInput = row.querySelector('.expense-amount');
+      const previousValue = payeeInput.getAttribute('data-prev-value') || '';
+      const newValue = payeeInput.value.trim().toLowerCase();
+      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
+
+      if (previousValue === 'ops' && newValue !== 'ops') {
+        updateTotalOpsAmount(); // Recalculate after removing 'ops'
+      } else if (previousValue !== 'ops' && newValue === 'ops') {
+        updateTotalOpsAmount(); // Recalculate after adding 'ops'
+      }
+
+      // Update the previous value
+      payeeInput.setAttribute('data-prev-value', newValue);
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

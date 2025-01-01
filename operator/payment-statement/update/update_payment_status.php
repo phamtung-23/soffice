@@ -137,15 +137,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
       }
 
-      // Store expense data
-      $expense = [
-        'expense_kind' => $_POST['expense_kind'][$i],
-        'expense_amount' => $expenseAmount,
-        'so_hoa_don' => $soHoaDon,
-        'expense_payee' => $_POST['expense_payee'][$i],
-        'expense_doc' => $_POST['expense_doc'][$i],
-        'expense_files' => $expenseFiles // Store all uploaded files for this expense
-      ];
+      // if new expense_amount and old expense_amount are not the same
+      if (isset($entry['expenses'][$i]) && $expenseAmount != $entry['expenses'][$i]['expense_amount']) {
+        // add $expense with expense_amount_old, is_update = true, time_update=1
+        $expense = [
+          'expense_kind' => $_POST['expense_kind'][$i],
+          'expense_amount' => $expenseAmount,
+          'so_hoa_don' => $soHoaDon,
+          'expense_payee' => $_POST['expense_payee'][$i],
+          'expense_doc' => $_POST['expense_doc'][$i],
+          'expense_vat' => $_POST['expense_vat'][$i],
+          'expense_files' => $expenseFiles, // Store all uploaded files for this expense
+          'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
+          'is_update' => true,
+          'time_update' => isset($entry['expenses'][$i]['time_update']) ? $entry['expenses'][$i]['time_update'] + 1 : 1
+        ];
+      } else {
+        // Store expense data
+        $expense = [
+          'expense_kind' => $_POST['expense_kind'][$i],
+          'expense_amount' => $expenseAmount,
+          'so_hoa_don' => $soHoaDon,
+          'expense_payee' => $_POST['expense_payee'][$i],
+          'expense_doc' => $_POST['expense_doc'][$i],
+          'expense_vat' => $_POST['expense_vat'][$i],
+          'expense_files' => $expenseFiles, // Store all uploaded files for this expense
+          'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
+          'is_update' => false,
+          'time_update' => 0
+        ];
+      }
 
       $newExpenses[] = $expense;
     }
@@ -157,13 +178,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   $entry['expenses'] = $newExpenses;
 
-  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
+  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl', 'expense_vat'];
 
   // Additional fields
   foreach ($_POST as $key => $value) {
     if ($key == "leader" || $key == "sale" || $key == "approval_status" || $key == "message" || $key == "instruction_no") {
       continue;
-    } elseif (!in_array($key, $fieldIgnore)) {
+    } elseif (!in_array($key, $fieldIgnore) && strpos($key, 'customUnit') === false) {
       $entry[$key] = is_array($value) ? $value : trim($value);
     }
   }
@@ -184,13 +205,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // logEntry("customExcl: " . json_encode($customExcl));
 
   foreach ($customFieldNames as $index => $name) {
+    $newValue = (float)str_replace('.', '', $customFields[$index]);
+    $newUnit = $_POST['customUnit_'.($index+1)] ?? '';
+    $newVat = $customVats[$index] ?? '';
+    $newContSet = isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set';
+    $newIncl = $customIncl[$index] ?? '';
+    $newExcl = $customExcl[$index] ?? '';
+
+    $existingData = $entry['payment'][$index] ?? [];
+    logEntry("existingData: " . json_encode($existingData));
+    $oldValue = $existingData['value'] ?? 0;
+    $oldUnit = $existingData['unit'] ?? '';
+    $oldVat = $existingData['vat'] ?? '';
+
+    $isUpdated = false;
+
     $customData[] = [
       'name' => $name,
-      'value' => (float)str_replace('.', '', $customFields[$index]),
-      'vat' => $customVats[$index] ?? '',
-      'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
-      'incl' => $customIncl[$index] ?? '',
-      'excl' => $customExcl[$index] ?? ''
+      'value' => $newValue,
+      'unit' => $newUnit,
+      'vat' => $newVat,
+      'contSet' => $newContSet,
+      'incl' => $newIncl,
+      'excl' => $newExcl,
+      'value_old' => $oldValue != $newValue ? $oldValue : null,
+      'unit_old' => $oldUnit != $newUnit ? $oldUnit : null,
+      'vat_old' => $oldVat != $newVat ? $oldVat : null,
+      'is_update' => $oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat,
+      'time_update' => isset($existingData['time_update']) ? $existingData['time_update'] + ($oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat ? 1 : 0) : ($oldValue != $newValue || $oldUnit != $newUnit || $oldVat != $newVat ? 1 : 0),
     ];
   }
 

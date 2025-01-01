@@ -30,10 +30,11 @@ function addRow() {
   newRow.innerHTML = `
     <td>${rowIndex + 1}</td>
     <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-    <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+    <td><input type="text" name="expense_amount[]" class="form-control expense-amount" required oninput="toggleExpenseFields(this)"></td>
     <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-    <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+    <td><input type="text" name="expense_payee[]" class="form-control expense-payee" required></td>
     <td><input type="text" name="expense_doc[]" class="form-control"></td>
+    <td class="text-center align-middle"><input class="form-check-input" type="checkbox" name="expense_vat[]"></td>
     <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
     <td class="align-middle">
       <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
@@ -106,9 +107,9 @@ submitForm.addEventListener("submit", function (event) {
     submitBtn.disabled = true;
     const formData = new FormData(submitForm);
     // // Log each key-value pair for debugging
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(`${key}:`, value);
-    // }
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
 
     let timerInterval;
     Swal.fire({
@@ -165,12 +166,14 @@ submitForm.addEventListener("submit", function (event) {
 document.getElementById("addRowPayment").addEventListener("click", function () {
   // Lấy container chứa các hàng hiện tại
   const container = document.getElementById("payment-info-container");
+  const rowCount = container.querySelectorAll(".row.mb-3.row-payment").length + 1;
 
   // Tạo một hàng mới
   const newRow = document.createElement("div");
   newRow.classList.add(
     "row",
     "mb-3",
+    "row-payment",
     "mt-3",
     "ps-4",
     "d-flex",
@@ -185,10 +188,14 @@ document.getElementById("addRowPayment").addEventListener("click", function () {
           <div class="col-sm-2 pb-2">
             <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
           </div>
-          <div class="col-sm-1 d-flex pb-2">
-            <label for="customUnit" class="col-form-label"></label>
-            <div class="input-group">
-              <input type="text" class="form-control" name="customUnit[]" placeholder="VND" >
+          <div class="col-sm-1 d-flex pb-2 flex-column">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_${rowCount}" id="customUnit_${rowCount}_VND" value="VND" checked>
+                <label class="form-check-label" for="customUnit_${rowCount}_VND">VND</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_${rowCount}" id="customUnit_${rowCount}_USD" value="USD">
+                <label class="form-check-label" for="customUnit_${rowCount}_USD">USD</label>
             </div>
           </div>
           <div class="col-sm-2 d-flex pb-2">
@@ -234,4 +241,63 @@ function deleteRowPayment(button) {
   }
 }
 
+
+
+const soTienInput = document.getElementById('ops_total');
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize the total amount for "ops" payees
+  updateTotalOpsAmount();
+
+  // Initialize `data-prev-value` for all `expense-payee` inputs
+  document.querySelectorAll('.expense-payee').forEach(payeeInput => {
+    payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
+  });
+});
+
+document.addEventListener('input', function(event) {
+  if (event.target.classList.contains('expense-amount')) {
+    updateAmountText(event.target); // Format the input value
+    updateTotalOpsAmount(); // Recalculate the total
+  }
+
+  if (event.target.classList.contains('expense-payee')) {
+    handlePayeeChange(event.target);
+  }
+});
+
+function updateTotalOpsAmount() {
+  const rows = document.querySelectorAll('.tableBody tr');
+  let totalOpsAmount = 0;
+
+  rows.forEach(row => {
+    const amountInput = row.querySelector('.expense-amount');
+    const payeeInput = row.querySelector('.expense-payee');
+
+    if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
+      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
+      totalOpsAmount += amount;
+    }
+  });
+
+  // console.log('Total expense amount for payee "ops":', totalOpsAmount);
+  soTienInput.value = formatNumber(totalOpsAmount.toString());
+}
+
+function handlePayeeChange(payeeInput) {
+  const row = payeeInput.closest('tr');
+  const amountInput = row.querySelector('.expense-amount');
+  const previousValue = payeeInput.getAttribute('data-prev-value') || '';
+  const newValue = payeeInput.value.trim().toLowerCase();
+  const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
+
+  if (previousValue === 'ops' && newValue !== 'ops') {
+    updateTotalOpsAmount(); // Recalculate after removing 'ops'
+  } else if (previousValue !== 'ops' && newValue === 'ops') {
+    updateTotalOpsAmount(); // Recalculate after adding 'ops'
+  }
+
+  // Update the previous value
+  payeeInput.setAttribute('data-prev-value', newValue);
+}
 

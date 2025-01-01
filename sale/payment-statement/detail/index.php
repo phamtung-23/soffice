@@ -20,9 +20,9 @@ $instructionNo = isset($_GET['instruction_no']) ? $_GET['instruction_no'] : null
 $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $data = null;
 $isUpdate = isset($_GET['update']) ? $_GET['update'] : false;
-echo '<script>console.log(' . json_encode($isUpdate) . ')</script>';
+// echo '<script>console.log(' . json_encode($isUpdate) . ')</script>';
 // Define the path to the JSON file
-$filePath = '../../../database/payment_' . $year . '.json';
+// $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
 
 $filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
@@ -34,7 +34,7 @@ $data = $paymentId;
 
 if ($instructionNo !== null) {
   // Load and decode JSON data
-  $jsonData = json_decode(file_get_contents($filePath), true);
+  // $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
   // Search for the entry with the matching InstructionNo
@@ -352,7 +352,7 @@ if ($instructionNo !== null) {
         </div>
 
         <?php
-        foreach ($data['payment'] as $customField) {
+        foreach ($data['payment'] as $index => $customField) {
         ?>
           <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
             <div class="col-sm-2 pb-2">
@@ -361,10 +361,18 @@ if ($instructionNo !== null) {
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000" required value="<?= number_format($customField['value'], 0, ",", ".") ?>" oninput="updateAmountText(this)" disabled>
             </div>
-            <div class="col-sm-1 d-flex pb-2">
-              <label for="customUnit" class="col-form-label"></label>
+            <div class="col-sm-1 d-flex pb-2 flex-column">
+              <!-- <label for="customUnit" class="col-form-label"></label>
               <div class="input-group">
-                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>" disabled>
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
+              </div> -->
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_VND" value="VND" <?= $customField['unit'] == 'VND' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="customUnit_1_VND">VND</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_USD" value="USD" <?= $customField['unit'] == 'USD' ? 'checked' : '' ?>>
+                <label class="form-check-label" for="customUnit_1_USD">USD</label>
               </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
@@ -426,6 +434,7 @@ if ($instructionNo !== null) {
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
               <!-- <th scope="col" rowspan="2" class="align-middle">Upload file</th> -->
+              <th scope="col" rowspan="2" class="align-middle">VAT</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
               <!-- <th scope="col" rowspan="2" class="align-middle">Action</th> -->
             </tr>
@@ -441,10 +450,11 @@ if ($instructionNo !== null) {
               <tr>
                 <td><?= $index + 1 ?></td>
                 <td><input type="text" class="form-control" name="expense_kind[]" value="<?= $expense['expense_kind'] ?>" disabled></td>
-                <td><input type="text" class="form-control" name="expense_amount[]" required id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)" disabled></td>
+                <td><input type="text" class="form-control expense-amount" name="expense_amount[]" required id="expenses_amount" value="<?= number_format($expense['expense_amount'], 0, ',', '.') ?>" oninput="updateAmountText(this)" disabled></td>
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>" disabled></td>
-                <td><input type="text" class="form-control" name="expense_payee[]" value="<?= $expense['expense_payee'] ?>" disabled></td>
+                <td><input type="text" class="form-control expense-payee" name="expense_payee[]" value="<?= $expense['expense_payee'] ?>" disabled></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>" disabled></td>
+                <td class="text-center align-middle"><input class="form-check-input" type="checkbox" name="expense_vat[]" <?= $expense['expense_vat'] == 'on' ? 'checked' : '' ?>></td>
                 <!-- <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple></td> -->
                 <?php
                 if (!empty($expense['expense_files'])) {
@@ -473,10 +483,13 @@ if ($instructionNo !== null) {
             <tr>
               <td colspan="2" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="updateAmountText(this)" disabled></td>
-              <td colspan="3">
+              <td colspan="2">
+                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" disabled>
+              </td>
+              <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
-              <td colspan="3">
+              <td colspan="2">
                 BY: <input type="text" class="form-control" value="<?= $data['by'] ?>" disabled>
               </td>
             </tr>
@@ -525,7 +538,6 @@ if ($instructionNo !== null) {
       </div>
     </div> -->
   </div>
-  <script src="./index.js"></script>
   <script>
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
@@ -542,6 +554,26 @@ if ($instructionNo !== null) {
     const totalActualValue = totalActual.value;
     totalActual.value = formatNumber(totalActualValue);
 
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".needs-validation");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+
+
     function updateAmountText(currentInput) {
       //  Loại bỏ dấu cham '.' trong số
       let advanceAmount = currentInput.value.replace(/\./g, '');
@@ -553,117 +585,6 @@ if ($instructionNo !== null) {
       }
       currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
     }
-
-    function handleRejectPayment() {
-      const message = document.getElementById('message-text').value;
-      const rejectData = {
-        instruction_no: itemData.instruction_no,
-        approval_status: 'rejected',
-        message: message
-      };
-
-      // Send data to the server using fetch
-      fetch('update_payment_status.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(rejectData)
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Tạo nội dung tin nhắn để gửi
-            let telegramMessage = `**Yêu cầu đã bị Sale từ chối!**\n` +
-              `ID yêu cầu: ${itemData.instruction_no}\n` +
-              `Người đề nghị: ${itemData.operator_name}\n` +
-              `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-              `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
-              `Tên khách hàng: ${itemData.shipper}\n` +
-              `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-              `Lý do: **${message}**\n` +
-              `Người từ chối:  <?= $fullName ?> - <?= $email ?>\n` +
-              `Thời gian từ chối: ${data.data.approval[1].time}`;
-
-            // Gửi tin nhắn đến Telegram
-            fetch('../../../sendTelegram.php', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                message: telegramMessage,
-                id_telegram: operatorUserData.phone // Truyền thêm thông tin operator_phone
-              })
-            });
-            alert("Payment rejected successfully!");
-            window.location.href = '../../index.php';
-          } else {
-            alert("Failed to reject payment: " + data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert("An error occurred. Please try again.");
-        });
-    }
-
-    let updateForm = document.getElementById("form-update");
-    updateForm.addEventListener("submit", (e) => {
-      if (!updateForm.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation();
-        updateForm.classList.add("was-validated");
-      } else {
-        e.preventDefault();
-
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach((checkbox) => {
-          if (!checkbox.checked) {
-            checkbox.checked = true;
-            checkbox.value = "off";
-          }
-        });
-        // disable the submit button
-        trinhKiBtn.disabled = true;
-
-
-        // get data from form
-        const formData = new FormData(updateForm);
-        formData.append('is_update', isUpdate);
-        // const data = Object.fromEntries(formData.entries());
-
-        // // handle submit
-        // const updateData = {
-        //   data: data
-        // };
-
-        // Send data to the server using fetch
-        fetch('update_payment_delivery.php', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              alert("Delivery data updated successfully!");
-              // enable the submit button
-              trinhKiBtn.disabled = false;
-              window.location.href = isUpdate ? '../../all_payment.php' : '../../index.php';
-            } else {
-              alert("Failed to update approval status: " + data.message);
-              // enable the submit button
-              trinhKiBtn.disabled = false;
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert("An error occurred. Please try again.");
-            // enable the submit button
-            trinhKiBtn.disabled = false;
-          });
-      }
-    });
 
     function getFirstExpenseAmountWithPayee(item, payee) {
       if (item.expenses && item.expenses.length > 0) { // Check if expenses exist and are non-empty
@@ -742,37 +663,74 @@ if ($instructionNo !== null) {
       }
     }
 
-    function addRow() {
-      const tableBody = document.querySelector(".tableBody");
-      const rowIndex = tableBody.rows.length;
-
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-        <td>${rowIndex + 1}</td>
-        <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-        <td><input type="text" name="expense_amount[]" class="form-control" required oninput="updateAmountText(this)"></td>
-        <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-        <td><input type="text" name="expense_payee[]" class="form-control" required></td>
-        <td><input type="text" name="expense_doc[]" class="form-control"></td>
-        <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
-        <td></td>
-        <td class="align-middle">
-          <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
-        </td>
-      `;
-      tableBody.appendChild(newRow);
+    // Toggle the responsive class to show/hide the menu
+    function toggleMenu() {
+      var menu = document.querySelector(".menu");
+      menu.classList.toggle("responsive");
     }
 
-    function deleteRow(button) {
-      const row = button.closest("tr");
-      // Remove the row from the table
-      row.remove();
+    // ========== UPDATE EXPENSE AMOUNTS FOR OPS PAYEES ==========
+    function updateAmountText(currentInput) {
+      const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
+      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    }
 
-      // Re-number the rows after deletion
-      const tableBody = document.querySelector(".tableBody");
-      Array.from(tableBody.rows).forEach((row, index) => {
-        row.cells[0].textContent = index + 1;
+    const soTienInput = document.getElementById('ops_total');
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the total amount for "ops" payees
+      updateTotalOpsAmount();
+
+      // Initialize `data-prev-value` for all `expense-payee` inputs
+      document.querySelectorAll('.expense-payee').forEach(payeeInput => {
+        payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
       });
+    });
+
+    document.addEventListener('input', function(event) {
+      if (event.target.classList.contains('expense-amount')) {
+        updateAmountText(event.target); // Format the input value
+        updateTotalOpsAmount(); // Recalculate the total
+      }
+
+      if (event.target.classList.contains('expense-payee')) {
+        handlePayeeChange(event.target);
+      }
+    });
+
+    function updateTotalOpsAmount() {
+      const rows = document.querySelectorAll('.tableBody tr');
+      let totalOpsAmount = 0;
+
+      rows.forEach(row => {
+        const amountInput = row.querySelector('.expense-amount');
+        const payeeInput = row.querySelector('.expense-payee');
+
+        if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
+          const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
+          totalOpsAmount += amount;
+        }
+      });
+
+      // console.log('Total expense amount for payee "ops":', totalOpsAmount);
+      soTienInput.value = formatNumber(totalOpsAmount.toString());
+    }
+
+    function handlePayeeChange(payeeInput) {
+      const row = payeeInput.closest('tr');
+      const amountInput = row.querySelector('.expense-amount');
+      const previousValue = payeeInput.getAttribute('data-prev-value') || '';
+      const newValue = payeeInput.value.trim().toLowerCase();
+      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
+
+      if (previousValue === 'ops' && newValue !== 'ops') {
+        updateTotalOpsAmount(); // Recalculate after removing 'ops'
+      } else if (previousValue !== 'ops' && newValue === 'ops') {
+        updateTotalOpsAmount(); // Recalculate after adding 'ops'
+      }
+
+      // Update the previous value
+      payeeInput.setAttribute('data-prev-value', newValue);
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

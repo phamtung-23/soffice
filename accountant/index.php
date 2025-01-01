@@ -33,8 +33,10 @@ $files = glob('../database/request_*.json');
 // Read and filter data
 $requestData = getDataFromJsonRequest($requestFile, $userEmail);
 
-// Function to get counts based on status
+// get year of payment data
+$directoriesName = getDirectories('../../../private_data/soffice_database/payment/data');
 
+// Function to get counts based on status
 function getStatusCounts($data, $statusField, $statusValue = null)
 {
     return count(array_filter($data, function ($item) use ($statusField, $statusValue) {
@@ -394,10 +396,21 @@ $paymentWaitingPay =  isset($paymentDataStatus['pending_accountant']) ? $payment
                 foreach ($files as $file) {
                     // Lấy năm từ tên file
                     preg_match('~request_(\d{4})\.json~', $file, $matches);
+                    $yearList = [];
                     if (isset($matches[1])) {
                         $year = $matches[1];
-                        echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
+                        $yearList[] = $year;
                     }
+                    // add $directoriesName to $yearList
+                    $yearList = array_merge($yearList, $directoriesName);
+                    // Remove duplicates
+                    $yearList = array_unique($yearList);
+                    // Sort the years in descending order
+                    rsort($yearList);
+                }
+                // Display the year options
+                foreach ($yearList as $year) {
+                    echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
                 }
                 ?>
             </select>

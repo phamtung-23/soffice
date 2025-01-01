@@ -416,6 +416,7 @@ if ($instructionNo !== null) {
               <th scope="col" colspan="2">Amount</th>
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+              <th scope="col" rowspan="2" class="align-middle">VAT</th>
               <!-- <th scope="col" rowspan="2" class="align-middle">Upload new file</th> -->
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
               <!-- <th scope="col" rowspan="2" class="align-middle">Action</th> -->
@@ -436,6 +437,9 @@ if ($instructionNo !== null) {
                 <td><input type="text" class="form-control" name="so_hoa_don[]" value="<?= $expense['so_hoa_don'] ?>" disabled></td>
                 <td><input type="text" class="form-control" required name="expense_payee[]" value="<?= $expense['expense_payee'] ?>" disabled></td>
                 <td><input type="text" class="form-control" name="expense_doc[]" value="<?= $expense['expense_doc'] ?>" disabled></td>
+                <td class="text-center align-middle">
+                  <input class="form-check-input" type="checkbox" name="custom_vat[]" <?= $expense['expense_vat'] == 'on' ? 'checked' : '' ?> disabled>
+                </td>
                 <!-- <td><input class="form-control" type="file" id="formFile" name="expense_file[<?= $index ?>][]" multiple disabled></td> -->
                 <td>
                   <?php
@@ -464,8 +468,10 @@ if ($instructionNo !== null) {
             <tr>
               <td colspan="3" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="toggleExpenseFields(this)" disabled></td>
-              <td></td>
               <td>
+                OPS TOTAL: <input type="text" class="form-control" name="ops_total" value="<?= $data['ops_total'] ?>" disabled>
+              </td>
+              <td colspan="2">
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
               <td colspan="3">
@@ -494,32 +500,8 @@ if ($instructionNo !== null) {
 
       </div> -->
     </form>
-
-    <!-- modal từ chối -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Hủy bỏ cập nhật</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="message-text" class="col-form-label">Bạn có chắc chắn muốn hủy bỏ cập nhật?</label>
-                <!-- <textarea class="form-control" id="message-text"></textarea> -->
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            <button type="button" class="btn btn-primary" onclick="handleCancelUpdate()" id="rejectSubmitButton">Xác nhận</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
-  <script src="./index.js"></script>
+  <!-- <script src="./index.js"></script> -->
   <script>
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
@@ -535,6 +517,21 @@ if ($instructionNo !== null) {
     const totalActual = document.getElementById('total_actual');
     const totalActualValue = totalActual.value;
     totalActual.value = formatNumber(totalActualValue);
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
 
     const exampleModal = document.getElementById('exampleModal')
     if (exampleModal) {
@@ -559,24 +556,6 @@ if ($instructionNo !== null) {
         }
         currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
       }
-    }
-
-    document.getElementById('rejectSubmitButton').addEventListener('click', () => {
-      const messageText = document.getElementById('message-text').value;
-      handleApprovePayment('rejected', messageText);
-      // Close the modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('exampleModal'));
-      modal.hide();
-    });
-
-    function getFirstExpenseAmountWithPayee(item, payee) {
-      if (item.expenses && item.expenses.length > 0) { // Check if expenses exist and are non-empty
-        const expense = item.expenses.find(exp => exp.expense_payee === payee);
-        if (expense) {
-          return expense.expense_amount;
-        }
-      }
-      return ''; // Return null if no matching expense is found
     }
 
     function formatNumber(num) {
@@ -652,195 +631,13 @@ if ($instructionNo !== null) {
       window.location.href = '../../index.php';
     }
 
-    function handleApprovePayment(status, message = '') {
-      leaderForm.addEventListener('submit', (e) => {
-        if (!leaderForm.checkValidity()) {
-          e.preventDefault();
-          e.stopPropagation();
-          leaderForm.classList.add("was-validated");
-        } else {
-
-          e.preventDefault();
-
-          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-          checkboxes.forEach((checkbox) => {
-            if (!checkbox.checked) {
-              checkbox.checked = true;
-              checkbox.value = "off";
-            }
-          });
-
-          const formData = new FormData(leaderForm);
-          const instructionNo = <?= json_encode($instructionNo) ?>; // Instruction number from PHP
-          formData.append('instruction_no', instructionNo);
-          formData.append('approval_status', status);
-          formData.append('message', message);
-
-          // // Log each key-value pair for debugging
-          // for (const [key, value] of formData.entries()) {
-          //   console.log(`${key}:`, value);
-          // }
-
-          // disable button
-          pheDuyetBtn.disabled = true;
-          tuChoiBtn.disabled = true;
-
-          // Send data to the server using fetch
-          fetch('update_payment_status.php', {
-              method: 'POST',
-              body: formData
-            })
-            .then(response => response.json())
-            .then(async data => {
-              if (data.success) {
-                // Tạo nội dung tin nhắn để gửi
-                let telegramMessage = '';
-
-                telegramMessage = `**Yêu cầu mới cần phê duyệt!**\n` +
-                  `ID yêu cầu: ${itemData.instruction_no}\n` +
-                  `Người đề nghị: ${itemData.operator_name}\n` +
-                  `Số tiền thanh toán: ${formatNumber((getFirstExpenseAmountWithPayee(itemData, 'OPS')).toString())} VND\n` +
-                  `Số tiền thanh toán bằng chữ: ${convertNumberToTextVND(getFirstExpenseAmountWithPayee(itemData, 'OPS'))}\n` +
-                  `Tên khách hàng: ${itemData.shipper}\n` +
-                  `Số tờ khai: ${itemData.customs_manifest_on}\n` +
-                  `Người yêu cầu:  ${itemData.operator_name} - ${itemData.operator_email}\n` +
-                  `Thời gian gửi: ${itemData.updated_at}`;
-
-
-                // Gửi tin nhắn đến Telegram
-                await fetch('../../../sendTelegram.php', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    message: telegramMessage,
-                    id_telegram: leaderData.phone // Truyền thêm thông tin operator_phone
-                  })
-                });
-
-                alert("Approval status updated successfully!");
-
-                // enable button
-                pheDuyetBtn.disabled = false;
-                tuChoiBtn.disabled = false;
-
-                window.location.href = '../../index.php';
-              } else {
-                alert("Failed to update approval status: " + data.message);
-                // enable button
-                pheDuyetBtn.disabled = false;
-                tuChoiBtn.disabled = false;
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              alert("An error occurred. Please try again.");
-              // enable button
-              pheDuyetBtn.disabled = false;
-              tuChoiBtn.disabled = false;
-            });
-        }
-      }, { once: true });
-    }
-
-    document.getElementById("addRowPayment").addEventListener("click", function() {
-      // Lấy container chứa các hàng hiện tại
-      const container = document.getElementById("payment-info-container");
-
-      // Tạo một hàng mới
-      const newRow = document.createElement("div");
-      newRow.classList.add(
-        "row",
-        "mb-3",
-        "mt-3",
-        "ps-4",
-        "d-flex",
-        "align-items-center"
-      );
-
-      // Nội dung HTML của hàng mới
-      newRow.innerHTML = `
-      <div class="col-sm-3 pb-2">
-              <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" >
-            </div>
-            <div class="col-sm-2 pb-2">
-              <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
-            </div>
-            <div class="col-sm-2 d-flex pb-2">
-              <label for="customVat" class="col-form-label">V.A.T</label>
-              <div class="input-group ps-2">
-                <input type="text" class="form-control" name="customVat[]" placeholder="%" >
-                <span class="input-group-text">%</span>
-              </div>
-            </div>
-            <div class="form-check col-sm-2 d-flex flex-column gap-2 align-items-start pb-2">
-              <select class="form-select" aria-label="Default select example" name="customContSet[]" >
-                <option selected disabled value="">Choose Cont/Set</option>
-                <option value="cont">Cont</option>
-                <option value="set">Set</option>
-              </select>
-            </div>
-            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
-              <input class="form-check-input" type="checkbox" name="customIncl[]">
-              <label class="form-check-label">
-                INCL
-              </label>
-            </div>
-            <div class="form-check col-sm-1 d-flex gap-2 align-items-center pb-2">
-              <input class="form-check-input" type="checkbox" name="customExcl[]">
-              <label class="form-check-label">
-                EXCL
-              </label>
-            </div>
-            <div class="form-check col-sm-1 d-flex justify-content-end gap-2 align-items-center pb-2">
-              <button onclick="deleteRowPayment(this)"><i class="ph ph-trash"></i></button>
-            </div>
-    `;
-
-      // Thêm hàng mới vào container
-      container.appendChild(newRow);
-    });
-
-    function deleteRowPayment(button) {
-      // Find the parent row (div) containing the button and remove it
-      const row = button.closest(".row");
-      if (row) {
-        row.remove();
-      }
-    }
-
-    function addRow() {
-      const tableBody = document.querySelector(".tableBody");
-      const rowIndex = tableBody.rows.length;
-
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-    <td>${rowIndex + 1}</td>
-    <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-    <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
-    <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-    <td><input type="text" name="expense_payee[]" class="form-control" required></td>
-    <td><input type="text" name="expense_doc[]" class="form-control"></td>
-    <td><input class="form-control" type="file" name="expense_file[${rowIndex}][]" multiple></td>
-    <td></td>
-    <td class="align-middle">
-      <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
-    </td>
-  `;
-      tableBody.appendChild(newRow);
-    }
-
-    function deleteRow(button) {
-      const row = button.closest("tr");
-      // Remove the row from the table
-      row.remove();
-
-      // Re-number the rows after deletion
-      const tableBody = document.querySelector(".tableBody");
-      Array.from(tableBody.rows).forEach((row, index) => {
-        row.cells[0].textContent = index + 1;
-      });
+    function updateAmountText(number) {
+      // const advanceAmountInput = document.getElementById('advance-amount');
+      // const advanceAmount = advanceAmountInput.value.replace(/,/g, ''); // Loại bỏ dấu phẩy
+      // advanceAmountInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+      const advanceAmountText = convertNumberToTextVND(number);
+      document.getElementById('advance-amount-words').value = advanceAmountText;
+      console.log(advanceAmountText);
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

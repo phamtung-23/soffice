@@ -22,12 +22,12 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $data = null;
 
 // Define the path to the JSON file
-$filePath = '../../../database/payment_' . $year . '.json';
+// $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
 
 if ($instructionNo !== null) {
   // Load and decode JSON data
-  $jsonData = json_decode(file_get_contents($filePath), true);
+  // $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
   $filePathPayment = "../../../../../private_data/soffice_database/payment/data/$year/";
@@ -414,9 +414,9 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
         </div>
 
         <?php
-        foreach ($data['payment'] as $customField) {
+        foreach ($data['payment'] as $index => $customField) {
         ?>
-          <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+          <div class="row mb-3 row-payment mt-3 ps-4 d-flex align-items-center">
             <div class="col-sm-2 pb-2">
               <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" required value="<?= $customField['name'] ?>" disabled>
             </div>
@@ -433,10 +433,18 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
                 }
                 ?>>
             </div>
-            <div class="col-sm-1 d-flex pb-2">
-              <label for="customUnit" class="col-form-label"></label>
+            <div class="col-sm-1 d-flex pb-2 flex-column">
+              <!-- <label for="customUnit" class="col-form-label"></label>
               <div class="input-group">
-                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>" disabled>
+                <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
+              </div> -->
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_VND" value="VND" <?= $customField['unit'] == 'VND' ? 'checked' : '' ?> disabled>
+                <label class="form-check-label" for="customUnit_1_VND">VND</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_USD" value="USD" <?= $customField['unit'] == 'USD' ? 'checked' : '' ?> disabled>
+                <label class="form-check-label" for="customUnit_1_USD">USD</label>
               </div>
             </div>
             <div class="col-sm-2 d-flex pb-2">
@@ -493,6 +501,7 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
               <th scope="col" colspan="2">Amount</th>
               <th scope="col" rowspan="2" class="align-middle">Payee</th>
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+              <th scope="col" rowspan="2" class="align-middle">VAT</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
               <th scope="col" rowspan="2" class="align-middle" style="width: 80px;">Chi tiền</th>
             </tr>
@@ -522,6 +531,7 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['so_hoa_don'] ?>"></td>
                 <td><input type="text" class="form-control" required disabled value="<?= $expense['expense_payee'] ?>"></td>
                 <td><input type="text" class="form-control" disabled value="<?= $expense['expense_doc'] ?>"></td>
+                <td class="text-center align-middle"><input class="form-check-input" type="checkbox" name="expense_vat[]" <?= $expense['expense_vat'] == 'on' ? 'checked' : '' ?> disabled></td>
                 <td>
                   <?php
                   if (!empty($expense['expense_files'])) {
@@ -544,11 +554,12 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
             <tr>
               <td colspan="2" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" disabled></td>
-              <td></td>
-              <td>
+              <td colspan="2">
+              OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" value="<?= $data['ops_total'] ?>" disabled></td>
+              <td colspan="2">
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
-              <td colspan="3">
+              <td colspan="2">
                 BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>" disabled>
               </td>
             </tr>
@@ -568,22 +579,22 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
           </thead>
           <tbody>
             <?php
-              if (isset($data['grouped_totals']) && count($data['grouped_totals']) > 0) {
-                foreach ($data['grouped_totals'] as $item) {
-                  echo '<tr>
+            if (isset($data['grouped_totals']) && count($data['grouped_totals']) > 0) {
+              foreach ($data['grouped_totals'] as $item) {
+                echo '<tr>
                           <td class="">
-                            <input type="text" class="form-control" value="'.$item['payee'].'" disabled>
+                            <input type="text" class="form-control" value="' . $item['payee'] . '" disabled>
                           </td>
                           <td class="">
-                            <input type="text" class="form-control text-success" value="'.number_format($item['amount'], 0, ',', '.').'" disabled>
+                            <input type="text" class="form-control text-success" value="' . number_format($item['amount'], 0, ',', '.') . '" disabled>
                           </td>
                         </tr>';
-                }
-              } else {
-                echo '<tr>
+              }
+            } else {
+              echo '<tr>
                         <td colspan="2" class="text-center">No data available</td>
                       </tr>';
-              }
+            }
             ?>
             <!-- Dynamic Rows Will Be Added Here -->
           </tbody>
@@ -703,7 +714,6 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
       </div>
     </div>
   </div>
-  <script src="./index.js"></script>
   <script>
     const itemData = <?= json_encode($data) ?>;
     const operatorUserData = <?= json_encode($operatorUserData) ?>;
@@ -719,6 +729,21 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
     const totalActual = document.getElementById('total_actual');
     const totalActualValue = totalActual.value;
     totalActual.value = formatNumber(totalActualValue);
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
 
     const soTienDoc = document.getElementById('soTien');
     const advanceAmount = soTienDoc.value;

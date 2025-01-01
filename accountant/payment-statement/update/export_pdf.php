@@ -158,6 +158,7 @@ if (count($request['expenses']) > 0) {
     $item = $request['expenses'][$i];
     $index = $i + 1;
     $amount = (!empty($item['expense_amount']) ? number_format($item['expense_amount'], 0, ",", ".") : "");
+    $checkedVat = $item['expense_vat'] == 'on' ? "<img src='https://static-00.iconduck.com/assets.00/checkbox-checked-icon-256x256-5ht7e55d.png' style='width: 15px; height: auto;'>" : "<img src='https://images.freeimages.com/fic/images/icons/2711/free_icons_for_windows8_metro/512/unchecked_checkbox.png' style='width: 15px; height: auto;'>";
     $rowsTable = $rowsTable."
     <tr>
       <td class='line-item'>{$index}</td>
@@ -166,6 +167,7 @@ if (count($request['expenses']) > 0) {
       <td class='line-item'>{$item['so_hoa_don']}</td>
       <td class='line-item'>{$item['expense_payee']}</td>
       <td class='line-item'>{$item['expense_doc']}</td>
+      <td class='line-item'>{$checkedVat}</td>
     </tr>
     ";
   }
@@ -433,6 +435,7 @@ $htmlContent = "
             <th colspan='2'>Amount</th>
             <th rowspan='2'>Payee</th>
             <th rowspan='2'>Doc.No</th>
+            <th rowspan='2'>VAT</th>
           </tr>
           <tr>
             <th>Actual</th>

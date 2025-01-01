@@ -142,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'so_hoa_don' => $soHoaDon,
         'expense_payee' => $_POST['expense_payee'][$i],
         'expense_doc' => $_POST['expense_doc'][$i],
+        'expense_vat' => $_POST['expense_vat'][$i],
         'expense_files' => $expenseFiles // Store all uploaded files for this expense
       ];
 
@@ -149,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
   }
 
-  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl'];
+  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl', 'expense_vat'];
   // Additional fields
   $saleIsDiRector = false;
   foreach ($_POST as $key => $value) {
@@ -179,17 +180,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'comment' => ''
         ];
       }
-    } elseif (!in_array($key, $fieldIgnore)) {
+    } elseif (!in_array($key, $fieldIgnore) && strpos($key, 'customUnit') === false) {
       $data[$key] = is_array($value) ? $value : trim($value);
     }
-  }
+  } 
 
   // get data payment
   // Extract custom fields
   $customFieldNames = $_POST['customFieldName'] ?? [];
   $customFields = $_POST['customField'] ?? [];
   $customVats = $_POST['customVat'] ?? [];
-  $customUnits = $_POST['customUnit'] ?? [];
+  // $customUnits = $_POST['customUnit'] ?? [];
   $customContSetRadios = $_POST['customContSet'] ?? [];
   $customIncl = $_POST['customIncl'] ?? [];
   $customExcl = $_POST['customExcl'] ?? [];
@@ -197,8 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Prepare an array to store custom fields
   $customData = [];
 
-  logEntry("customInclude: " . json_encode($customIncl));
-  logEntry("customExcl: " . json_encode($customExcl));
+  // logEntry("customInclude: " . json_encode($customIncl));
+  // logEntry("customExcl: " . json_encode($customExcl));
 
   foreach ($customFieldNames as $index => $name) {
     logEntry("Processing custom field: $name");
@@ -206,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       'name' => $name,
       'value' => (float)str_replace('.', '', $customFields[$index]),
       'vat' => $customVats[$index] ?? '',
-      'unit' => $customUnits[$index] ?? '',
+      'unit' => $_POST['customUnit_'.($index+1)] ?? '',
       'contSet' => isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set',
       'incl' => $customIncl[$index] ?? '',
       'excl' => $customExcl[$index] ?? ''

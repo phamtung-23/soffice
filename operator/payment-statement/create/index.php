@@ -344,17 +344,25 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
           </div>
         </div>
 
-        <div class="row mb-3 mt-3 ps-4 d-flex align-items-center">
+        <div class="row mb-3 row-payment mt-3 ps-4 d-flex align-items-center">
           <div class="col-sm-2 pb-2">
             <input type="text" class="form-control" name="customFieldName[]" placeholder="Ex: Custom Value Name" >
           </div>
           <div class="col-sm-2 pb-2">
             <input type="text" class="form-control" name="customField[]" placeholder="Ex: 1.000.000"  oninput="toggleExpenseFields(this)">
           </div>
-          <div class="col-sm-1 d-flex pb-2">
-            <label for="customUnit" class="col-form-label"></label>
+          <div class="col-sm-1 d-flex pb-2 flex-column">
+            <!-- <label for="customUnit" class="col-form-label"></label>
             <div class="input-group">
               <input type="text" class="form-control" name="customUnit[]" placeholder="VND" >
+            </div> -->
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_1" id="customUnit_1_VND" value="VND" checked>
+                <label class="form-check-label" for="customUnit_1_VND">VND</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="customUnit_1" id="customUnit_1_USD" value="USD">
+                <label class="form-check-label" for="customUnit_1_USD">USD</label>
             </div>
           </div>
           <div class="col-sm-2 d-flex pb-2">
@@ -415,6 +423,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
                 <th scope="col" colspan="2">Amount</th>
                 <th scope="col" rowspan="2" class="align-middle">Payee</th>
                 <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
+                <th scope="col" rowspan="2" class="align-middle">VAT</th>
                 <th scope="col" rowspan="2" class="align-middle">Upload file</th>
                 <th scope="col" rowspan="2" class="align-middle">Action</th>
               </tr>
@@ -427,10 +436,11 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
               <tr>
                 <td>1</td>
                 <td><input type="text" name="expense_kind[]" class="form-control" required></td>
-                <td><input type="text" name="expense_amount[]" class="form-control" required oninput="toggleExpenseFields(this)"></td>
+                <td><input type="text" name="expense_amount[]" class="form-control expense-amount" required oninput="toggleExpenseFields(this)"></td>
                 <td><input type="text" name="so_hoa_don[]" class="form-control"></td>
-                <td><input type="text" name="expense_payee[]" class="form-control" required></td>
+                <td><input type="text" name="expense_payee[]" class="form-control expense-payee" required></td>
                 <td><input type="text" name="expense_doc[]" class="form-control"></td>
+                <td class="text-center align-middle"><input class="form-check-input" type="checkbox" name="expense_vat[]"></td>
                 <td><input class="form-control" type="file" id="formFile" name="expense_file[0][]" multiple></td>
                 <td class="align-middle">
                   <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
@@ -440,7 +450,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
               <!-- Additional rows as needed -->
             <tfoot>
               <tr>
-                <td colspan="8" class="text-center">
+                <td colspan="9" class="text-center">
                   <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
                 </td>
               </tr>
@@ -451,9 +461,12 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
                 </td>
                 <td></td>
                 <td>
+                  OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total">
+                </td>
+                <td colspan="2">
                   RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on">
                 </td>
-                <td colspan="3">
+                <td colspan="2">
                   BY: <input type="text" class="form-control" name="by">
                 </td>
               </tr>

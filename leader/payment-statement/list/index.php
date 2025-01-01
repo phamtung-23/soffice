@@ -23,6 +23,13 @@ $directoriesName = getDirectories('../../../../../private_data/soffice_database/
 $years = array_unique($directoriesName);
 sort($years);
 
+// handle request form
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  if (isset($_POST['selectedYear'])) {
+    $currentYear = $_POST['selectedYear'];
+  }
+}
+
 $filePath = "../../../../../private_data/soffice_database/payment/status/$currentYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
@@ -57,7 +64,26 @@ echo "</script>";
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <!-- DataTables CSS and jQuery -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
   <script>
+    $(document).ready(function() {
+      // Initialize DataTable with individual column search
+      var table = $('#requestsTable').DataTable({
+        "language": {
+          "search": "Tìm kiếm nhanh:",
+          "lengthMenu": "Hiển thị _MENU_ phiếu trên mỗi trang",
+          "zeroRecords": "Không tìm thấy phiếu nào",
+          "info": "Hiển thị _START_ đến _END_ của _TOTAL_ phiếu",
+          "infoEmpty": "Hiển thị 0 đến 0 của 0 phiếu",
+          "infoFiltered": "(lọc từ _MAX_ phiếu)"
+        }
+      });
+    });
+
+
     let userEmail = ('<?php echo $userEmail; ?>');
     let userRole = ('<?php echo $userRole; ?>');
     let currentRequest = null;
@@ -183,7 +209,20 @@ echo "</script>";
     </div>
 
     <!-- Thêm Dropdown chọn năm -->
-    <div class="form-group">
+    <form id="year-form" method="POST">
+      <div class="form-group">
+        <label for="year-select">Chọn năm:</label>
+        <select id="year-select" name="selectedYear" onchange="document.getElementById('year-form').submit()">
+          <?php
+          // Tạo các tùy chọn cho năm từ mảng $years
+          foreach ($years as $year) {
+            echo "<option value=\"$year\" " . ($year == $currentYear ? 'selected' : '') . ">$year</option>";
+          }
+          ?>
+        </select>
+      </div>
+    </form>
+    <!-- <div class="form-group">
       <label for="year-select">Chọn năm:</label>
       <select id="year-select" onchange="updateYear()">
         <?php
@@ -193,7 +232,7 @@ echo "</script>";
         }
         ?>
       </select>
-    </div>
+    </div> -->
 
     <!-- Filter Fields -->
     <!-- <div class="filters">
@@ -214,7 +253,7 @@ echo "</script>";
     <!-- Requests table -->
     <div id="requests">
       <h2>Danh sách các phiếu thanh toán</h2>
-      <table>
+      <table id="requestsTable">
         <thead>
           <tr>
             <th>ID</th>

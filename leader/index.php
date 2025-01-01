@@ -108,8 +108,10 @@ $requestRejectedLeader = getStatusCounts($requestData, 'check_status', 'Từ ch�
 $requestRejectedDirector = getStatusCounts($requestData, 'status', 'Từ chối');
 $requestWaitingLeader = getStatusCounts($requestData, 'check_status');
 
-// get payment status data
+// get year of payment data
+$directoriesName = getDirectories('../../../private_data/soffice_database/payment/data');
 
+// get payment status data
 $filePath = "../../../private_data/soffice_database/payment/status/$selectedYear/status.json";
 $paymentDataStatusRes = getDataFromJson($filePath);
 $paymentDataStatus = $paymentDataStatusRes['data'];
@@ -452,10 +454,21 @@ $paymentTotal = $paymentApprovedLeader + $paymentRejectedLeader + $paymentWaitin
                 foreach ($files as $file) {
                     // Lấy năm từ tên file
                     preg_match('~request_(\d{4})\.json~', $file, $matches);
+                    $yearList = [];
                     if (isset($matches[1])) {
                         $year = $matches[1];
-                        echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
+                        $yearList[] = $year;
                     }
+                    // add $directoriesName to $yearList
+                    $yearList = array_merge($yearList, $directoriesName);
+                    // Remove duplicates
+                    $yearList = array_unique($yearList);
+                    // Sort the years in descending order
+                    rsort($yearList);
+                }
+                // Display the year options
+                foreach ($yearList as $year) {
+                    echo "<option value=\"$year\" " . ($year == $selectedYear ? 'selected' : '') . ">$year</option>";
                 }
                 ?>
             </select>

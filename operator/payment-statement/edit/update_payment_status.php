@@ -146,6 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'so_hoa_don' => $soHoaDon,
           'expense_payee' => $_POST['expense_payee'][$i],
           'expense_doc' => $_POST['expense_doc'][$i],
+          'expense_vat' => $_POST['expense_vat'][$i],
           'expense_files' => $expenseFiles, // Store all uploaded files for this expense
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => true,
@@ -159,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'so_hoa_don' => $soHoaDon,
           'expense_payee' => $_POST['expense_payee'][$i],
           'expense_doc' => $_POST['expense_doc'][$i],
+          'expense_vat' => $_POST['expense_vat'][$i],
           'expense_files' => $expenseFiles, // Store all uploaded files for this expense
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => false,
@@ -177,13 +179,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   $entry['expenses'] = $newExpenses;
 
-  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl', 'customUnit'];
+  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl', 'customUnit', 'expense_vat'];
 
   // Additional fields
   foreach ($_POST as $key => $value) {
     if ($key == "leader" || $key == "sale" || $key == "approval_status" || $key == "message" || $key == "instruction_no") {
       continue;
-    } elseif (!in_array($key, $fieldIgnore)) {
+    } elseif (!in_array($key, $fieldIgnore) && strpos($key, 'customUnit') === false) {
       $entry[$key] = is_array($value) ? $value : trim($value);
     }
   }
@@ -192,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Extract custom fields
   $customFieldNames = $_POST['customFieldName'] ?? [];
   $customFields = $_POST['customField'] ?? [];
-  $customUnits = $_POST['customUnit'] ?? [];
+  // $customUnits = $_POST['customUnit'] ?? [];
   $customVats = $_POST['customVat'] ?? [];
   $customContSetRadios = $_POST['customContSet'] ?? [];
   $customIncl = $_POST['customIncl'] ?? [];
@@ -206,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   foreach ($customFieldNames as $index => $name) {
     $newValue = (float)str_replace('.', '', $customFields[$index]);
-    $newUnit = $customUnits[$index] ?? '';
+    $newUnit = $_POST['customUnit_'.($index+1)] ?? '';
     $newVat = $customVats[$index] ?? '';
     $newContSet = isset($customContSetRadios[$index]) && $customContSetRadios[$index] === 'cont' ? 'cont' : 'set';
     $newIncl = $customIncl[$index] ?? '';
