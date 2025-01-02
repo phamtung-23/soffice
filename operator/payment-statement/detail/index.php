@@ -22,12 +22,12 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 $data = null;
 
 // Define the path to the JSON file
-$filePath = '../../../database/payment_' . $year . '.json';
+// $filePath = '../../../database/payment_' . $year . '.json';
 $filePathUser = '../../../database/users.json';
 
 if ($instructionNo !== null) {
   // Load and decode JSON data
-  $jsonData = json_decode(file_get_contents($filePath), true);
+  // $jsonData = json_decode(file_get_contents($filePath), true);
   $jsonDataUser = json_decode(file_get_contents($filePathUser), true);
 
 

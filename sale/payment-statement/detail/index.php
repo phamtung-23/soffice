@@ -367,11 +367,11 @@ if ($instructionNo !== null) {
                 <input type="text" class="form-control" name="customUnit[]" placeholder="VND" value="<?= $customField['unit'] ?? '' ?>">
               </div> -->
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_VND" value="VND" <?= $customField['unit'] == 'VND' ? 'checked' : '' ?>>
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_VND" value="VND" <?= $customField['unit'] == 'VND' ? 'checked' : '' ?> disabled>
                 <label class="form-check-label" for="customUnit_1_VND">VND</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_USD" value="USD" <?= $customField['unit'] == 'USD' ? 'checked' : '' ?>>
+                <input class="form-check-input" type="radio" name="customUnit_<?= $index + 1 ?>" id="customUnit_1_USD" value="USD" <?= $customField['unit'] == 'USD' ? 'checked' : '' ?> disabled>
                 <label class="form-check-label" for="customUnit_1_USD">USD</label>
               </div>
             </div>
@@ -483,14 +483,14 @@ if ($instructionNo !== null) {
             <tr>
               <td colspan="2" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="updateAmountText(this)" disabled></td>
-              <td colspan="2">
-                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" disabled>
-              </td>
               <td>
                 RECEIVED BACK ON: <input type="text" class="form-control" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
               <td colspan="2">
                 BY: <input type="text" class="form-control" value="<?= $data['by'] ?>" disabled>
+              </td>
+              <td colspan="2">
+                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" value="<?= $data['ops_total'] ?>" disabled>
               </td>
             </tr>
           </tfoot>
@@ -669,69 +669,69 @@ if ($instructionNo !== null) {
       menu.classList.toggle("responsive");
     }
 
-    // ========== UPDATE EXPENSE AMOUNTS FOR OPS PAYEES ==========
-    function updateAmountText(currentInput) {
-      const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
-      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-    }
+    // // ========== UPDATE EXPENSE AMOUNTS FOR OPS PAYEES ==========
+    // function updateAmountText(currentInput) {
+    //   const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
+    //   currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    // }
 
-    const soTienInput = document.getElementById('ops_total');
+    // const soTienInput = document.getElementById('ops_total');
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize the total amount for "ops" payees
-      updateTotalOpsAmount();
+    // document.addEventListener('DOMContentLoaded', function() {
+    //   // Initialize the total amount for "ops" payees
+    //   updateTotalOpsAmount();
 
-      // Initialize `data-prev-value` for all `expense-payee` inputs
-      document.querySelectorAll('.expense-payee').forEach(payeeInput => {
-        payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
-      });
-    });
+    //   // Initialize `data-prev-value` for all `expense-payee` inputs
+    //   document.querySelectorAll('.expense-payee').forEach(payeeInput => {
+    //     payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
+    //   });
+    // });
 
-    document.addEventListener('input', function(event) {
-      if (event.target.classList.contains('expense-amount')) {
-        updateAmountText(event.target); // Format the input value
-        updateTotalOpsAmount(); // Recalculate the total
-      }
+    // document.addEventListener('input', function(event) {
+    //   if (event.target.classList.contains('expense-amount')) {
+    //     updateAmountText(event.target); // Format the input value
+    //     updateTotalOpsAmount(); // Recalculate the total
+    //   }
 
-      if (event.target.classList.contains('expense-payee')) {
-        handlePayeeChange(event.target);
-      }
-    });
+    //   if (event.target.classList.contains('expense-payee')) {
+    //     handlePayeeChange(event.target);
+    //   }
+    // });
 
-    function updateTotalOpsAmount() {
-      const rows = document.querySelectorAll('.tableBody tr');
-      let totalOpsAmount = 0;
+    // function updateTotalOpsAmount() {
+    //   const rows = document.querySelectorAll('.tableBody tr');
+    //   let totalOpsAmount = 0;
 
-      rows.forEach(row => {
-        const amountInput = row.querySelector('.expense-amount');
-        const payeeInput = row.querySelector('.expense-payee');
+    //   rows.forEach(row => {
+    //     const amountInput = row.querySelector('.expense-amount');
+    //     const payeeInput = row.querySelector('.expense-payee');
 
-        if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
-          const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
-          totalOpsAmount += amount;
-        }
-      });
+    //     if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
+    //       const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
+    //       totalOpsAmount += amount;
+    //     }
+    //   });
 
-      // console.log('Total expense amount for payee "ops":', totalOpsAmount);
-      soTienInput.value = formatNumber(totalOpsAmount.toString());
-    }
+    //   // console.log('Total expense amount for payee "ops":', totalOpsAmount);
+    //   soTienInput.value = formatNumber(totalOpsAmount.toString());
+    // }
 
-    function handlePayeeChange(payeeInput) {
-      const row = payeeInput.closest('tr');
-      const amountInput = row.querySelector('.expense-amount');
-      const previousValue = payeeInput.getAttribute('data-prev-value') || '';
-      const newValue = payeeInput.value.trim().toLowerCase();
-      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
+    // function handlePayeeChange(payeeInput) {
+    //   const row = payeeInput.closest('tr');
+    //   const amountInput = row.querySelector('.expense-amount');
+    //   const previousValue = payeeInput.getAttribute('data-prev-value') || '';
+    //   const newValue = payeeInput.value.trim().toLowerCase();
+    //   const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
 
-      if (previousValue === 'ops' && newValue !== 'ops') {
-        updateTotalOpsAmount(); // Recalculate after removing 'ops'
-      } else if (previousValue !== 'ops' && newValue === 'ops') {
-        updateTotalOpsAmount(); // Recalculate after adding 'ops'
-      }
+    //   if (previousValue === 'ops' && newValue !== 'ops') {
+    //     updateTotalOpsAmount(); // Recalculate after removing 'ops'
+    //   } else if (previousValue !== 'ops' && newValue === 'ops') {
+    //     updateTotalOpsAmount(); // Recalculate after adding 'ops'
+    //   }
 
-      // Update the previous value
-      payeeInput.setAttribute('data-prev-value', newValue);
-    }
+    //   // Update the previous value
+    //   payeeInput.setAttribute('data-prev-value', newValue);
+    // }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

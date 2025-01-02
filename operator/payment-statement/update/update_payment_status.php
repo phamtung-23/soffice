@@ -147,6 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'expense_payee' => $_POST['expense_payee'][$i],
           'expense_doc' => $_POST['expense_doc'][$i],
           'expense_vat' => $_POST['expense_vat'][$i],
+          'expense_ops' => $_POST['expense_ops'][$i] ?? $entry['expenses'][$i]['expense_ops'] ?? "",
           'expense_files' => $expenseFiles, // Store all uploaded files for this expense
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => true,
@@ -161,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'expense_payee' => $_POST['expense_payee'][$i],
           'expense_doc' => $_POST['expense_doc'][$i],
           'expense_vat' => $_POST['expense_vat'][$i],
+          'expense_ops' => $_POST['expense_ops'][$i] ?? $entry['expenses'][$i]['expense_ops'] ?? "",
           'expense_files' => $expenseFiles, // Store all uploaded files for this expense
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => false,

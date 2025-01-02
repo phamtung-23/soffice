@@ -1,4 +1,9 @@
 <?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies.
+
+// Start the session
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
@@ -448,6 +453,7 @@ if ($instructionNo !== null) {
               <th scope="col" rowspan="2" class="align-middle">Upload file</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
               <th scope="col" rowspan="2" class="align-middle">Action</th>
+              <th scope="col" rowspan="2" class="align-middle">OPS Total</th>
             </tr>
             <tr>
               <th>Actual</th>
@@ -489,6 +495,7 @@ if ($instructionNo !== null) {
                 }
                 ?>
                 <td class="align-middle"></td>
+                <td class="text-center align-middle"><input type="checkbox" class="select-expense form-check-input" name="expense_ops[]" onchange="updateOpsTotal()"></td>
               </tr>
             <?php
             }
@@ -497,7 +504,7 @@ if ($instructionNo !== null) {
             <!-- Additional rows as needed -->
           <tfoot>
             <tr>
-              <td colspan="10" class="text-center">
+              <td colspan="11" class="text-center">
                 <button type="button" class="btn btn-secondary w-100" onclick="addRow()">Add Row</button>
               </td>
             </tr>
@@ -505,12 +512,13 @@ if ($instructionNo !== null) {
               <td colspan="2" class="text-end">TOTAL</td>
               <td colspan="2"><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" oninput="updateAmountText(this)"></td>
               <td colspan="2">
-                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total"></td>
-              <td colspan="2">
                 RECEIVED BACK ON: <input type="text" class="form-control" value="<?= $data['received_back_on'] ?>">
               </td>
               <td colspan="2">
                 BY: <input type="text" class="form-control" value="<?= $data['by'] ?>">
+              </td>
+              <td colspan="3">
+                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" value="<?= $data['ops_total'] ?>" disabled>
               </td>
             </tr>
           </tfoot>
@@ -617,6 +625,16 @@ if ($instructionNo !== null) {
       );
     });
 
+    // Calculate OPS Total when checkbox is checked
+    function updateOpsTotal() {
+      let total = 0;
+      document.querySelectorAll('.select-expense:checked').forEach((checkbox) => {
+        const amount = parseFloat(checkbox.closest('tr').querySelector('.expense-amount').value.replace(/\./g, '')) || 0;
+        total += amount;
+      });
+      document.getElementById('ops_total').value = new Intl.NumberFormat('de-DE').format(total);
+    }
+
     function updateAmountText(currentInput) {
       //  Loại bỏ dấu cham '.' trong số
       let advanceAmount = currentInput.value.replace(/\./g, '');
@@ -627,6 +645,9 @@ if ($instructionNo !== null) {
         return;
       }
       currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+      
+      // Update OPS Total
+      updateOpsTotal();
     }
 
     function handleRejectPayment() {
@@ -729,10 +750,12 @@ if ($instructionNo !== null) {
         // disable the submit button
         trinhKiBtn.disabled = true;
 
+        const opsTotal = document.getElementById('ops_total').value;
 
         // get data from form
         const formData = new FormData(updateForm);
         formData.append('is_update', isUpdate);
+        formData.append('ops_total', opsTotal);
         // const data = Object.fromEntries(formData.entries());
 
         // // handle submit
@@ -887,6 +910,8 @@ if ($instructionNo !== null) {
         <td class="align-middle">
           <button onclick="deleteRow(this)"><i class="ph ph-trash"></i></button>
         </td>
+        <td class="text-center align-middle"><input type="checkbox" class="select-expense form-check-input" name="expense_ops[]" onchange="updateOpsTotal()">
+        </td>
       `;
       tableBody.appendChild(newRow);
     }
@@ -987,69 +1012,69 @@ if ($instructionNo !== null) {
       }
     }
 
-    // ========== UPDATE EXPENSE AMOUNTS FOR OPS PAYEES ==========
-    function updateAmountText(currentInput) {
-      const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
-      currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-    }
+    // // ========== UPDATE EXPENSE AMOUNTS FOR OPS PAYEES ==========
+    // function updateAmountText(currentInput) {
+    //   const advanceAmount = currentInput.value.replace(/\./g, ""); // Loại bỏ dấu phẩy
+    //   currentInput.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
+    // }
 
-    const soTienInput = document.getElementById('ops_total');
+    // const soTienInput = document.getElementById('ops_total');
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize the total amount for "ops" payees
-      updateTotalOpsAmount();
+    // document.addEventListener('DOMContentLoaded', function() {
+    //   // Initialize the total amount for "ops" payees
+    //   updateTotalOpsAmount();
 
-      // Initialize `data-prev-value` for all `expense-payee` inputs
-      document.querySelectorAll('.expense-payee').forEach(payeeInput => {
-        payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
-      });
-    });
+    //   // Initialize `data-prev-value` for all `expense-payee` inputs
+    //   document.querySelectorAll('.expense-payee').forEach(payeeInput => {
+    //     payeeInput.setAttribute('data-prev-value', payeeInput.value.trim().toLowerCase());
+    //   });
+    // });
 
-    document.addEventListener('input', function(event) {
-      if (event.target.classList.contains('expense-amount')) {
-        updateAmountText(event.target); // Format the input value
-        updateTotalOpsAmount(); // Recalculate the total
-      }
+    // document.addEventListener('input', function(event) {
+    //   if (event.target.classList.contains('expense-amount')) {
+    //     updateAmountText(event.target); // Format the input value
+    //     updateTotalOpsAmount(); // Recalculate the total
+    //   }
 
-      if (event.target.classList.contains('expense-payee')) {
-        handlePayeeChange(event.target);
-      }
-    });
+    //   if (event.target.classList.contains('expense-payee')) {
+    //     handlePayeeChange(event.target);
+    //   }
+    // });
 
-    function updateTotalOpsAmount() {
-      const rows = document.querySelectorAll('.tableBody tr');
-      let totalOpsAmount = 0;
+    // function updateTotalOpsAmount() {
+    //   const rows = document.querySelectorAll('.tableBody tr');
+    //   let totalOpsAmount = 0;
 
-      rows.forEach(row => {
-        const amountInput = row.querySelector('.expense-amount');
-        const payeeInput = row.querySelector('.expense-payee');
+    //   rows.forEach(row => {
+    //     const amountInput = row.querySelector('.expense-amount');
+    //     const payeeInput = row.querySelector('.expense-payee');
 
-        if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
-          const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
-          totalOpsAmount += amount;
-        }
-      });
+    //     if (payeeInput && payeeInput.value.trim().toLowerCase() === 'ops') {
+    //       const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0; // Strip commas for calculation
+    //       totalOpsAmount += amount;
+    //     }
+    //   });
 
-      // console.log('Total expense amount for payee "ops":', totalOpsAmount);
-      soTienInput.value = formatNumber(totalOpsAmount.toString());
-    }
+    //   // console.log('Total expense amount for payee "ops":', totalOpsAmount);
+    //   soTienInput.value = formatNumber(totalOpsAmount.toString());
+    // }
 
-    function handlePayeeChange(payeeInput) {
-      const row = payeeInput.closest('tr');
-      const amountInput = row.querySelector('.expense-amount');
-      const previousValue = payeeInput.getAttribute('data-prev-value') || '';
-      const newValue = payeeInput.value.trim().toLowerCase();
-      const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
+    // function handlePayeeChange(payeeInput) {
+    //   const row = payeeInput.closest('tr');
+    //   const amountInput = row.querySelector('.expense-amount');
+    //   const previousValue = payeeInput.getAttribute('data-prev-value') || '';
+    //   const newValue = payeeInput.value.trim().toLowerCase();
+    //   const amount = parseFloat(amountInput.value.replace(/\./g, '')) || 0;
 
-      if (previousValue === 'ops' && newValue !== 'ops') {
-        updateTotalOpsAmount(); // Recalculate after removing 'ops'
-      } else if (previousValue !== 'ops' && newValue === 'ops') {
-        updateTotalOpsAmount(); // Recalculate after adding 'ops'
-      }
+    //   if (previousValue === 'ops' && newValue !== 'ops') {
+    //     updateTotalOpsAmount(); // Recalculate after removing 'ops'
+    //   } else if (previousValue !== 'ops' && newValue === 'ops') {
+    //     updateTotalOpsAmount(); // Recalculate after adding 'ops'
+    //   }
 
-      // Update the previous value
-      payeeInput.setAttribute('data-prev-value', newValue);
-    }
+    //   // Update the previous value
+    //   payeeInput.setAttribute('data-prev-value', newValue);
+    // }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -1,4 +1,7 @@
 <?php
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies.
 session_start();
 
 // Kiểm tra nếu người dùng đã đăng nhập, thì tiếp tục trang, nếu không thì chuyển hướng về trang login
@@ -503,6 +506,7 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
               <th scope="col" rowspan="2" class="align-middle">Doc. No.</th>
               <th scope="col" rowspan="2" class="align-middle">VAT</th>
               <th scope="col" rowspan="2" class="align-middle">Attachment</th>
+              <th scope="col" rowspan="2" class="align-middle">OPS Total</th>
               <th scope="col" rowspan="2" class="align-middle" style="width: 80px;">Chi tiền</th>
             </tr>
             <tr>
@@ -541,8 +545,9 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
                   }
                   ?>
                 </td>
-                <td>
-                  <input class="form-check-input payee-checkbox" style="width: 25px; height: 25px;" type="checkbox" name="chi_tien[]" />
+                <td class="text-center align-middle"><input type="checkbox" class="select-expense form-check-input" name="expense_ops[]" <?= $expense['expense_ops'] == 'on' ? 'checked' : '' ?> disabled></td>
+                <td class="text-center align-middle">
+                  <input class="form-check-input payee-checkbox" type="checkbox" name="chi_tien[]" />
                 </td>
               </tr>
             <?php
@@ -555,13 +560,15 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
               <td colspan="2" class="text-end">TOTAL</td>
               <td><input type="text" name="total_actual" id="total_actual" class="form-control" value="<?= $data['total_actual'] ?>" disabled></td>
               <td colspan="2">
-              OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" value="<?= $data['ops_total'] ?>" disabled></td>
-              <td colspan="2">
                 RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on" value="<?= $data['received_back_on'] ?>" disabled>
               </td>
               <td colspan="2">
                 BY: <input type="text" class="form-control" name="by" value="<?= $data['by'] ?>" disabled>
               </td>
+              <td colspan="2">
+                OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total" value="<?= $data['ops_total'] ?>" disabled>
+              </td>
+              <td></td>
             </tr>
           </tfoot>
 
@@ -745,11 +752,27 @@ echo "<script>const grouped_totals_data = " . json_encode($grouped_totals_data) 
       }, false)
     })
 
-    const soTienDoc = document.getElementById('soTien');
-    const advanceAmount = soTienDoc.value;
-    soTienDoc.value = formatNumber(advanceAmount); // Chèn dấu phẩy vào số
-    const advanceAmountText = convertNumberToTextVND(advanceAmount);
-    document.getElementById('soTienBangChu').value = advanceAmountText;
+    const soTienInput = document.getElementById('soTien');
+    const soTienBangChuInput = document.getElementById('soTienBangChu');
+    const opsTotal = document.getElementById('ops_total');
+
+    // Calculate OPS Total when checkbox is checked
+    function updateOpsTotal() {
+      let total = 0;
+      document.querySelectorAll('.select-expense:checked').forEach((checkbox) => {
+        const amount = parseFloat(checkbox.closest('tr').querySelector('.expense-amount').value.replace(/\./g, '')) || 0;
+        total += amount;
+      });
+      opsTotal.value = new Intl.NumberFormat('de-DE').format(total);
+      soTienInput.value = new Intl.NumberFormat('de-DE').format(total);
+      const totalOpsAmountText = convertNumberToTextVND(total);
+      soTienBangChuInput.value = totalOpsAmountText;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the total amount for "ops" payees
+      updateOpsTotal();
+    });
 
     // Toggle the responsive class to show/hide the menu
     function toggleMenu() {

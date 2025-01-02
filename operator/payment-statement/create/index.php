@@ -461,7 +461,7 @@ $directorData = current(array_filter($users, fn($user) => $user['role'] == 'dire
                 </td>
                 <td></td>
                 <td>
-                  OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total">
+                  <!-- OPS TOTAL: <input type="text" class="form-control" name="ops_total" id="ops_total"> -->
                 </td>
                 <td colspan="2">
                   RECEIVED BACK ON: <input type="text" class="form-control" name="received_back_on">

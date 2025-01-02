@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
           'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
           'expense_vat' => $_POST['expense_vat'][$i] ?? $entry['expenses'][$i]['expense_vat'] ?? "",
+          'expense_ops' => $_POST['expense_ops'][$i] ?? $entry['expenses'][$i]['expense_ops'] ?? "",
           'expense_files' => $expenseFile,
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => true,
@@ -78,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           'expense_payee' => $_POST['expense_payee'][$i] ?? $entry['expenses'][$i]['expense_payee'] ?? "",
           'expense_doc' => $_POST['expense_doc'][$i] ?? $entry['expenses'][$i]['expense_doc'] ?? "",
           'expense_vat' => $_POST['expense_vat'][$i] ?? $entry['expenses'][$i]['expense_vat'] ?? "",
+          'expense_ops' => $_POST['expense_ops'][$i] ?? $entry['expenses'][$i]['expense_ops'] ?? "",
           'expense_files' => $expenseFile,
           'expense_amount_old' => $entry['expenses'][$i]['expense_amount_old'] ?? $entry['expenses'][$i]['expense_amount'] ?? 0,
           'is_update' => $entry['expenses'][$i]['is_update'] ?? false,
@@ -95,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   $entry['expenses'] = $newExpenses;
 
-  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl', 'customUnit', 'expense_vat'];
+  $fieldIgnore = ['expense_kind', 'expense_amount', 'so_hoa_don', 'expense_payee', 'expense_doc', 'customFieldName', 'customField', 'customVat', 'customContSet', 'customIncl', 'customExcl', 'customUnit', 'expense_vat', 'expense_ops'];
 
   // Additional fields
   foreach ($_POST as $key => $value) {
