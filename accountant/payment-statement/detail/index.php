@@ -528,7 +528,7 @@ if ($instructionNo !== null) {
                   }
                   ?>
                 </td>
-                <td class="text-center align-middle"><input type="checkbox" class="select-expense form-check-input" name="expense_ops[]" <?= $expense['expense_ops'] == 'on' ? 'checked' : '' ?> disabled></td>
+                <td class="text-center align-middle"><input type="checkbox" class="select-expense form-check-input" name="expense_ops[]" <?= (isset($expense['expense_ops']) && $expense['expense_ops'] == 'on') ? 'checked' : '' ?> disabled></td>
                 <!-- <td>
                   <input class="form-check-input payee-checkbox" style="width: 25px; height: 25px;" type="checkbox" name="chi_tien[]" />
                 </td> -->

@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'accountant') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -14,7 +14,7 @@ $fullName = $_SESSION['full_name'];
 $userEmail = $_SESSION['user_id']; // operator_email matches user_id
 
 // Read JSON files in the directory
-$files = glob('../database/payment_*.json');
+// $files = glob('../database/payment_*.json');
 $selectedYear = date('Y');
 
 // If a year is selected, update the year
@@ -23,7 +23,6 @@ if (isset($_POST['year'])) {
 }
 
 // Read data from the selected JSON file
-// $file = "../database/payment_$selectedYear.json";
 $directory = "../../../private_data/soffice_database/payment/data/$selectedYear";
 
 $resData =  getAllDataFiles($directory);
@@ -31,10 +30,13 @@ $filteredRequests = [];
 if ($resData['status'] === 'success') {
   $requests = $resData['data'];
   // Filter requests to only those matching the operator's email
-  $filteredRequests = array_filter($requests, function ($request) use ($userEmail) {
-    return $request['approval'][1]['email'] === $userEmail;
-  });
+  foreach ($requests as $request) {
+    if ($request['approval'][3]['status'] === 'approved') {
+      $filteredRequests[] = $request;
+    }
+  }
 }
+
 
 $directoriesName = getDirectories('../../../private_data/soffice_database/payment/data');
 
@@ -412,9 +414,10 @@ function getApprovalStatus($item)
     <div class='icon'>
       <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
     </div>
-    <a href="./index.php">Home</a>
-    <!-- <a href="all_request.php">Danh sách phiếu tạm ứng</a> -->
-    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
+    <a href="index.php">Home</a>
+    <a href="all_request.php">Quản lý phiếu tạm ứng</a>
+    <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="finance.php">Quản lý tài chính</a>
     <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
@@ -426,7 +429,7 @@ function getApprovalStatus($item)
     </div>
 
     <div class="content">
-      <h2>Danh sách các phiếu đề nghị thanh toán</h2>
+      <h2>Báo cáo thanh toán</h2>
 
       <!-- Year Selection -->
       <form method="POST">
@@ -440,27 +443,33 @@ function getApprovalStatus($item)
         </select>
       </form>
 
+      <div style="margin-top: 10px; margin-bottom: 10px; gap: 10px; display: flex; flex-direction: row;">
+        <div>
+          <label for="min">Từ ngày:</label>
+          <input type="date" id="min" name="min">
+        </div>
+        <div>
+          <label for="max">Đến ngày:</label>
+          <input type="date" id="max" name="max">
+        </div>
+      </div>
+
       <!-- Data Table -->
       <table id="requestsTable" class="display">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Họ tên operator</th>
-            <th>Khách hàng</th>
-            <th>Số tờ khai</th>
-            <th>Số tiền thanh toán (VNĐ)</th>
-            <th>Thời gian gửi yêu cầu</th>
-            <th>Thời gian Leader duyệt</th>
-            <th>Thời gian Sale duyệt</th>
-            <th>Thời gian Giám đốc duyệt</th>
-            <th>Thời gian kế toán duyệt</th>
-            <th>Trạng thái</th>
-            <th>Phiếu đã duyệt</th>
-            <th>Action</th>
+            <th>Chi tiết</th>
+            <th>Ngày bắt đầu</th>
+            <th>Số file</th>
+            <th>Hóa đơn</th>
+            <th>OPS</th>
+            <th>Số tiền</th>
+            <th></th>
           </tr>
           <tr>
             <!-- Add search inputs for each column -->
-            <?php for ($i = 0; $i < 13; $i++): ?>
+            <?php for ($i = 0; $i < 8; $i++): ?>
               <th><input type="text" placeholder="Tìm kiếm" /></th>
             <?php endfor; ?>
           </tr>
@@ -469,57 +478,44 @@ function getApprovalStatus($item)
           <?php
           $totalAmount = 0; // Initialize total amount
           if (!empty($filteredRequests)) {
+            $index = 0;
             foreach ($filteredRequests as $request) {
-              echo "<tr>";
-              echo "<td>" . $request['instruction_no'] . "</td>";
-              echo "<td>" . $request['operator_name'] . "</td>";
-              echo "<td>" . $request['shipper'] . "</td>";
-              echo "<td>" . $request['customs_manifest_on'] . "</td>";
-              echo "<td>" . (!empty($request['amount']) ? number_format($request['amount']) : "") . "</td>";
-              echo "<td>" . (!empty($request['created_at']) ? date("d/m/Y", strtotime($request['created_at'])) : "") . "</td>";
-              echo "<td>" . (!empty($request['approval'][0]['time']) ? date("d/m/Y", strtotime($request['approval'][0]['time'])) : "") . "</td>";
-              echo "<td>" . (!empty($request['approval'][1]['time']) ? date("d/m/Y", strtotime($request['approval'][1]['time'])) : "") . "</td>";
-              echo "<td>" . (!empty($request['approval'][2]['time']) ? date("d/m/Y", strtotime($request['approval'][2]['time'])) : "") . "</td>";
-              echo "<td>" . (!empty($request['approval'][3]['time']) ? date("d/m/Y", strtotime($request['approval'][3]['time'])) : "") . "</td>";
-              echo "<td>" . getApprovalStatus($request) . "</td>";
-              if (!empty($request['file_path'])) {
-                echo "<td><a href=\"" . $request['file_path'] . "\" target=\"_blank\">Xem Phiếu</a></td>";
-              } else {
-                echo "<td></td>"; // Empty cell if there's no filename
-              }
-              echo '<td>';
-                if ($request['approval'][2]['status'] === 'rejected') {
-                  echo "<button style='background-color: #808080;
+              foreach ($request['expenses'] as $expense) {
+                if (isset($expense['expense_ops']) && $expense['expense_ops'] === 'on') {
+                  echo "<tr>";
+                  echo "<td>" . $index + 1 . "</td>";
+                  echo "<td>" . $request['shipper'] . "</td>";
+                  echo "<td>" . explode(" ", $request['created_at'])[0] . "</td>";
+                  echo "<td>" . $request['v_id'] . "</td>";
+                  echo "<td>" . ($expense['so_hoa_don'] ?? null) . "</td>";
+                  echo "<td>" . $request['operator_name'] . " - UNI</td>";
+                  echo "<td>" . number_format($expense['expense_amount'], 0, ',', '.') . "</td>";
+                  // Add button to show detail
+                  echo "<td style='text-align: center;'>";
+                  echo "<button style='background-color:#808080;
                       color: white;
-                      margin: 2px;
-                      border: none;
-                      border-radius: 5px;
-                      padding: 5px 10px;
-                      cursor: pointer;' 
-                    onclick='handleShowUpdate(" . $request['instruction_no'] . ")'>Chỉnh sửa</button>";
-                }
-                echo "<button style='background-color:#808080;
-                      color: white;
-                      margin: 2px;
                       border: none;
                       border-radius: 5px;
                       padding: 5px 10px;
                       cursor: pointer;' 
                     onclick='handleShowDetail(" . $request['instruction_no'] . ")'>Chi tiết</button>";
-              echo '</td>';
-              echo "</tr>";
+                  echo "</td>";
+                  echo "</tr>";
+                  $index++;
+                }
+              }
               // Add to total amount
               $totalAmount = !empty($request['amount']) ? $totalAmount + $request['amount'] : $totalAmount;
             }
           } else {
-            echo "<tr><td colspan='15'>Không có yêu cầu nào.</td></tr>";
+            echo "<tr><td colspan='7'>Không có yêu cầu nào.</td></tr>";
           }
 
           ?>
         </tbody>
       </table>
       <tr>
-        <td colspan="6" style="text-align: right;"><strong>Tổng số tiền đã được duyệt (VNĐ):</strong></td>
+        <td colspan="6" style="text-align: right;"><strong>Tổng số tiền thanh toán (VNĐ):</strong></td>
         <td><strong id="totalAmount">0</strong></td>
         <td colspan="6"></td> <!-- Empty cells to align with the table structure -->
       </tr>
@@ -553,6 +549,7 @@ function getApprovalStatus($item)
 
   <script>
     $(document).ready(function() {
+
       // Initialize DataTable with individual column search
       var table = $('#requestsTable').DataTable({
         "language": {
@@ -576,24 +573,78 @@ function getApprovalStatus($item)
         });
       });
 
+      // Listen for changes in min and max date inputs
+      $('#min, #max').on('change', function() {
+        reRenderTable();
+      });
+
+      // Function to re-render table rows based on selected date range
+      function reRenderTable() {
+        let minDate = new Date($('#min').val());
+        let maxDate = new Date($('#max').val());
+
+        // Clear the table
+        table.clear();
+
+        // Iterate through PHP data passed as JSON (filteredRequests)
+        <?php if (!empty($filteredRequests)) : ?>
+          const requests = <?= json_encode($filteredRequests) ?>;
+          let index = 0;
+          requests.forEach((request) => {
+            request.expenses.forEach((expense) => {
+              if (expense.expense_ops === 'on') {
+                let rowDate = new Date(request.created_at);
+                // Check if the row date is within the selected range
+                if (
+                  (isNaN(minDate.getTime()) || rowDate >= minDate) &&
+                  (isNaN(maxDate.getTime()) || rowDate <= maxDate)
+                ) {
+                  index++;
+                  // Add the row back to the table
+                  table.row.add([
+                    index,
+                    request.shipper,
+                    request.created_at,
+                    request.v_id,
+                    expense.so_hoa_don ?? '',
+                    `${request.operator_name} - UNI`,
+                    parseFloat(expense.expense_amount).toLocaleString('DE-de'),
+                    `<button style="background-color:#808080; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;" onclick="handleShowDetail(${request.instruction_no})">Chi tiết</button>`
+                  ]);
+                }
+              }
+            });
+          });
+        <?php endif; ?>
+
+        // Redraw the table
+        table.draw();
+
+        // Recalculate the total amount
+        calculateTotal();
+      }
 
       // Initial total calculation
       calculateTotal();
     });
 
-    // Hàm để lấy năm từ dropdown
-    function getSelectedYear() {
-      const yearSelect = document.getElementById('year');
-      return yearSelect.value;
-    }
+    // Function to filter table rows by date range
+    function filterByDate() {
+      let minDate = new Date($('#min').val());
+      let maxDate = new Date($('#max').val());
+      let rows = $('#requestsTable tbody tr');
 
-    function handleShowUpdate(instructionNo) {
-      const year = getSelectedYear();
-      window.location.href = `./payment-statement/update?instruction_no=${instructionNo}&year=${year}&update=true`;
-    }
-    function handleShowDetail(instructionNo) {
-      const year = getSelectedYear();
-      window.location.href = `./payment-statement/detail?instruction_no=${instructionNo}&year=${year}&update=true`;
+      rows.each(function() {
+        let rowDate = new Date($(this).find('td:nth-child(3)').text()); // Adjust index for the 'Start date' column
+        if (
+          (!isNaN(minDate) && rowDate < minDate) ||
+          (!isNaN(maxDate) && rowDate > maxDate)
+        ) {
+          $(this).hide(); // Hide rows outside the date range
+        } else {
+          $(this).show(); // Show rows within the date range
+        }
+      });
     }
 
     // Toggle the responsive class to show/hide the menu
@@ -613,10 +664,10 @@ function getApprovalStatus($item)
       for (let i = 1; i < tr.length; i++) { // Start from 1 to skip the header
         if (tr[i].style.display !== 'none') { // Only consider visible rows
           // Get the "Số tiền xin tạm ứng (VNĐ)" column
-          let amountCell1 = tr[i].getElementsByTagName('td')[4]; // Adjust index for "Số tiền xin tạm ứng (VNĐ)"
+          let amountCell1 = tr[i].getElementsByTagName('td')[6]; // Adjust index for "Số tiền xin tạm ứng (VNĐ)"
           console.log(amountCell1);
           if (amountCell1) {
-            let amount = parseFloat(amountCell1.innerText.replace(/,/g, '')); // Remove commas for parsing
+            let amount = parseFloat(amountCell1.innerText.replace(/\./g, '')); // Remove commas for parsing
             totalAmount += isNaN(amount) ? 0 : amount; // Ensure valid number
           }
         }
@@ -626,6 +677,12 @@ function getApprovalStatus($item)
 
       // Update the total amount display
       document.getElementById('totalAmount').innerText = totalAmount.toLocaleString(); // Format for display
+    }
+
+    // Handle showing the detail of a request
+    function handleShowDetail(instructionNo) {
+      const year = <?= $selectedYear ?>;
+      window.location.href = `./payment-statement/detail?instruction_no=${instructionNo}&year=${year}`;
     }
   </script>
 

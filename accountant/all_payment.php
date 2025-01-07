@@ -205,7 +205,7 @@ function getApprovalStatus($item)
       min-width: 100px;
       /* Adjust based on content */
       word-wrap: break-word;
-      word-break: break-all;
+      /* word-break: break-all; */
       /* Ensures long words break within cell */
       white-space: normal;
       /* Allows text wrapping */
@@ -424,7 +424,16 @@ function getApprovalStatus($item)
     </div>
 
     <div class="content">
-      <h2>Danh sách các phiếu đề nghị thanh toán</h2>
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <h2>Danh sách các phiếu đề nghị thanh toán</h2>
+        </div>
+        <div>
+          <button style="padding: 10px; border: none; background-color: #4CAF50; color: white; border-radius: 5px;">
+            <a href="report_expense.php" style="padding: 10px; color: white;">Xem báo cáo</a>
+          </button>
+        </div>
+      </div>
 
       <!-- Year Selection -->
       <form method="POST">

@@ -208,7 +208,7 @@ function getApprovalStatus($item)
       min-width: 100px;
       /* Adjust based on content */
       word-wrap: break-word;
-      word-break: break-all;
+      /* word-break: break-all; */
       /* Ensures long words break within cell */
       white-space: normal;
       /* Allows text wrapping */
