@@ -116,10 +116,10 @@ $paymentDataStatus = $paymentDataStatusRes['data'];
 $filePathPayment = "../../../private_data/soffice_database/payment/data/$selectedYear/";
 $paymentPendingData = [];
 foreach ($paymentDataStatus['pending_sale']['ids'] as $id) {
-  $filePathPaymentID = $filePathPayment . "payment_$id.json";
-  $paymentIdRes = getDataFromJson($filePathPaymentID);
-  $paymentId = $paymentIdRes['data'];
-  $paymentPendingData[] = $paymentId;
+    $filePathPaymentID = $filePathPayment . "payment_$id.json";
+    $paymentIdRes = getDataFromJson($filePathPaymentID);
+    $paymentId = $paymentIdRes['data'];
+    $paymentPendingData[] = $paymentId;
 }
 // filter paymentPendingData with leader email
 $paymentPendingData = array_filter($paymentPendingData, function ($item) use ($userEmail) {
@@ -436,6 +436,7 @@ $directoriesName = getDirectories('../../../private_data/soffice_database/paymen
         <a href="index.php">Home</a>
         <!-- <a href="all_request.php">Danh sách phiếu tạm ứng</a> -->
         <a href="all_payment.php">Danh sách phiếu thanh toán</a>
+        <a href="all_bookings.php">Booking container</a>
         <a href="../update_signature.php">Cập nhật hình chữ ký</a>
         <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
         <a href="../logout.php" class="logout">Đăng xuất</a>

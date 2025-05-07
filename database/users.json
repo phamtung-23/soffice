@@ -1,44 +1,58 @@
-{
-    "0": {
+[
+    {
         "fullname": "Sale 1",
         "email": "sale1@gmail.com",
         "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
         "phone": "15585997619",
         "role": "sale"
     },
-    "1": {
+    {
         "fullname": "Oper 1",
         "email": "oper1@gmail.com",
         "password": "$2y$10$vB.y.iTL45ZWirlKtpUztubaVPgfIpuK5AnNH0TxWC5ptwkQHtyri",
         "phone": "6944007336",
         "role": "operator"
     },
-    "2": {
+    {
         "fullname": "Leader 1",
         "email": "leader1@gmail.com",
         "password": "$2y$10$QbnD\/H\/63uWvvndSsSzP7.I2cIsApkWZMuOEAt8oNHo3zLfOBNGK6",
         "phone": "6944007336`",
         "role": "leader"
     },
-    "3": {
+    {
         "fullname": "Accountant",
         "email": "accountant@gmail.com",
         "password": "$2y$10$dMYaF0enJTwhkMuYTlmGmutLy0P4.TvZaqP2OOLY9vrhMfLXkfJ8m",
         "phone": "6944007336",
         "role": "accountant"
     },
-    "4": {
-        "fullname": "PH\u1ea0M TH\u1eca MY",
+    {
+        "fullname": "PHẠM THỊ MY",
         "email": "logistics06@uni-global.com",
         "password": "$2y$10$qmhHOZeIG3du7GPTPk.AM.Gl2g1KMSLsJ7azchZmkNm9ek1.oYsGq",
         "phone": "6944007336",
         "role": "operator"
     },
-    "5": {
+    {
         "fullname": "Director1",
         "email": "director@gmail.com",
         "password": "$2y$10$yzLv3iUdl\/FBLl0tK2jH\/OogtB2zUPxhPedsBG24D0.p9LxWV56PS",
         "phone": "6944007336",
         "role": "director"
+    },
+    {
+        "fullname": "PHạM THANH TùNG",
+        "email": "pttung23082001@gmail.com",
+        "password": "$2y$10$60RjVZrr6iA1UArbCc58Zes9lpm1\/FxlLt0TBAsfAlCqDYFMy4wO6",
+        "phone": "34234524",
+        "role": "operator"
+    },
+    {
+        "fullname": "PIC 1",
+        "email": "pic@gmail.com",
+        "password": "$2y$10$xyI.jctDlebnAs1mjoGrZ.fEKBWogUbFUcFU5mjqljA25fPlh2.8.",
+        "phone": "0359663439",
+        "role": "pic"
     }
-}
+]

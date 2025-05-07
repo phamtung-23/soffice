@@ -239,6 +239,82 @@ function getUserInfoById($userId, $filePath)
   }
 }
 
+// Get all users with a specific role
+function getUsersByRole($role, $filePath = '../database/users.json')
+{
+  // check if the file exists
+  if (!file_exists($filePath)) {
+    return ['status' => 'fail', 'message' => 'File not found'];
+  }
+
+  // read the file content
+  $jsonContent = file_get_contents($filePath);
+
+  // decode the JSON data
+  $data = json_decode($jsonContent, true);
+
+  // check for JSON decoding errors
+  if (json_last_error() !== JSON_ERROR_NONE) {
+    return ['status' => 'fail', 'message' => 'Error decoding JSON'];
+  }
+
+  // filter users by role
+  $filteredUsers = array_filter($data, function ($user) use ($role) {
+    return isset($user['role']) && $user['role'] === $role;
+  });
+
+  return ['status' => 'success', 'data' => array_values($filteredUsers)];
+}
+
+// Generate a unique booking number
+function generateBookingNumber() {
+  // Format: BKG + current year + 5 random digits
+  $year = date('Y');
+  $randomDigits = mt_rand(10000, 99999);
+  return "BKG{$year}{$randomDigits}";
+}
+
+// Generate a unique ID for any entity
+function generateUniqueId() {
+  return uniqid('', true); // Returns a prefixed unique identifier based on the current time in microseconds
+}
+
+// Save booking data in the appropriate yearly file
+function saveBookingData($bookingData) {
+  $year = date('Y');
+  $directory = '../database/bookings';
+  $fileName = "bookings_{$year}";
+  
+  // Ensure the directory exists
+  if (!is_dir($directory)) {
+    mkdir($directory, 0777, true);
+  }
+  
+  $filePath = $directory . '/' . $fileName . '.json';
+  
+  // Load existing data or initialize a new array
+  $bookings = [];
+  if (file_exists($filePath)) {
+    $fileContent = file_get_contents($filePath);
+    $bookings = json_decode($fileContent, true);
+    
+    // If there was an error decoding or it's not an array, initialize as empty array
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($bookings)) {
+      $bookings = [];
+    }
+  }
+  
+  // Add new booking to the array
+  $bookings[] = $bookingData;
+  
+  // Save data back to the file
+  if (file_put_contents($filePath, json_encode($bookings, JSON_PRETTY_PRINT))) {
+    return ['status' => 'success', 'data' => $bookingData];
+  } else {
+    return ['status' => 'fail', 'message' => 'Failed to save booking data'];
+  }
+}
+
 // update user by user id
 function updateUserInfoById($userId, $data, $filePath)
 {
