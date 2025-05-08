@@ -17,6 +17,12 @@ $userEmail = $_SESSION['user_id'];
 $successMessage = '';
 $errorMessage = '';
 
+// Create attachments directory if it doesn't exist
+$attachmentsDir = '../database/bookings/attachments';
+if (!is_dir($attachmentsDir)) {
+  mkdir($attachmentsDir, 0777, true);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Get form data
   $bookingNumber = $_POST['booking_number'] ?? '';
@@ -29,51 +35,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $etdEnd = $_POST['etd_end'] ?? '';
   $picId = $_POST['pic'] ?? '';
   $status = $_POST['status'] ?? 'pending';
+  $delayDate = $_POST['delay_date'] ?? '';
   $notes = $_POST['notes'] ?? '';
   
   // Generate a unique ID for this booking
   $uniqueId = generateUniqueId();
   
-  // Get PIC's name from id
-  $picName = '';
-  $picResult = getUsersByRole('pic');
-  if ($picResult['status'] === 'success') {
-    foreach ($picResult['data'] as $user) {
-      if ($user['email'] === $picId) {
-        $picName = $user['fullname'];
-        break;
+  // Handle file upload
+  $attachmentPath = '';
+  $hasAttachment = false;
+  
+  if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+    $allowedTypes = ['application/pdf'];
+    
+    $file = $_FILES['attachment'];
+    $fileType = $file['type'];
+    $fileName = $file['name'];
+    $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+    
+    // Validate file type
+    if (!in_array($fileType, $allowedTypes)) {
+      $errorMessage = 'Lỗi: Loại file không được hỗ trợ. Vui lòng sử dụng PDF.';
+    } else {
+      // Generate a unique filename to prevent duplicates
+      $newFilename = $uniqueId . '_' . date('Ymd') . '.' . $fileExt;
+      $uploadPath = $attachmentsDir . '/' . $newFilename;
+      
+      if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        $attachmentPath = 'attachments/' . $newFilename;
+        $hasAttachment = true;
+      } else {
+        $errorMessage = 'Lỗi: Không thể tải file lên. Vui lòng thử lại sau.';
       }
     }
   }
   
-  // Create booking data structure
-  $bookingData = [
-    'id' => $uniqueId,
-    'booking_number' => $bookingNumber,
-    'vessel_name' => $vesselName,
-    'voyage_number' => $voyageNumber,
-    'shipping_line' => $shippingLine,
-    'quantity' => $quantity,
-    'pod' => $pod,
-    'etd_start' => $etdStart,
-    'etd_end' => $etdEnd,
-    'sales' => $fullName,
-    'sales_email' => $userEmail,
-    'pic' => $picName,
-    'pic_email' => $picId,
-    'status' => $status,
-    'notes' => $notes,
-    'created_at' => date('Y-m-d H:i:s'),
-    'updated_at' => date('Y-m-d H:i:s')
-  ];
-  
-  // Save booking data
-  $saveResult = saveBookingData($bookingData);
-  
-  if ($saveResult['status'] === 'success') {
-    $successMessage = 'Đã tạo booking thành công với số: ' . $bookingNumber;
-  } else {
-    $errorMessage = 'Lỗi: ' . ($saveResult['message'] ?? 'Không thể tạo booking');
+  if (empty($errorMessage)) {
+    // Get PIC's name from id
+    $picName = '';
+    $picResult = getUsersByRole('pic');
+    if ($picResult['status'] === 'success') {
+      foreach ($picResult['data'] as $user) {
+        if ($user['email'] === $picId) {
+          $picName = $user['fullname'];
+          break;
+        }
+      }
+    }
+    
+    // Create booking data structure
+    $bookingData = [
+      'id' => $uniqueId,
+      'booking_number' => $bookingNumber,
+      'vessel_name' => $vesselName,
+      'voyage_number' => $voyageNumber,
+      'shipping_line' => $shippingLine,
+      'quantity' => $quantity,
+      'pod' => $pod,
+      'etd_start' => $etdStart,
+      'etd_end' => $etdEnd,
+      'sales' => $fullName,
+      'sales_email' => $userEmail,
+      'pic' => $picName,
+      'pic_email' => $picId,
+      'status' => $status,
+      'delay_date' => $delayDate,
+      'notes' => $notes,
+      'created_at' => date('Y-m-d H:i:s'),
+      'updated_at' => date('Y-m-d H:i:s')
+    ];
+    
+    // Add attachment path if a file was uploaded
+    if ($hasAttachment) {
+      $bookingData['attachment'] = $attachmentPath;
+    }
+    
+    // Save booking data
+    $saveResult = saveBookingData($bookingData);
+    
+    if ($saveResult['status'] === 'success') {
+      $successMessage = 'Đã tạo booking thành công với số: ' . $bookingNumber;
+    } else {
+      $errorMessage = 'Lỗi: ' . ($saveResult['message'] ?? 'Không thể tạo booking');
+    }
   }
 }
 
@@ -183,7 +227,8 @@ if ($picUsersResult['status'] === 'success') {
     input[type="text"],
     input[type="date"],
     select,
-    textarea {
+    textarea,
+    input[type="file"] {
       width: 100%;
       padding: 8px;
       border: 1px solid #ddd;
@@ -340,7 +385,7 @@ if ($picUsersResult['status'] === 'success') {
       </div>
       <?php endif; ?>
 
-      <form method="POST" action="" class="booking-form">
+      <form method="POST" action="" class="booking-form" enctype="multipart/form-data">
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
@@ -393,14 +438,14 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="etd_start">Ngày Khởi Hành Dự Kiến Từ (ETD) <span style="color: red;">*</span></label>
-              <input type="date" id="etd_start" name="etd_start" required>
+              <input type="text" id="etd_start" name="etd_start" placeholder="dd/mm/yyyy" required>
             </div>
           </div>
 
           <div class="form-col">
             <div class="form-group">
               <label for="etd_end">Đến Ngày <span style="color: red;">*</span></label>
-              <input type="date" id="etd_end" name="etd_end" required>
+              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" required>
             </div>
           </div>
         </div>
@@ -438,6 +483,23 @@ if ($picUsersResult['status'] === 'success') {
           </div>
           
           <div class="form-col">
+            <div class="form-group">
+              <label for="delay_date">Ngày Delay <span style="color: red;">*</span></label>
+              <input type="text" id="delay_date" name="delay_date" placeholder="dd/mm/yyyy" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="attachment">File Đính Kèm</label>
+              <input type="file" id="attachment" name="attachment" accept="application/pdf">
+              <small style="display: block; margin-top: 5px; color: #666;">Chỉ hỗ trợ định dạng PDF</small>
+            </div>
+          </div>
+          
+          <div class="form-col">
             <!-- Placeholder for layout balance -->
           </div>
         </div>
@@ -462,25 +524,138 @@ if ($picUsersResult['status'] === 'success') {
       menu.classList.toggle('responsive');
     }
     
-    // Validate that end date is not before start date
-    document.getElementById('etd_end').addEventListener('change', function() {
-      const startDate = document.getElementById('etd_start').value;
-      const endDate = this.value;
+    // Add date format validation and conversion
+    document.addEventListener('DOMContentLoaded', function() {
+      // Date input formatting for dd/mm/yyyy
+      const dateInputs = document.querySelectorAll('input[name="etd_start"], input[name="etd_end"], input[name="delay_date"]');
       
-      if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
-        alert("Ngày kết thúc không thể trước ngày bắt đầu.");
-        this.value = '';
-      }
+      dateInputs.forEach(input => {
+        // Add input validation
+        input.addEventListener('input', function(e) {
+          let value = e.target.value;
+          
+          // Remove any character that's not a number or slash
+          value = value.replace(/[^\d\/]/g, '');
+          
+          // Remove all slashes first
+          value = value.replace(/\//g, '');
+          
+          // Re-add slashes in the correct positions
+          if (value.length > 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2);
+          }
+          if (value.length > 5) {
+            value = value.substring(0, 5) + '/' + value.substring(5);
+          }
+          
+          // Limit the length to ensure we don't exceed dd/mm/yyyy format (10 chars)
+          if (value.length > 10) {
+            value = value.substring(0, 10);
+          }
+          
+          e.target.value = value;
+        });
+        
+        // Validate the date format when leaving the field
+        input.addEventListener('blur', function() {
+          const value = this.value;
+          if (!value) return; // Skip if empty
+          
+          // Check if the format is dd/mm/yyyy
+          const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+          if (!regex.test(value)) {
+            alert('Vui lòng nhập ngày theo định dạng dd/mm/yyyy (ví dụ: 15/05/2025)');
+            this.value = '';
+            return;
+          }
+          
+          const parts = value.split('/');
+          const day = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1; // JavaScript months are 0-11
+          const year = parseInt(parts[2], 10);
+          
+          // Create date object and check if it's valid
+          const date = new Date(year, month, day);
+          if (
+            date.getDate() !== day ||
+            date.getMonth() !== month ||
+            date.getFullYear() !== year ||
+            year < 2000 || 
+            year > 2100
+          ) {
+            alert('Ngày không hợp lệ. Vui lòng kiểm tra lại.');
+            this.value = '';
+          }
+        });
+      });
+      
+      // Handle form submission - convert dd/mm/yyyy to yyyy-mm-dd for server processing
+      document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const startDateInput = document.getElementById('etd_start');
+        const endDateInput = document.getElementById('etd_end');
+        const delayDateInput = document.getElementById('delay_date');
+        
+        if (startDateInput.value) {
+          const parts = startDateInput.value.split('/');
+          if (parts.length === 3) {
+            // Convert from dd/mm/yyyy to yyyy-mm-dd
+            const serverFormat = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            startDateInput.value = serverFormat;
+          }
+        }
+        
+        if (endDateInput.value) {
+          const parts = endDateInput.value.split('/');
+          if (parts.length === 3) {
+            // Convert from dd/mm/yyyy to yyyy-mm-dd
+            const serverFormat = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            endDateInput.value = serverFormat;
+          }
+        }
+        
+        if (delayDateInput.value) {
+          const parts = delayDateInput.value.split('/');
+          if (parts.length === 3) {
+            // Convert from dd/mm/yyyy to yyyy-mm-dd
+            const serverFormat = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            delayDateInput.value = serverFormat;
+          }
+        }
+        
+        this.submit();
+      });
     });
     
-    // Also check when changing start date
-    document.getElementById('etd_start').addEventListener('change', function() {
-      const startDate = this.value;
-      const endDate = document.getElementById('etd_end').value;
+    // Validate that end date is not before start date
+    document.getElementById('etd_end').addEventListener('change', function() {
+      const startDateInput = document.getElementById('etd_start');
+      const endDateInput = this;
       
-      if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+      if (!startDateInput.value || !endDateInput.value) return;
+      
+      const startParts = startDateInput.value.split('/');
+      const endParts = endDateInput.value.split('/');
+      
+      if (startParts.length !== 3 || endParts.length !== 3) return;
+      
+      // Create date objects (day, month, year)
+      const startDate = new Date(
+        parseInt(startParts[2]), 
+        parseInt(startParts[1]) - 1, 
+        parseInt(startParts[0])
+      );
+      
+      const endDate = new Date(
+        parseInt(endParts[2]), 
+        parseInt(endParts[1]) - 1, 
+        parseInt(endParts[0])
+      );
+      
+      if (endDate < startDate) {
         alert("Ngày kết thúc không thể trước ngày bắt đầu.");
-        document.getElementById('etd_end').value = '';
+        endDateInput.value = '';
       }
     });
   </script>

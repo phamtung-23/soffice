@@ -91,6 +91,14 @@ if (!$booking) {
 // Store booking number for the success message
 $bookingNumber = $booking['booking_number'];
 
+// Check if there's an attachment file and delete it
+if (isset($booking['attachment']) && !empty($booking['attachment'])) {
+  $attachmentPath = "../database/bookings/" . $booking['attachment'];
+  if (file_exists($attachmentPath)) {
+    unlink($attachmentPath);
+  }
+}
+
 // Remove the booking from the array
 array_splice($bookings, $bookingIndex, 1);
 

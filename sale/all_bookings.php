@@ -540,6 +540,7 @@ function getStatusClass($status)
               <th>SỐ LƯỢNG</th>
               <th>POD</th>
               <th>ETD</th>
+              <th>DELAY DATE</th>
               <th>SALES</th>
               <th>PIC</th>
               <th>TRẠNG THÁI</th>
@@ -549,7 +550,7 @@ function getStatusClass($status)
             </tr>
             <tr>
               <!-- Add search inputs for each column -->
-              <?php for ($i = 0; $i < 14; $i++) : ?>
+              <?php for ($i = 0; $i < 15; $i++) : ?>
                 <th><input type="text" placeholder="Tìm kiếm" /></th>
               <?php endfor; ?>
             </tr>
@@ -576,6 +577,7 @@ function getStatusClass($status)
                   }
                   ?>
                 </td>
+                <td><?php echo isset($container['delay_date']) ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
                 <td><?php echo $container['sales']; ?></td>
                 <td><?php echo $container['pic']; ?></td>
                 <td>

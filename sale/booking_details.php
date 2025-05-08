@@ -396,6 +396,22 @@ function getStatusClass($status)
             <span class="label">Cảng đích (POD):</span>
             <span class="value"><?php echo htmlspecialchars($booking['pod']); ?></span>
           </div>
+          <div class="detail-item">
+            <span class="label">Ngày Delay:</span>
+            <span class="value">
+              <?php echo isset($booking['delay_date']) ? date("d/m/Y", strtotime($booking['delay_date'])) : 'N/A'; ?>
+            </span>
+          </div>
+          <?php if (isset($booking['attachment']) && !empty($booking['attachment'])): ?>
+          <div class="detail-item">
+            <span class="label">File đính kèm:</span>
+            <span class="value">
+              <a href="../database/bookings/<?php echo htmlspecialchars($booking['attachment']); ?>" target="_blank" style="color: #4CAF50; text-decoration: underline;">
+                Xem file PDF
+              </a>
+            </span>
+          </div>
+          <?php endif; ?>
         </div>
 
         <div class="detail-card">
