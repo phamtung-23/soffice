@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pic') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -24,14 +24,14 @@ $bookingsDir = "../database/bookings/";
 if (is_dir($bookingsDir)) {
   // Scan the directory for json files
   $files = scandir($bookingsDir);
-  
+
   foreach ($files as $file) {
     // Check if it's a bookings_YYYY.json file
     if (preg_match('/bookings_(\d{4})\.json$/', $file, $matches)) {
       $availableYears[] = (int)$matches[1];
     }
   }
-  
+
   // Sort years in descending order (newest first)
   rsort($availableYears);
 }
@@ -62,15 +62,14 @@ if (empty($bookingsData)) {
   $bookingsData = [];
 }
 
-// // Filter containers by sales person
-$filteredContainers = [];
-// $filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
-//   return (
-//     // Match by sales_email (new format) or sales (old format) which contains full name
-//     (isset($container['sales_email']) && $container['sales_email'] === $userEmail) || 
-//     (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
-//   );
-// });
+// Filter containers by sales person
+$filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
+  return (
+    // Match by sales_email (new format) or sales (old format) which contains full name
+    (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
+    (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
+  );
+});
 
 // If no filtering is applied (for demo purposes), use all data
 if (empty($filteredContainers)) {
@@ -82,7 +81,7 @@ function getStatusClass($status)
 {
   // Convert to lowercase for case-insensitive comparison
   $status = strtolower($status);
-  
+
   switch ($status) {
     case 'confirmed':
       return 'confirmed';
@@ -249,6 +248,40 @@ function getStatusClass($status)
       color: #721c24;
     }
 
+    .alert {
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border-left: 5px solid #28a745;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-left: 5px solid #dc3545;
+    }
+
     .action-button {
       background-color: #4CAF50;
       color: white;
@@ -285,6 +318,27 @@ function getStatusClass($status)
 
     .create-button:hover {
       background-color: #45a049;
+    }
+
+    /* Filter and create button container */
+    .filter-create-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .year-filter form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .create-button-container {
+      display: flex;
+      justify-content: flex-end;
     }
 
     /* Hamburger icon (hidden by default) */
@@ -386,6 +440,33 @@ function getStatusClass($status)
       .menu.responsive .logout {
         float: none;
       }
+
+      /* Filter and create button adjustments */
+      .filter-create-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .create-button-container {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .year-filter {
+        width: 100%;
+      }
+
+      .year-filter form {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .year-filter select {
+        width: 100%;
+      }
     }
 
     @media (max-width: 480px) {
@@ -407,6 +488,18 @@ function getStatusClass($status)
 
       .welcome-message {
         font-size: 16px;
+      }
+
+      /* Enhanced mobile styles for filter and create button */
+      .create-button {
+        width: 100%;
+        text-align: center;
+        padding: 12px 10px;
+      }
+
+      .filter-create-container {
+        gap: 20px;
+        margin-bottom: 20px;
       }
 
       table {
@@ -474,9 +567,6 @@ function getStatusClass($status)
       <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
     </div>
     <a href="./index.php">Home</a>
-    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
-    <a href="all_bookings.php">Booking container</a>
-    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
   </div>
@@ -488,44 +578,44 @@ function getStatusClass($status)
 
     <div class="content">
       <h2>Danh sách Booking Container</h2>
-      
-      <!-- Display success message if exists -->
-      <?php if (isset($_SESSION['delete_success'])): ?>
+
+      <!-- Display success message if exists --> <?php if (isset($_SESSION['delete_success'])): ?>
         <div class="alert alert-success">
-          <?php 
-            echo $_SESSION['delete_success']; 
-            unset($_SESSION['delete_success']); // Clear the message after displaying
+          <?php
+                                                    echo $_SESSION['delete_success'];
+                                                    unset($_SESSION['delete_success']); // Clear the message after displaying
           ?>
         </div>
       <?php endif; ?>
-      
+
       <!-- Display error message if exists -->
       <?php if (isset($_SESSION['delete_error'])): ?>
         <div class="alert alert-danger">
-          <?php 
-            echo $_SESSION['delete_error']; 
-            unset($_SESSION['delete_error']); // Clear the message after displaying
+          <?php
+          echo $_SESSION['delete_error'];
+          unset($_SESSION['delete_error']); // Clear the message after displaying
           ?>
         </div>
       <?php endif; ?>
-      
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <div class="filter-create-container">
         <!-- Year Filter Dropdown -->
-        <div>
-          <form method="GET" action="" id="yearFilterForm" style="display: flex; align-items: center;">
-            <label for="year" style="margin-right: 10px; font-weight: bold;">Chọn năm:</label>
+        <div class="year-filter">
+          <form method="GET" action="" id="yearFilterForm">
+            <label for="year" style="font-weight: bold;">Chọn năm:</label>
             <select name="year" id="year" onchange="this.form.submit()" style="padding: 8px; border-radius: 4px;">
               <?php foreach ($availableYears as $year): ?>
-              <option value="<?php echo $year; ?>" <?php echo $selectedYear == $year ? 'selected' : ''; ?>>
-                <?php echo $year; ?>
-              </option>
+                <option value="<?php echo $year; ?>" <?php echo $selectedYear == $year ? 'selected' : ''; ?>>
+                  <?php echo $year; ?>
+                </option>
               <?php endforeach; ?>
             </select>
           </form>
         </div>
-        
+
         <!-- Create New Booking Button -->
-        <!-- <a href="create_booking.php" class="create-button">+ Tạo Booking Mới</a> -->
+        <div class="create-button-container">
+          <a href="create_booking.php" class="create-button">+ Tạo Booking Mới</a>
+        </div>
       </div>
 
       <!-- Data Table -->
@@ -567,14 +657,14 @@ function getStatusClass($status)
                 <td><?php echo $container['quantity']; ?></td>
                 <td><?php echo $container['pod']; ?></td>
                 <td>
-                  <?php 
+                  <?php
                   // Check if using new date range format or old single date format
                   if (isset($container['etd_start']) && isset($container['etd_end'])) {
-                    echo date("d/m/Y", strtotime($container['etd_start'])) . ' - ' . 
-                         date("d/m/Y", strtotime($container['etd_end']));
+                    echo date("d/m/Y", strtotime($container['etd_start'])) . ' - ' .
+                      date("d/m/Y", strtotime($container['etd_end']));
                   } else {
                     // Fall back to single date format if still using old data
-                    echo date("d/m/Y", strtotime($container['etd'])); 
+                    echo date("d/m/Y", strtotime($container['etd']));
                   }
                   ?>
                 </td>
@@ -589,9 +679,9 @@ function getStatusClass($status)
                 <td><?php echo isset($container['created_at']) ? date("d/m/Y H:i", strtotime($container['created_at'])) : 'N/A'; ?></td>
                 <td><?php echo isset($container['updated_at']) ? date("d/m/Y H:i", strtotime($container['updated_at'])) : 'N/A'; ?></td>
                 <td>
-                  <!-- <button class="action-button edit" onclick="handleEdit('<?php echo $container['id']; ?>')">Sửa</button> -->
+                  <button class="action-button edit" onclick="handleEdit('<?php echo $container['id']; ?>')">Sửa</button>
                   <button class="action-button details" onclick="handleDetails('<?php echo $container['id']; ?>')">Chi tiết</button>
-                  <!-- <button class="action-button delete" onclick="handleDelete('<?php echo $container['id']; ?>', '<?php echo addslashes($container['booking_number']); ?>')">Xóa</button> -->
+                  <button class="action-button delete" onclick="handleDelete('<?php echo $container['id']; ?>', '<?php echo addslashes($container['booking_number']); ?>')">Xóa</button>
                 </td>
               </tr>
             <?php endforeach; ?>

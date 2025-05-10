@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pic') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -33,10 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $pod = $_POST['pod'] ?? '';
   $etdStart = $_POST['etd_start'] ?? '';
   $etdEnd = $_POST['etd_end'] ?? '';
-  $picId = $_POST['pic'] ?? '';
+  $picId = $_POST['pic_email'] ?? '';
   $status = $_POST['status'] ?? 'pending';
   $delayDate = $_POST['delay_date'] ?? '';
   $notes = $_POST['notes'] ?? '';
+  $salesId = $_POST['sales'] ?? '';
 
   // Generate a unique ID for this booking
   $uniqueId = generateUniqueId();
@@ -61,9 +62,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $newFilename = $uniqueId . '_' . date('Ymd') . '.' . $fileExt;
       $uploadPath = $attachmentsDir . '/' . $newFilename;
 
+      // Move the uploaded file to a temporary location
       if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-        $attachmentPath = 'attachments/' . $newFilename;
-        $hasAttachment = true;
+        // Upload to Google Drive
+        $gDriveFolderId = '175l19YFsHesJmn5yKVO8XV-H5RZp8ron'; // Google Drive folder ID
+        $uploadResult = uploadFileToGoogleDrive($uploadPath, $newFilename, $gDriveFolderId);
+
+        if ($uploadResult) {
+          // Use the Google Drive link instead of local path
+          $attachmentPath = $uploadResult['link'];
+          $attachmentFileId = $uploadResult['id'];
+          $hasAttachment = true;
+
+          // Delete the temporary local file
+          unlink($uploadPath);
+        } else {
+          $errorMessage = 'Lỗi: Không thể tải file lên Google Drive. Vui lòng thử lại sau.';
+          // Remove local file if it exists
+          if (file_exists($uploadPath)) {
+            unlink($uploadPath);
+          }
+        }
       } else {
         $errorMessage = 'Lỗi: Không thể tải file lên. Vui lòng thử lại sau.';
       }
@@ -71,13 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if (empty($errorMessage)) {
-    // Get PIC's name from id
-    $picName = '';
-    $picResult = getUsersByRole('pic');
-    if ($picResult['status'] === 'success') {
-      foreach ($picResult['data'] as $user) {
-        if ($user['email'] === $picId) {
-          $picName = $user['fullname'];
+    // Get Sales's name from id
+    $salesName = '';
+    $salesResult = getUsersByRole('sale');
+    if ($salesResult['status'] === 'success') {
+      foreach ($salesResult['data'] as $user) {
+        if ($user['email'] === $salesId) {
+          $salesName = $user['fullname'];
           break;
         }
       }
@@ -94,9 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       'pod' => $pod,
       'etd_start' => $etdStart,
       'etd_end' => $etdEnd,
-      'sales' => $fullName,
-      'sales_email' => $userEmail,
-      'pic' => $picName,
+      'sales' => $salesName,
+      'sales_email' => $salesId,
+      'pic' => $fullName,
       'pic_email' => $picId,
       'status' => $status,
       'delay_date' => $delayDate,
@@ -108,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Add attachment path if a file was uploaded
     if ($hasAttachment) {
       $bookingData['attachment'] = $attachmentPath;
+      $bookingData['attachment_file_id'] = $attachmentFileId;
     }
 
     // Save booking data
@@ -115,6 +135,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($saveResult['status'] === 'success') {
       $successMessage = 'Đã tạo booking thành công với số: ' . $bookingNumber;
+
+      // Send Telegram notification to Sales if delay date is entered
+      if (!empty($delayDate) && !empty($salesId)) {
+        // Get Sales user data to get their Telegram ID
+        $salesUserData = null;
+        $allUsersData = json_decode(file_get_contents('../database/users.json'), true);
+
+        if (is_array($allUsersData)) {
+          foreach ($allUsersData as $user) {
+            if ($user['email'] === $salesId) {
+              $salesUserData = $user;
+              break;
+            }
+          }
+        }
+
+        // If we have the Sales user's data and they have a Telegram ID
+        if ($salesUserData && !empty($salesUserData['phone'])) {
+          $telegramMessage = "**THÔNG BÁO DELAY BOOKING**\n\n" .
+            "📦 Số Booking: " . $bookingNumber . "\n" .
+            "🚢 Tên Tàu: " . $vesselName . "\n" .
+            "🔢 Số Chuyến: " . $voyageNumber . "\n" .
+            "📆 Ngày Delay: " . date('d/m/Y', strtotime($delayDate)) . "\n" .
+            "🧳 Số Container: " . $quantity . "\n" .
+            "📝 Ghi chú: " . $notes . "\n\n" .
+            "👤 Người cập nhật: " . $fullName . "\n" .
+            "⏱️ Thời gian cập nhật: " . date('d/m/Y H:i:s');
+
+          // Send Telegram notification
+          $telegramData = [
+            'message' => $telegramMessage,
+            'id_telegram' => $salesUserData['phone']
+          ];
+
+          // Use absolute path instead of relative path
+          $serverName = $_SERVER['SERVER_NAME'];
+          $serverPort = $_SERVER['SERVER_PORT'];
+          $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+          $sendTelegramUrl = $protocol . $serverName . ($serverPort != 80 && $serverPort != 443 ? ":" . $serverPort : "") . "/soffice/sendTelegram.php";
+
+          $ch = curl_init($sendTelegramUrl);
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_POST, true);
+          curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($telegramData));
+          curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+          $result = curl_exec($ch);
+          $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+          curl_close($ch);
+
+          // Log the Telegram notification
+          $logDir = '../logs';
+          if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+          }
+
+          $timestamp = date('Y-m-d H:i:s');
+          $telegramLog = "[$timestamp] TELEGRAM NOTIFICATION SENT\n" .
+            "Booking Number: {$bookingNumber}\n" .
+            "Recipient: {$salesUserData['fullname']} ({$salesUserData['email']})\n" .
+            "Telegram ID: {$salesUserData['phone']}\n" .
+            "Message: {$telegramMessage}\n" .
+            "Response Code: {$httpCode}\n" .
+            "Response: {$result}\n" .
+            "------------------------------------\n\n";
+
+          $telegramLogFile = $logDir . '/telegram_notifications.log';
+          file_put_contents($telegramLogFile, $telegramLog, FILE_APPEND);
+        } else if (!empty($delayDate)) {
+          // Log failure to send Telegram notification due to missing ID
+          $logDir = '../logs';
+          if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+          }
+
+          $timestamp = date('Y-m-d H:i:s');
+          $telegramErrorLog = "[$timestamp] TELEGRAM NOTIFICATION FAILED\n" .
+            "Booking Number: {$bookingNumber}\n" .
+            "Recipient: " . ($salesUserData ? $salesUserData['fullname'] . ' (' . $salesUserData['email'] . ')' : 'Unknown user') . "\n" .
+            "Reason: " . ($salesUserData ? 'Missing Telegram ID' : 'User not found') . "\n" .
+            "------------------------------------\n\n";
+
+          $telegramLogFile = $logDir . '/telegram_notifications.log';
+          file_put_contents($telegramLogFile, $telegramErrorLog, FILE_APPEND);
+        }
+      }
     } else {
       $errorMessage = 'Lỗi: ' . ($saveResult['message'] ?? 'Không thể tạo booking');
     }
@@ -425,9 +530,6 @@ if ($picUsersResult['status'] === 'success') {
       <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
     </div>
     <a href="./index.php">Home</a>
-    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
-    <a href="all_bookings.php">Booking container</a>
-    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
   </div>
@@ -520,20 +622,28 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
-              <label for="sales">Sales</label>
-              <input type="text" id="sales" name="sales" value="<?php echo $fullName; ?>" readonly>
+              <label for="sales">Sales (Người Bán Hàng) <span style="color: red;">*</span></label>
+              <select id="sales" name="sales" required>
+                <option value="">-- Chọn Sales --</option>
+                <?php
+                $salesUsersResult = getUsersByRole('sale');
+                if ($salesUsersResult['status'] === 'success') {
+                  foreach ($salesUsersResult['data'] as $user):
+                ?>
+                    <option value="<?php echo $user['email']; ?>"><?php echo $user['fullname']; ?></option>
+                <?php
+                  endforeach;
+                }
+                ?>
+              </select>
             </div>
           </div>
 
           <div class="form-col">
             <div class="form-group">
-              <label for="pic">PIC (Người Phụ Trách) <span style="color: red;">*</span></label>
-              <select id="pic" name="pic" required>
-                <option value="">-- Chọn PIC --</option>
-                <?php foreach ($picUsers as $user): ?>
-                  <option value="<?php echo $user['email']; ?>"><?php echo $user['fullname']; ?></option>
-                <?php endforeach; ?>
-              </select>
+              <label for="pic">PIC (Người Phụ Trách)</label>
+              <input type="text" id="pic" name="pic" value="<?php echo $fullName; ?>" readonly>
+              <input type="hidden" id="pic_email" name="pic_email" value="<?php echo $userEmail; ?>">
             </div>
           </div>
         </div>
@@ -551,8 +661,8 @@ if ($picUsersResult['status'] === 'success') {
 
           <div class="form-col">
             <div class="form-group">
-              <label for="delay_date">Ngày Delay <span style="color: red;">*</span></label>
-              <input type="text" id="delay_date" name="delay_date" placeholder="dd/mm/yyyy" required>
+              <label for="delay_date">Ngày Delay</label>
+              <input type="text" id="delay_date" name="delay_date" placeholder="dd/mm/yyyy">
             </div>
           </div>
         </div>
@@ -577,7 +687,7 @@ if ($picUsersResult['status'] === 'success') {
         </div>
 
         <div class="form-actions">
-          <a href="all_bookings.php" class="btn btn-cancel">Hủy</a>
+          <a href="index.php" class="btn btn-cancel">Hủy</a>
           <button type="submit" class="btn">Tạo Booking</button>
         </div>
       </form>

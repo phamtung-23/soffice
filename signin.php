@@ -45,7 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header("Location: accountant");
                 } elseif ($user['role'] == 'leader') {
                     header("Location: leader");
-                }
+                } elseif ($user['role'] == 'pic') {
+                    header("Location: pic");
+                } 
                 exit();
             } else {
                

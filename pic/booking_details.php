@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pic') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -319,8 +319,8 @@ function getStatusClass($status)
       .booking-header {
         display: flex;
         flex-direction: column;
-        gap: 10px;
         /* justify-content: space-between; */
+        gap: 10px;
         align-items: center;
         margin-bottom: 20px;
         border-bottom: 1px solid #ddd;
@@ -422,9 +422,6 @@ function getStatusClass($status)
       <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
     </div>
     <a href="./index.php">Home</a>
-    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
-    <a href="all_bookings.php">Booking container</a>
-    <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
   </div>
@@ -440,7 +437,7 @@ function getStatusClass($status)
           <h2>Booking: <?php echo htmlspecialchars($booking['booking_number']); ?></h2>
           <p>ID: <?php echo isset($booking['id']) ? $booking['id'] : 'N/A'; ?></p>
         </div>
-        <a href="all_bookings.php?year=<?php echo $year; ?>" class="back-button">Quay lại danh sách</a>
+        <a href="index.php?year=<?php echo $year; ?>" class="back-button">Quay lại danh sách</a>
       </div>
 
       <div class="booking-details">
@@ -484,7 +481,7 @@ function getStatusClass($status)
             <div class="detail-item">
               <span class="label">File đính kèm:</span>
               <span class="value">
-                <a href="../database/bookings/<?php echo htmlspecialchars($booking['attachment']); ?>" target="_blank" style="color: #4CAF50; text-decoration: underline;">
+                <a href="<?php echo htmlspecialchars($booking['attachment']); ?>" target="_blank" style="color: #4CAF50; text-decoration: underline;">
                   Xem file PDF
                 </a>
               </span>

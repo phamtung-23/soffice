@@ -472,3 +472,74 @@ function checkValueChange($oldData, $newData)
   }
   return '';
 }
+
+function logEntry($message)
+{
+  $logFile = '../logs/payment_update_log.txt';
+  $timestamp = date("Y-m-d H:i:s");
+  // get full path
+  $filePath = $_SERVER['PHP_SELF'];
+  $logMessage = "[$timestamp] $filePath: $message\n";
+  file_put_contents($logFile, $logMessage, FILE_APPEND);
+}
+
+
+// Delete file from Google Drive by file ID
+function deleteFileFromGoogleDrive($fileId) {
+  if (empty($fileId)) {
+    return false;
+  }
+  
+  try {
+    // Need to include autoload.php for Google API
+    require_once '../library/google_api/vendor/autoload.php';
+    
+    $client = new Google_Client();
+    $client->setAuthConfig('../library/google_api/gdcredentials.json'); // Path to credentials file
+    $client->addScope(Google_Service_Drive::DRIVE_FILE);
+    $service = new Google_Service_Drive($client);
+    
+    // Delete the file
+    $service->files->delete($fileId);
+    
+    return true;
+  } catch (Exception $e) {
+    error_log("Google Drive Deletion Error: " . $e->getMessage());
+    return false;
+  }
+}
+
+// Upload file to Google Drive and return link
+function uploadFileToGoogleDrive($filePath, $fileName, $folderId) {
+  // Need to include autoload.php for Google API
+  require_once '../library/google_api/vendor/autoload.php';
+
+  $client = new Google_Client();
+  $client->setAuthConfig('../library/google_api/gdcredentials.json'); // Path to credentials file
+  $client->addScope(Google_Service_Drive::DRIVE_FILE);
+  $service = new Google_Service_Drive($client);
+
+  $fileMetadata = new Google_Service_Drive_DriveFile([
+    'name' => $fileName,
+    'parents' => [$folderId]
+  ]);
+  
+  try {
+    $content = file_get_contents($filePath);
+    
+    $file = $service->files->create($fileMetadata, [
+      'data' => $content,
+      'mimeType' => mime_content_type($filePath),
+      'uploadType' => 'multipart'
+    ]);
+    
+    return [
+      'link' => "https://drive.google.com/file/d/" . $file->id . "/view",
+      'id' => $file->id
+    ];
+  } catch (Exception $e) {
+    error_log("Google Drive Upload Error: " . $e->getMessage());
+    return null;
+  }
+}
+

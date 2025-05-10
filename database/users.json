@@ -3,7 +3,14 @@
         "fullname": "Sale 1",
         "email": "sale1@gmail.com",
         "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
-        "phone": "15585997619",
+        "phone": "6944007336",
+        "role": "sale"
+    },
+    {
+        "fullname": "Sale 2",
+        "email": "sale2@gmail.com",
+        "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
+        "phone": "6944007336",
         "role": "sale"
     },
     {
