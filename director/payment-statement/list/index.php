@@ -222,6 +222,7 @@ echo "</script>";
     <a href="../../index.php">Home</a>
     <a href="../../all_request.php">Quản lý phiếu tạm ứng</a>
     <a href="../../all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="../../all_bookings.php">Quản lý Booking</a>
     <a href="../../finance.php">Quản lý tài chính</a>
     <a href="../../../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../../../update_idtelegram.php">Cập nhật ID Telegram</a>

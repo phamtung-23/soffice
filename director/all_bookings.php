@@ -2,7 +2,7 @@
 session_start();
 
 // Check if the user is logged in; if not, redirect to login
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'director') {
   echo "<script>alert('Bạn chưa đăng nhập! Vui lòng đăng nhập lại.'); window.location.href = '../index.php';</script>";
   exit();
 }
@@ -485,11 +485,14 @@ function getStatusClass($status)
     <div class='icon'>
       <img src="../images/uniIcon.png" alt="Home Icon" class="menu-icon">
     </div>
-    <a href="./index.php">Home</a>
-    <a href="all_payment.php">Danh sách phiếu thanh toán</a>
-    <a href="all_bookings.php">Booking container</a>
+    <a href="index.php">Home</a>
+    <a href="all_request.php">Quản lý phiếu tạm ứng</a>
+    <a href="all_payment.php">Quản lý phiếu thanh toán</a>
+    <a href="all_bookings.php">Quản lý Booking</a>
+    <a href="finance.php">Quản lý tài chính</a>
     <a href="../update_signature.php">Cập nhật hình chữ ký</a>
     <a href="../update_idtelegram.php">Cập nhật ID Telegram</a>
+    <a href="admin.php">Quản lý account</a>
     <a href="../logout.php" class="logout">Đăng xuất</a>
   </div>
 
@@ -520,7 +523,6 @@ function getStatusClass($status)
           ?>
         </div>
       <?php endif; ?>
-
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <!-- Year Filter Dropdown -->
         <div>
@@ -616,7 +618,6 @@ function getStatusClass($status)
       </div>
     </div>
   </div>
-
   <script>
     $(document).ready(function() {
       // Initialize DataTable with individual column search

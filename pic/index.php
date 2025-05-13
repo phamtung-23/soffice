@@ -339,6 +339,7 @@ function getStatusClass($status)
     .create-button-container {
       display: flex;
       justify-content: flex-end;
+      gap: 10px;
     }
 
     /* Hamburger icon (hidden by default) */
@@ -554,6 +555,18 @@ function getStatusClass($status)
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+  <!-- Excel Export Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 </head>
 
 <body>
@@ -614,7 +627,8 @@ function getStatusClass($status)
 
         <!-- Create New Booking Button -->
         <div class="create-button-container">
-          <a href="create_booking.php" class="create-button">+ Tạo Booking Mới</a>
+          <a href="create_booking.php" class="create-button"><i class="fa-solid fa-plus"></i> Tạo Booking Mới</a>
+          <button id="exportExcel" class="create-button" style="background-color:rgb(2, 47, 124);"><i class="fa-solid fa-file-export"></i> Xuất Excel</button>
         </div>
       </div>
 
@@ -711,6 +725,87 @@ function getStatusClass($status)
           if (table.column(i).search() !== this.value) {
             table.column(i).search(this.value).draw();
           }
+        });
+      });
+
+      // Excel Export functionality
+      $('#exportExcel').on('click', function() {
+        // Get current date for the filename
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0');
+        let yyyy = today.getFullYear();
+        let dateStr = yyyy + mm + dd;
+
+        // Define column headers for Excel
+        let headers = [
+          'ID', 'SỐ BKG', 'TÊN TÀU', 'SỐ CHUYẾN', 'HÃNG TÀU',
+          'SỐ LƯỢNG', 'POD', 'ETD', 'DELAY DATE', 'SALES',
+          'PIC', 'TRẠNG THÁI', 'NGÀY TẠO', 'NGÀY CẬP NHẬT'
+        ];
+
+        // Create temporary table for export
+        let $temp = $('<div>').css('display', 'none');
+        let $table = $('<table>');
+        let $thead = $('<thead>');
+        let $headerRow = $('<tr>');
+
+        // Add headers
+        headers.forEach(header => {
+          $headerRow.append(
+            $('<th>').text(header).css({
+              'border': '1px solid #000000',
+              'font-weight': 'bold',
+              'background-color': '#f2f2f2'
+            })
+          );
+        });
+
+        $thead.append($headerRow);
+        $table.append($thead);
+
+        // Add data rows - get ALL data from DataTable (not just visible page)
+        let allData = table.rows().data();
+        let $tbody = $('<tbody>');
+
+        // Process all rows from the DataTable
+        for (let i = 0; i < allData.length; i++) {
+          let rowData = allData[i];
+          let $row = $('<tr>');
+
+          // Add all columns except the last one (actions column)
+          for (let j = 0; j < rowData.length - 1; j++) {
+            $row.append(
+              $('<td>').html(rowData[j]).css({
+                'border': '1px solid #000000'
+              })
+            );
+          }
+
+          $tbody.append($row);
+        }
+
+        $table.append($tbody);
+        $temp.append($table);
+        $('body').append($temp);
+
+        // Convert HTML table to workbook
+        let wb = XLSX.utils.table_to_book($table[0], {
+          sheet: "Booking_Report"
+        });
+
+        // Create filename and download
+        const fileName = 'Booking_Report_' + dateStr + '_Year<?php echo $selectedYear; ?>.xlsx';
+        XLSX.writeFile(wb, fileName);
+
+        // Clean up temporary table
+        $temp.remove();
+
+        // Show success message
+        Swal.fire({
+          icon: 'success',
+          title: 'Xuất Excel thành công',
+          text: 'Dữ liệu đã được xuất thành công với ' + allData.length + ' dòng!'
         });
       });
     });

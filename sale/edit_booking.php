@@ -658,7 +658,7 @@ if ($picUsersResult['status'] === 'success') {
               <small style="display: block; margin-top: 5px; color: #666;">Chỉ hỗ trợ định dạng PDF</small>
               <?php if (isset($booking['attachment']) && !empty($booking['attachment'])): ?>
                 <p style="margin-top: 10px; font-size: 14px;">
-                  File hiện tại: <a href="../database/bookings/<?php echo htmlspecialchars($booking['attachment']); ?>" target="_blank">Xem file</a>
+                  File hiện tại: <a href="<?php echo htmlspecialchars($booking['attachment']); ?>" target="_blank">Xem file</a>
                 </p>
               <?php endif; ?>
             </div>
