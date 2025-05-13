@@ -507,12 +507,10 @@ if ($picUsersResult['status'] === 'success') {
               <label for="etd_start">Ngày Khởi Hành Dự Kiến Từ (ETD) <span style="color: red;">*</span></label>
               <input type="text" id="etd_start" name="etd_start" placeholder="dd/mm/yyyy" required>
             </div>
-          </div>
-
-          <div class="form-col">
+          </div>          <div class="form-col">
             <div class="form-group">
-              <label for="etd_end">Đến Ngày <span style="color: red;">*</span></label>
-              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" required>
+              <label for="etd_end">Đến Ngày</label>
+              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy">
             </div>
           </div>
         </div>

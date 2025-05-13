@@ -63,17 +63,27 @@ if (empty($bookingsData)) {
 }
 
 // Filter containers by sales person
+// $filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
+//   return (
+//     // Match by sales_email (new format) or sales (old format) which contains full name
+//     (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
+//     (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
+//   );
+// });
+
+// Filter containers by pic person
 $filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
   return (
-    // Match by sales_email (new format) or sales (old format) which contains full name
-    (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
-    (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
+    // Match by pic_email (new format) or pic (old format) which contains full name
+    (isset($container['pic_email']) && $container['pic_email'] === $userEmail) ||
+    (isset($container['pic']) && $container['pic'] === $_SESSION['full_name'])
   );
 });
 
 // If no filtering is applied (for demo purposes), use all data
 if (empty($filteredContainers)) {
-  $filteredContainers = $bookingsData;
+  // $filteredContainers = $bookingsData;
+  $filteredContainers = [];
 }
 
 // Function to get status class for styling
@@ -669,20 +679,24 @@ function getStatusClass($status)
                 <td><?php echo $container['voyage_number']; ?></td>
                 <td><?php echo $container['shipping_line']; ?></td>
                 <td><?php echo $container['quantity']; ?></td>
-                <td><?php echo $container['pod']; ?></td>
-                <td>
+                <td><?php echo $container['pod']; ?></td>                <td>
                   <?php
                   // Check if using new date range format or old single date format
-                  if (isset($container['etd_start']) && isset($container['etd_end'])) {
+                  if (isset($container['etd_start']) && isset($container['etd_end']) && !empty($container['etd_end'])) {
                     echo date("d/m/Y", strtotime($container['etd_start'])) . ' - ' .
                       date("d/m/Y", strtotime($container['etd_end']));
-                  } else {
+                  } else if (isset($container['etd_start'])) {
+                    // Just show the start date if end date is not provided
+                    echo date("d/m/Y", strtotime($container['etd_start'])) . ' - N/A';
+                  } else if (isset($container['etd'])) {
                     // Fall back to single date format if still using old data
                     echo date("d/m/Y", strtotime($container['etd']));
+                  } else {
+                    echo 'N/A';
                   }
                   ?>
                 </td>
-                <td><?php echo isset($container['delay_date']) ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
+                <td><?php echo isset($container['delay_date']) && $container['delay_date'] != '' ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
                 <td><?php echo $container['sales']; ?></td>
                 <td><?php echo $container['pic']; ?></td>
                 <td>
@@ -766,17 +780,24 @@ function getStatusClass($status)
 
         // Add data rows - get ALL data from DataTable (not just visible page)
         let allData = table.rows().data();
-        let $tbody = $('<tbody>');
-
-        // Process all rows from the DataTable
+        let $tbody = $('<tbody>');        // Process all rows from the DataTable
         for (let i = 0; i < allData.length; i++) {
           let rowData = allData[i];
           let $row = $('<tr>');
 
           // Add all columns except the last one (actions column)
           for (let j = 0; j < rowData.length - 1; j++) {
+            // For ETD (column 7) and Delay Date (column 8), handle potentially empty values
+            let cellContent = rowData[j];
+            
+            // Add additional cleanup for HTML entities or unwanted formatting if needed
+            // This helps ensure the Excel export looks clean and consistent
+            if (cellContent === 'N/A') {
+              cellContent = '';  // Replace N/A with empty string for cleaner Excel export
+            }
+
             $row.append(
-              $('<td>').html(rowData[j]).css({
+              $('<td>').html(cellContent).css({
                 'border': '1px solid #000000'
               })
             );

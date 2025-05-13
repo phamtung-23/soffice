@@ -585,16 +585,21 @@ function getStatusClass($status)
                 <td>
                   <?php
                   // Check if using new date range format or old single date format
-                  if (isset($container['etd_start']) && isset($container['etd_end'])) {
+                  if (isset($container['etd_start']) && isset($container['etd_end']) && !empty($container['etd_end'])) {
                     echo date("d/m/Y", strtotime($container['etd_start'])) . ' - ' .
                       date("d/m/Y", strtotime($container['etd_end']));
-                  } else {
+                  } else if (isset($container['etd_start'])) {
+                    // Just show the start date if end date is not provided
+                    echo date("d/m/Y", strtotime($container['etd_start'])) . ' - N/A';
+                  } else if (isset($container['etd'])) {
                     // Fall back to single date format if still using old data
                     echo date("d/m/Y", strtotime($container['etd']));
+                  } else {
+                    echo 'N/A';
                   }
                   ?>
                 </td>
-                <td><?php echo isset($container['delay_date']) ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
+                <td><?php echo isset($container['delay_date']) && $container['delay_date'] != '' ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
                 <td><?php echo $container['sales']; ?></td>
                 <td><?php echo $container['pic']; ?></td>
                 <td>
@@ -678,17 +683,24 @@ function getStatusClass($status)
 
         // Add data rows - get ALL data from DataTable (not just visible page)
         let allData = table.rows().data();
-        let $tbody = $('<tbody>');
-
-        // Process all rows from the DataTable
+        let $tbody = $('<tbody>'); // Process all rows from the DataTable
         for (let i = 0; i < allData.length; i++) {
           let rowData = allData[i];
           let $row = $('<tr>');
 
           // Add all columns except the last one (actions column)
           for (let j = 0; j < rowData.length - 1; j++) {
+            // For ETD (column 7) and Delay Date (column 8), handle potentially empty values
+            let cellContent = rowData[j];
+
+            // Add additional cleanup for HTML entities or unwanted formatting if needed
+            // This helps ensure the Excel export looks clean and consistent
+            if (cellContent === 'N/A') {
+              cellContent = ''; // Replace N/A with empty string for cleaner Excel export
+            }
+
             $row.append(
-              $('<td>').html(rowData[j]).css({
+              $('<td>').html(cellContent).css({
                 'border': '1px solid #000000'
               })
             );

@@ -496,11 +496,12 @@ function getStatusClass($status)
           <h3>Thời gian và Người phụ trách</h3>
           <div class="detail-item">
             <span class="label">Ngày khởi hành dự kiến:</span>
-            <span class="value">
-              <?php
-              if (isset($booking['etd_start']) && isset($booking['etd_end'])) {
+            <span class="value">              <?php
+              if (isset($booking['etd_start']) && isset($booking['etd_end']) && !empty($booking['etd_end'])) {
                 echo date("d/m/Y", strtotime($booking['etd_start'])) . ' - ' .
                   date("d/m/Y", strtotime($booking['etd_end']));
+              } else if (isset($booking['etd_start'])) {
+                echo date("d/m/Y", strtotime($booking['etd_start']));
               } else if (isset($booking['etd'])) {
                 echo date("d/m/Y", strtotime($booking['etd']));
               } else {

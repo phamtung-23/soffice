@@ -598,11 +598,10 @@ if ($picUsersResult['status'] === 'success') {
               <input type="text" id="etd_start" name="etd_start" placeholder="dd/mm/yyyy" value="<?php echo isset($booking['etd_start']) ? date('d/m/Y', strtotime($booking['etd_start'])) : (isset($booking['etd']) ? date('d/m/Y', strtotime($booking['etd'])) : ''); ?>" required>
             </div>
           </div>
-
           <div class="form-col">
             <div class="form-group">
-              <label for="etd_end">Đến Ngày <span style="color: red;">*</span></label>
-              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" value="<?php echo isset($booking['etd_end']) ? date('d/m/Y', strtotime($booking['etd_end'])) : (isset($booking['etd']) ? date('d/m/Y', strtotime($booking['etd'])) : ''); ?>" required>
+              <label for="etd_end">Đến Ngày</label>
+              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" value="<?php echo isset($booking['etd_end']) == '' ? date('d/m/Y', strtotime($booking['etd_end'])) : (isset($booking['etd']) ? date('d/m/Y', strtotime($booking['etd'])) : ''); ?>">
             </div>
           </div>
         </div>
