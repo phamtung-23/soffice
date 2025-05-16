@@ -95,6 +95,8 @@ function getStatusClass($status)
       return 'pending';
     case 'rejected':
       return 'rejected';
+    case 'cancel':
+      return 'cancel';
     default:
       return '';
   }
@@ -278,6 +280,11 @@ function getStatusClass($status)
     .rejected {
       background-color: #f8d7da;
       color: #721c24;
+    }
+
+    .cancel {
+      background-color: #e0e0e0;
+      color: #b71c1c;
     }
 
     .notes-section {
@@ -480,6 +487,10 @@ function getStatusClass($status)
               <?php echo isset($booking['delay_date']) ? date("d/m/Y", strtotime($booking['delay_date'])) : 'N/A'; ?>
             </span>
           </div>
+          <div class="detail-item">
+            <span class="label">Khách hàng:</span>
+            <span class="value"><?php echo htmlspecialchars($booking['customer'] ?? ''); ?></span>
+          </div>
           <?php if (isset($booking['attachment']) && !empty($booking['attachment'])): ?>
             <div class="detail-item">
               <span class="label">File đính kèm:</span>
@@ -496,7 +507,8 @@ function getStatusClass($status)
           <h3>Thời gian và Người phụ trách</h3>
           <div class="detail-item">
             <span class="label">Ngày khởi hành dự kiến:</span>
-            <span class="value">              <?php
+            <span class="value">
+              <?php
               if (isset($booking['etd_start']) && isset($booking['etd_end']) && !empty($booking['etd_end'])) {
                 echo date("d/m/Y", strtotime($booking['etd_start'])) . ' - ' .
                   date("d/m/Y", strtotime($booking['etd_end']));

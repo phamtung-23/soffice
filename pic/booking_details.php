@@ -95,6 +95,8 @@ function getStatusClass($status)
       return 'pending';
     case 'rejected':
       return 'rejected';
+    case 'cancel':
+      return 'cancel';
     default:
       return '';
   }
@@ -278,6 +280,11 @@ function getStatusClass($status)
     .rejected {
       background-color: #f8d7da;
       color: #721c24;
+    }
+
+    .cancel {
+      background-color: #e0e0e0;
+      color: #b71c1c;
     }
 
     .notes-section {
@@ -538,6 +545,14 @@ function getStatusClass($status)
             <span class="value">
               <?php echo isset($booking['updated_at']) ? date("d/m/Y H:i:s", strtotime($booking['updated_at'])) : 'N/A'; ?>
             </span>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h3>Thông tin khách hàng</h3>
+          <div class="detail-item">
+            <span class="label">Khách hàng (Customer):</span>
+            <span class="value"><?php echo htmlspecialchars($booking['customer'] ?? ''); ?></span>
           </div>
         </div>
       </div>

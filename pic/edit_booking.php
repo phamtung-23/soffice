@@ -107,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $notes = $_POST['notes'] ?? '';
   $delayDate = $_POST['delay_date'] ?? '';
   $salesId = $_POST['sales'] ?? ''; // Add this line to capture sales from form
+  $customer = $_POST['customer'] ?? '';
 
   // Get PIC's name from id
   $picName = '';
@@ -220,6 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $updatedBooking['delay_date'] = $delayDate;
   $updatedBooking['attachment'] = $attachmentPath;
   $updatedBooking['attachment_file_id'] = $attachmentFileId;
+  $updatedBooking['customer'] = $customer;
   $updatedBooking['updated_at'] = date('Y-m-d H:i:s');
 
   // Update the booking in the array
@@ -789,11 +791,22 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
+              <label for="customer">Khách hàng (Customer)</label>
+              <input type="text" id="customer" name="customer" value="<?php echo htmlspecialchars($booking['customer'] ?? ''); ?>">
+            </div>
+          </div>
+          <div class="form-col"><!-- empty for layout --></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
               <label for="status">Trạng Thái <span style="color: red;">*</span></label>
               <select id="status" name="status" required>
                 <option value="pending" <?php echo strtolower($booking['status']) === 'pending' ? 'selected' : ''; ?>>Pending</option>
                 <option value="confirmed" <?php echo strtolower($booking['status']) === 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
-                <option value="rejected" <?php echo strtolower($booking['status']) === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
+                <!-- <option value="rejected" <?php echo strtolower($booking['status']) === 'rejected' ? 'selected' : ''; ?>>Rejected</option> -->
+                <option value="cancel" <?php echo strtolower($booking['status']) === 'cancel' ? 'selected' : ''; ?>>Cancel</option>
               </select>
             </div>
           </div>

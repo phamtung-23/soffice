@@ -61,5 +61,12 @@
         "password": "$2y$10$xyI.jctDlebnAs1mjoGrZ.fEKBWogUbFUcFU5mjqljA25fPlh2.8.",
         "phone": "0359663439",
         "role": "pic"
+    },
+    {
+        "fullname": "PIC 2",
+        "email": "pic2@gmail.com",
+        "password": "$2y$10$xyI.jctDlebnAs1mjoGrZ.fEKBWogUbFUcFU5mjqljA25fPlh2.8.",
+        "phone": "0359663439",
+        "role": "pic"
     }
 ]

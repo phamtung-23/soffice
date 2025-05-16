@@ -106,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $status = $_POST['status'] ?? 'pending';
   $notes = $_POST['notes'] ?? '';
   $delayDate = $_POST['delay_date'] ?? '';
+  $customer = $_POST['customer'] ?? '';
 
   // Get PIC's name from id
   $picName = '';
@@ -177,6 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $updatedBooking['notes'] = $notes;
   $updatedBooking['delay_date'] = $delayDate;
   $updatedBooking['attachment'] = $attachmentPath;
+  $updatedBooking['customer'] = $customer;
   $updatedBooking['updated_at'] = date('Y-m-d H:i:s');
 
   // Update the booking in the array
@@ -601,7 +603,7 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="etd_end">Đến Ngày</label>
-              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" value="<?php echo isset($booking['etd_end']) == '' ? date('d/m/Y', strtotime($booking['etd_end'])) : (isset($booking['etd']) ? date('d/m/Y', strtotime($booking['etd'])) : ''); ?>">
+              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" value="<?php echo isset($booking['etd_end']) && $booking['etd_end'] != '' ? date('d/m/Y', strtotime($booking['etd_end'])) : (isset($booking['etd']) ? date('d/m/Y', strtotime($booking['etd'])) : ''); ?>">
             </div>
           </div>
         </div>
@@ -632,11 +634,20 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
-              <label for="status">Trạng Thái <span style="color: red;">*</span></label>
+              <label for="customer">Khách hàng</label>
+              <input type="text" id="customer" name="customer" value="<?php echo htmlspecialchars($booking['customer'] ?? ''); ?>">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="status">Trạng thái <span style="color: red;">*</span></label>
               <select id="status" name="status" required>
-                <option value="pending" <?php echo strtolower($booking['status']) === 'pending' ? 'selected' : ''; ?>>Pending</option>
                 <option value="confirmed" <?php echo strtolower($booking['status']) === 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
-                <option value="rejected" <?php echo strtolower($booking['status']) === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
+                <option value="pending" <?php echo strtolower($booking['status']) === 'pending' ? 'selected' : ''; ?>>Pending</option>
+                <option value="cancel" <?php echo strtolower($booking['status']) === 'cancel' ? 'selected' : ''; ?>>Cancel</option>
               </select>
             </div>
           </div>

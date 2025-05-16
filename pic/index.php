@@ -62,29 +62,8 @@ if (empty($bookingsData)) {
   $bookingsData = [];
 }
 
-// Filter containers by sales person
-// $filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
-//   return (
-//     // Match by sales_email (new format) or sales (old format) which contains full name
-//     (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
-//     (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
-//   );
-// });
-
-// Filter containers by pic person
-$filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
-  return (
-    // Match by pic_email (new format) or pic (old format) which contains full name
-    (isset($container['pic_email']) && $container['pic_email'] === $userEmail) ||
-    (isset($container['pic']) && $container['pic'] === $_SESSION['full_name'])
-  );
-});
-
-// If no filtering is applied (for demo purposes), use all data
-if (empty($filteredContainers)) {
-  // $filteredContainers = $bookingsData;
-  $filteredContainers = [];
-}
+// Show all bookings to PIC
+$filteredContainers = $bookingsData;
 
 // Function to get status class for styling
 function getStatusClass($status)
@@ -99,6 +78,8 @@ function getStatusClass($status)
       return 'pending';
     case 'rejected':
       return 'rejected';
+    case 'cancel':
+      return 'cancel';
     default:
       return '';
   }
@@ -256,6 +237,11 @@ function getStatusClass($status)
     .rejected {
       background-color: #f8d7da;
       color: #721c24;
+    }
+
+    .cancel {
+      background-color: #e0e0e0;
+      color: #b71c1c;
     }
 
     .alert {
@@ -654,6 +640,7 @@ function getStatusClass($status)
               <th>HÃNG TÀU</th>
               <th>SỐ LƯỢNG</th>
               <th>POD</th>
+              <th>CUSTOMER</th>
               <th>ETD</th>
               <th>DELAY DATE</th>
               <th>SALES</th>
@@ -665,7 +652,7 @@ function getStatusClass($status)
             </tr>
             <tr>
               <!-- Add search inputs for each column -->
-              <?php for ($i = 0; $i < 15; $i++) : ?>
+              <?php for ($i = 0; $i < 16; $i++) : ?>
                 <th><input type="text" placeholder="Tìm kiếm" /></th>
               <?php endfor; ?>
             </tr>
@@ -679,7 +666,10 @@ function getStatusClass($status)
                 <td><?php echo $container['voyage_number']; ?></td>
                 <td><?php echo $container['shipping_line']; ?></td>
                 <td><?php echo $container['quantity']; ?></td>
-                <td><?php echo $container['pod']; ?></td>                <td>
+                <td><?php echo $container['pod']; ?>
+                </td>
+                <td><?php echo htmlspecialchars($container['customer'] ?? ''); ?></td>
+                <td>
                   <?php
                   // Check if using new date range format or old single date format
                   if (isset($container['etd_start']) && isset($container['etd_end']) && !empty($container['etd_end'])) {
@@ -707,9 +697,17 @@ function getStatusClass($status)
                 <td><?php echo isset($container['created_at']) ? date("d/m/Y H:i", strtotime($container['created_at'])) : 'N/A'; ?></td>
                 <td><?php echo isset($container['updated_at']) ? date("d/m/Y H:i", strtotime($container['updated_at'])) : 'N/A'; ?></td>
                 <td>
-                  <button class="action-button edit" onclick="handleEdit('<?php echo $container['id']; ?>')">Sửa</button>
+                  <?php
+                  $canEditOrDelete = (
+                    (isset($container['pic_email']) && $container['pic_email'] === $userEmail) ||
+                    (isset($container['pic']) && $container['pic'] === $_SESSION['full_name'])
+                  );
+                  ?>
+                  <?php if ($canEditOrDelete): ?>
+                    <button class="action-button edit" onclick="handleEdit('<?php echo $container['id']; ?>')">Sửa</button>
+                    <button class="action-button delete" onclick="handleDelete('<?php echo $container['id']; ?>', '<?php echo addslashes($container['booking_number']); ?>')">Xóa</button>
+                  <?php endif; ?>
                   <button class="action-button details" onclick="handleDetails('<?php echo $container['id']; ?>')">Chi tiết</button>
-                  <button class="action-button delete" onclick="handleDelete('<?php echo $container['id']; ?>', '<?php echo addslashes($container['booking_number']); ?>')">Xóa</button>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -754,7 +752,7 @@ function getStatusClass($status)
         // Define column headers for Excel
         let headers = [
           'ID', 'SỐ BKG', 'TÊN TÀU', 'SỐ CHUYẾN', 'HÃNG TÀU',
-          'SỐ LƯỢNG', 'POD', 'ETD', 'DELAY DATE', 'SALES',
+          'SỐ LƯỢNG', 'POD', 'CUSTOMER', 'ETD', 'DELAY DATE', 'SALES',
           'PIC', 'TRẠNG THÁI', 'NGÀY TẠO', 'NGÀY CẬP NHẬT'
         ];
 
@@ -780,7 +778,7 @@ function getStatusClass($status)
 
         // Add data rows - get ALL data from DataTable (not just visible page)
         let allData = table.rows().data();
-        let $tbody = $('<tbody>');        // Process all rows from the DataTable
+        let $tbody = $('<tbody>'); // Process all rows from the DataTable
         for (let i = 0; i < allData.length; i++) {
           let rowData = allData[i];
           let $row = $('<tr>');
@@ -789,11 +787,11 @@ function getStatusClass($status)
           for (let j = 0; j < rowData.length - 1; j++) {
             // For ETD (column 7) and Delay Date (column 8), handle potentially empty values
             let cellContent = rowData[j];
-            
+
             // Add additional cleanup for HTML entities or unwanted formatting if needed
             // This helps ensure the Excel export looks clean and consistent
             if (cellContent === 'N/A') {
-              cellContent = '';  // Replace N/A with empty string for cleaner Excel export
+              cellContent = ''; // Replace N/A with empty string for cleaner Excel export
             }
 
             $row.append(

@@ -64,13 +64,13 @@ if (empty($bookingsData)) {
 
 // // Filter containers by sales person
 $filteredContainers = [];
-// $filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
-//   return (
-//     // Match by sales_email (new format) or sales (old format) which contains full name
-//     (isset($container['sales_email']) && $container['sales_email'] === $userEmail) || 
-//     (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
-//   );
-// });
+$filteredContainers = array_filter($bookingsData, function ($container) use ($userEmail) {
+  return (
+    // Match by sales_email (new format) or sales (old format) which contains full name
+    (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
+    (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
+  );
+});
 
 // If no filtering is applied (for demo purposes), use all data
 if (empty($filteredContainers)) {
@@ -90,6 +90,8 @@ function getStatusClass($status)
       return 'pending';
     case 'rejected':
       return 'rejected';
+    case 'cancel':
+      return 'rejected'; // Reusing rejected class for cancel status
     default:
       return '';
   }
@@ -247,6 +249,11 @@ function getStatusClass($status)
     .rejected {
       background-color: #f8d7da;
       color: #721c24;
+    }
+
+    .cancel {
+      background-color: #e0e0e0;
+      color: #b71c1c;
     }
 
     .action-button {
@@ -556,6 +563,7 @@ function getStatusClass($status)
               <th>HÃNG TÀU</th>
               <th>SỐ LƯỢNG</th>
               <th>POD</th>
+              <th>CUSTOMER</th>
               <th>ETD</th>
               <th>DELAY DATE</th>
               <th>SALES</th>
@@ -567,7 +575,7 @@ function getStatusClass($status)
             </tr>
             <tr>
               <!-- Add search inputs for each column -->
-              <?php for ($i = 0; $i < 15; $i++) : ?>
+              <?php for ($i = 0; $i < 16; $i++) : ?>
                 <th><input type="text" placeholder="Tìm kiếm" /></th>
               <?php endfor; ?>
             </tr>
@@ -582,24 +590,22 @@ function getStatusClass($status)
                 <td><?php echo $container['shipping_line']; ?></td>
                 <td><?php echo $container['quantity']; ?></td>
                 <td><?php echo $container['pod']; ?></td>
+                <td><?php echo $container['customer'] ?? 'N/A'; ?></td>
                 <td>
                   <?php
-                  // Check if using new date range format or old single date format
                   if (isset($container['etd_start']) && isset($container['etd_end']) && !empty($container['etd_end'])) {
                     echo date("d/m/Y", strtotime($container['etd_start'])) . ' - ' .
                       date("d/m/Y", strtotime($container['etd_end']));
                   } else if (isset($container['etd_start'])) {
-                    // Just show the start date if end date is not provided
                     echo date("d/m/Y", strtotime($container['etd_start'])) . ' - N/A';
                   } else if (isset($container['etd'])) {
-                    // Fall back to single date format if still using old data
                     echo date("d/m/Y", strtotime($container['etd']));
                   } else {
                     echo 'N/A';
                   }
                   ?>
                 </td>
-                <td><?php echo isset($container['delay_date']) && $container['delay_date'] != '' ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
+                <td><?php echo isset($container['delay_date']) && $container['delay_date'] != ''  ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
                 <td><?php echo $container['sales']; ?></td>
                 <td><?php echo $container['pic']; ?></td>
                 <td>
@@ -657,7 +663,7 @@ function getStatusClass($status)
         // Define column headers for Excel
         let headers = [
           'ID', 'SỐ BKG', 'TÊN TÀU', 'SỐ CHUYẾN', 'HÃNG TÀU',
-          'SỐ LƯỢNG', 'POD', 'ETD', 'DELAY DATE', 'SALES',
+          'SỐ LƯỢNG', 'POD', 'CUSTOMER', 'ETD', 'DELAY DATE', 'SALES',
           'PIC', 'TRẠNG THÁI', 'NGÀY TẠO', 'NGÀY CẬP NHẬT'
         ];
 

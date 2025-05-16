@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $delayDate = $_POST['delay_date'] ?? '';
   $notes = $_POST['notes'] ?? '';
   $salesId = $_POST['sales'] ?? '';
+  $customer = $_POST['customer'] ?? '';
 
   // Generate a unique ID for this booking
   $uniqueId = generateUniqueId();
@@ -111,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       'shipping_line' => $shippingLine,
       'quantity' => $quantity,
       'pod' => $pod,
+      'customer' => $customer,
       'etd_start' => $etdStart,
       'etd_end' => $etdEnd,
       'sales' => $salesName,
@@ -649,10 +651,22 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
+              <label for="customer">Khách hàng (Customer) <span style="color: red;">*</span></label>
+              <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng">
+            </div>
+          </div>
+
+          <div class="form-col"><!-- empty for layout --></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
               <label for="status">Trạng Thái <span style="color: red;">*</span></label>
               <select id="status" name="status" required>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
+                <option value="cancel">Cancel</option>
               </select>
             </div>
           </div>
