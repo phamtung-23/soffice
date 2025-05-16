@@ -300,6 +300,11 @@ function getStatusClass($status)
       background-color: #f44336;
     }
 
+    .action-button.duplicate {
+      background-color: #ff9800;
+      color: white;
+    }
+
     .create-button {
       display: inline-block;
       background-color: #4CAF50;
@@ -697,6 +702,8 @@ function getStatusClass($status)
                 <td><?php echo isset($container['created_at']) ? date("d/m/Y H:i", strtotime($container['created_at'])) : 'N/A'; ?></td>
                 <td><?php echo isset($container['updated_at']) ? date("d/m/Y H:i", strtotime($container['updated_at'])) : 'N/A'; ?></td>
                 <td>
+                  <button class="action-button details" onclick="handleDetails('<?php echo $container['id']; ?>')">Chi tiết</button>
+                  <button class="action-button duplicate" onclick="handleDuplicate('<?php echo $container['id']; ?>')">Nhân bản</button>
                   <?php
                   $canEditOrDelete = (
                     (isset($container['pic_email']) && $container['pic_email'] === $userEmail) ||
@@ -707,7 +714,6 @@ function getStatusClass($status)
                     <button class="action-button edit" onclick="handleEdit('<?php echo $container['id']; ?>')">Sửa</button>
                     <button class="action-button delete" onclick="handleDelete('<?php echo $container['id']; ?>', '<?php echo addslashes($container['booking_number']); ?>')">Xóa</button>
                   <?php endif; ?>
-                  <button class="action-button details" onclick="handleDetails('<?php echo $container['id']; ?>')">Chi tiết</button>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -851,6 +857,11 @@ function getStatusClass($status)
         // Redirect to delete_booking.php with the booking ID
         window.location.href = `delete_booking.php?id=${bookingId}&year=${<?php echo $selectedYear; ?>}`;
       }
+    }
+
+    // Handle duplicate button click
+    function handleDuplicate(bookingId) {
+      window.location.href = `create_booking.php?duplicate_id=${bookingId}&year=<?php echo $selectedYear; ?>`;
     }
   </script>
 

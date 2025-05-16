@@ -228,6 +228,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
+// Handle duplicate booking pre-fill
+$duplicateData = null;
+if (isset($_GET['duplicate_id'])) {
+    $dupId = $_GET['duplicate_id'];
+    $dupYear = isset($_GET['year']) ? $_GET['year'] : date('Y');
+    $dupFile = "../database/bookings/bookings_{$dupYear}.json";
+    if (file_exists($dupFile)) {
+        $json = file_get_contents($dupFile);
+        $bookings = json_decode($json, true);
+        foreach ($bookings as $b) {
+            if ($b['id'] === $dupId) {
+                $duplicateData = $b;
+                break;
+            }
+        }
+    }
+}
+
 // Get all PIC users for dropdown
 $picUsersResult = getUsersByRole('pic');
 $picUsers = [];
@@ -561,14 +579,14 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="booking_number">Số Booking <span style="color: red;">*</span></label>
-              <input type="text" id="booking_number" name="booking_number" placeholder="Nhập số booking" required>
+              <input type="text" id="booking_number" name="booking_number" placeholder="Nhập số booking" required value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['booking_number']) : ''; ?>">
             </div>
           </div>
 
           <div class="form-col">
             <div class="form-group">
               <label for="vessel_name">Tên Tàu <span style="color: red;">*</span></label>
-              <input type="text" id="vessel_name" name="vessel_name" required>
+              <input type="text" id="vessel_name" name="vessel_name" required value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['vessel_name']) : ''; ?>">
             </div>
           </div>
         </div>
@@ -577,14 +595,14 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="voyage_number">Số Chuyến <span style="color: red;">*</span></label>
-              <input type="text" id="voyage_number" name="voyage_number" required>
+              <input type="text" id="voyage_number" name="voyage_number" required value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['voyage_number']) : ''; ?>">
             </div>
           </div>
 
           <div class="form-col">
             <div class="form-group">
               <label for="shipping_line">Hãng Tàu <span style="color: red;">*</span></label>
-              <input type="text" id="shipping_line" name="shipping_line" required>
+              <input type="text" id="shipping_line" name="shipping_line" required value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['shipping_line']) : ''; ?>">
             </div>
           </div>
         </div>
@@ -593,14 +611,14 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="quantity">Số Lượng Container <span style="color: red;">*</span></label>
-              <input type="text" id="quantity" name="quantity" placeholder="Ví dụ: 1x40HC, 2x20GP" required>
+              <input type="text" id="quantity" name="quantity" placeholder="Ví dụ: 1x40HC, 2x20GP" required value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['quantity']) : ''; ?>">
             </div>
           </div>
 
           <div class="form-col">
             <div class="form-group">
               <label for="pod">Cảng Đích (POD) <span style="color: red;">*</span></label>
-              <input type="text" id="pod" name="pod" required>
+              <input type="text" id="pod" name="pod" required value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['pod']) : ''; ?>">
             </div>
           </div>
         </div>
@@ -608,13 +626,13 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
-              <label for="etd_start">Ngày Khởi Hành Dự Kiến Từ (ETD) <span style="color: red;">*</span></label>
-              <input type="text" id="etd_start" name="etd_start" placeholder="dd/mm/yyyy" required>
+              <label for="etd_start">Ngày Khởi Hành Dự KIến Từ (ETD) <span style="color: red;">*</span></label>
+              <input type="text" id="etd_start" name="etd_start" placeholder="dd/mm/yyyy" required value="<?php echo isset($duplicateData) && !empty($duplicateData['etd_start']) ? date('d/m/Y', strtotime($duplicateData['etd_start'])) : ''; ?>">
             </div>
           </div>          <div class="form-col">
             <div class="form-group">
               <label for="etd_end">Đến Ngày</label>
-              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy">
+              <input type="text" id="etd_end" name="etd_end" placeholder="dd/mm/yyyy" value="<?php echo isset($duplicateData) && !empty($duplicateData['etd_end']) ? date('d/m/Y', strtotime($duplicateData['etd_end'])) : ''; ?>">
             </div>
           </div>
         </div>
@@ -629,8 +647,9 @@ if ($picUsersResult['status'] === 'success') {
                 $salesUsersResult = getUsersByRole('sale');
                 if ($salesUsersResult['status'] === 'success') {
                   foreach ($salesUsersResult['data'] as $user):
+                    $selected = (isset($duplicateData) && isset($duplicateData['sales_email']) && $duplicateData['sales_email'] === $user['email']) ? 'selected' : '';
                 ?>
-                    <option value="<?php echo $user['email']; ?>"><?php echo $user['fullname']; ?></option>
+                    <option value="<?php echo $user['email']; ?>" <?php echo $selected; ?>><?php echo $user['fullname']; ?></option>
                 <?php
                   endforeach;
                 }
@@ -652,7 +671,7 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="customer">Khách hàng (Customer) <span style="color: red;">*</span></label>
-              <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng">
+              <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng" value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['customer']) : ''; ?>">
             </div>
           </div>
 
@@ -664,9 +683,9 @@ if ($picUsersResult['status'] === 'success') {
             <div class="form-group">
               <label for="status">Trạng Thái <span style="color: red;">*</span></label>
               <select id="status" name="status" required>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancel">Cancel</option>
+                <option value="pending" <?php echo (isset($duplicateData) && $duplicateData['status'] == 'pending') ? 'selected' : ''; ?>>Pending</option>
+                <option value="confirmed" <?php echo (isset($duplicateData) && $duplicateData['status'] == 'confirmed') ? 'selected' : ''; ?>>Confirmed</option>
+                <option value="cancel" <?php echo (isset($duplicateData) && $duplicateData['status'] == 'cancel') ? 'selected' : ''; ?>>Cancel</option>
               </select>
             </div>
           </div>
@@ -674,7 +693,7 @@ if ($picUsersResult['status'] === 'success') {
           <div class="form-col">
             <div class="form-group">
               <label for="delay_date">Ngày Delay</label>
-              <input type="text" id="delay_date" name="delay_date" placeholder="dd/mm/yyyy">
+              <input type="text" id="delay_date" name="delay_date" placeholder="dd/mm/yyyy" value="<?php echo isset($duplicateData) && !empty($duplicateData['delay_date']) ? date('d/m/Y', strtotime($duplicateData['delay_date'])) : ''; ?>">
             </div>
           </div>
         </div>
@@ -695,7 +714,7 @@ if ($picUsersResult['status'] === 'success') {
 
         <div class="form-group">
           <label for="notes">Ghi Chú</label>
-          <textarea id="notes" name="notes"></textarea>
+          <textarea id="notes" name="notes"><?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['notes']) : ''; ?></textarea>
         </div>
 
         <div class="form-actions">
