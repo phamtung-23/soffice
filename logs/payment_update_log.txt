@@ -1,3 +1,7 @@
 [2025-05-10 18:24:42] /soffice/pic/edit_booking.php: Deleting old file from Google Drive: 1bCLonoIsVPjoV2C76Y83iGkalq-kNi9H
 [2025-05-10 18:26:27] /soffice/pic/edit_booking.php: Deleting old file from Google Drive: 11vaKKvUtbYQdDJTtTrtEkZDXQdgMdBtZ
 [2025-05-10 18:26:29] /soffice/pic/edit_booking.php: Successfully deleted old file from Google Drive: 11vaKKvUtbYQdDJTtTrtEkZDXQdgMdBtZ
+[2025-05-15 05:06:16] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: asdf
+[2025-05-15 05:08:26] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: asdf
+[2025-05-15 19:20:54] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
+[2025-05-15 19:27:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"vat":"2","unit":"VND","contSet":"cont","incl":"on","excl":"off"}

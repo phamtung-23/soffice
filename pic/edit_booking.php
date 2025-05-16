@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Upload to Google Drive
         $gDriveFolderId = '175l19YFsHesJmn5yKVO8XV-H5RZp8ron'; // Google Drive folder ID
-        $uploadResult = uploadFileToGoogleDrive($uploadPath, $newFilename, $gDriveFolderId);
+        $uploadResult = uploadFileToGoogleDriveGeneral($uploadPath, $newFilename, $gDriveFolderId);
 
         if ($uploadResult) {
           // Use the Google Drive link instead of local path

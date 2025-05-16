@@ -114,3 +114,22 @@ Response Code: 200
 Response: {"status":"success","message":"Message sent successfully"}
 ------------------------------------
 
+[2025-05-15 05:09:12] TELEGRAM NOTIFICATION SENT
+Booking Number: booking 1
+Recipient: Sale 1 (sale1@gmail.com)
+Telegram ID: 6944007336
+Message: **THÔNG BÁO DELAY BOOKING**
+
+📦 Số Booking: booking 1
+🚢 Tên Tàu: tau 1
+🔢 Số Chuyến: chuyen 1
+📆 Ngày Delay: 08/07/2025
+🧳 Số Container: so 1
+📝 Ghi chú: okok
+
+👤 Người cập nhật: PIC 1
+⏱️ Thời gian cập nhật: 15/05/2025 05:09:10
+Response Code: 200
+Response: {"status":"success","message":"Message sent successfully"}
+------------------------------------
+

@@ -440,6 +440,7 @@ if (isset($_GET['edit'])) {
                         <option value="operator" <?php if ($editingUser['role'] == 'operator') echo 'selected'; ?>>Operator</option>
                         <option value="leader" <?php if ($editingUser['role'] == 'leader') echo 'selected'; ?>>Leader</option>
                         <option value="accountant" <?php if ($editingUser['role'] == 'accountant') echo 'selected'; ?>>Accountant</option>
+                        <option value="pic" <?php if ($editingUser['role'] == 'pic') echo 'selected'; ?>>Pic</option>
                         <!-- Add more roles as needed -->
                     </select>
                     <button type="submit" class="update-btn">Cập nhật</button>

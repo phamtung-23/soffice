@@ -35,11 +35,11 @@
         "role": "accountant"
     },
     {
-        "fullname": "PHẠM THỊ MY",
+        "fullname": "PH\u1ea0M TH\u1eca MY",
         "email": "logistics06@uni-global.com",
         "password": "$2y$10$qmhHOZeIG3du7GPTPk.AM.Gl2g1KMSLsJ7azchZmkNm9ek1.oYsGq",
         "phone": "6944007336",
-        "role": "operator"
+        "role": "pic"
     },
     {
         "fullname": "Director1",
@@ -49,7 +49,7 @@
         "role": "director"
     },
     {
-        "fullname": "PHạM THANH TùNG",
+        "fullname": "PH\u1ea1M THANH T\u00f9NG",
         "email": "pttung23082001@gmail.com",
         "password": "$2y$10$60RjVZrr6iA1UArbCc58Zes9lpm1\/FxlLt0TBAsfAlCqDYFMy4wO6",
         "phone": "34234524",
