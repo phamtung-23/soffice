@@ -724,7 +724,18 @@ function getStatusClass($status)
   </div>
 
   <script>
+    // Function to normalize Vietnamese text (remove accents)
+    function normalizeVietnamese(str) {
+      return str.normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+
     $(document).ready(function() {
+      // Extend DataTables search to normalize Vietnamese for both data and input
+      $.fn.dataTable.ext.type.search.string = function(data) {
+        if (!data) return '';
+        return normalizeVietnamese(data.toString().toLowerCase());
+      };
+
       // Initialize DataTable with individual column search
       var table = $('#containersTable').DataTable({
         "language": {
@@ -740,8 +751,10 @@ function getStatusClass($status)
       // Apply column search on each input field in the header
       $('#containersTable thead tr:eq(1) th').each(function(i) {
         $('input', this).on('keyup change', function() {
-          if (table.column(i).search() !== this.value) {
-            table.column(i).search(this.value).draw();
+          // Normalize input value for Vietnamese search
+          let searchVal = normalizeVietnamese(this.value.toLowerCase());
+          if (table.column(i).search() !== searchVal) {
+            table.column(i).search(searchVal).draw();
           }
         });
       });
