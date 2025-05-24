@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Bangkok'); // Set timezone to UTC+7
 
 // Check if the user is logged in; if not, redirect to login
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sale') {
@@ -63,7 +64,7 @@ if (empty($bookingsData)) {
 }
 
 // Filter bookings to show only those with etd_start date greater than 2 days from today
-$filteredContainersByEmail = [];
+$filteredContainersByEmail = $bookingsData;
 $filteredContainers = [];
 
 // If no filtering is applied (for demo purposes), use all data
@@ -74,13 +75,13 @@ $filteredContainers = [];
 $currentDate = date('Y-m-d');
 $twoDaysFromNow = date('Y-m-d', strtotime('+2 days'));
 
-$filteredContainersByEmail = array_filter($bookingsData, function ($container) use ($userEmail) {
-  return (
-    // Match by sales_email (new format) or sales (old format) which contains full name
-    (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
-    (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
-  );
-});
+// $filteredContainersByEmail = array_filter($bookingsData, function ($container) use ($userEmail) {
+//   return (
+//     // Match by sales_email (new format) or sales (old format) which contains full name
+//     (isset($container['sales_email']) && $container['sales_email'] === $userEmail) ||
+//     (isset($container['sales']) && $container['sales'] === $_SESSION['full_name'])
+//   );
+// });
 
 $unfilteredContainers = $filteredContainersByEmail; // Keep all bookings for toggling
 
@@ -260,6 +261,15 @@ function getStatusClass($status)
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+
+    #containersTable_filter {
+      display: none !important;
+    }
+
+    #containersTableAll_filter {
+      display: none !important;
+    }
+
 
     .footer {
       text-align: center;
@@ -603,14 +613,11 @@ function getStatusClass($status)
           <button id="toggleFilter" class="create-button" type="button" style="background-color:#ff9800; color:white; min-width:180px; border: none;">Hiện tất cả booking</button>
           <button id="exportExcel" class="create-button" style="background-color: #4CAF50; border: none;"><i class="fa-solid fa-file-export"></i> Xuất Excel</button>
         </div>
-      </div>
-
-      <!-- Data Table (Filtered) -->
+      </div> <!-- Data Table (Filtered) -->
       <div class="table-wrapper" id="filteredTableWrapper">
         <table id="containersTable" class="display">
           <thead>
             <tr>
-              <th>ID</th>
               <th>SỐ BKG</th>
               <th>TÊN TÀU</th>
               <th>SỐ CHUYẾN</th>
@@ -629,7 +636,7 @@ function getStatusClass($status)
             </tr>
             <tr>
               <!-- Add search inputs for each column -->
-              <?php for ($i = 0; $i < 16; $i++) : ?>
+              <?php for ($i = 0; $i < 15; $i++) : ?>
                 <th><input type="text" placeholder="Tìm kiếm" /></th>
               <?php endfor; ?>
             </tr>
@@ -637,7 +644,6 @@ function getStatusClass($status)
           <tbody>
             <?php foreach ($filteredContainers as $container) : ?>
               <tr>
-                <td><?php echo isset($container['id']) ? substr($container['id'], 0, 8) : 'N/A'; ?></td>
                 <td><?php echo $container['booking_number']; ?></td>
                 <td><?php echo $container['vessel_name']; ?></td>
                 <td><?php echo $container['voyage_number']; ?></td>
@@ -676,14 +682,11 @@ function getStatusClass($status)
             <?php endforeach; ?>
           </tbody>
         </table>
-      </div>
-
-      <!-- Data Table (Unfiltered, hidden by default) -->
+      </div> <!-- Data Table (Unfiltered, hidden by default) -->
       <div class="table-wrapper" id="unfilteredTableWrapper" style="display:none;">
         <table id="containersTableAll" class="display">
           <thead>
             <tr>
-              <th>ID</th>
               <th>SỐ BKG</th>
               <th>TÊN TÀU</th>
               <th>SỐ CHUYẾN</th>
@@ -701,7 +704,7 @@ function getStatusClass($status)
               <th>THAO TÁC</th>
             </tr>
             <tr>
-              <?php for ($i = 0; $i < 16; $i++) : ?>
+              <?php for ($i = 0; $i < 15; $i++) : ?>
                 <th><input type="text" placeholder="Tìm kiếm" /></th>
               <?php endfor; ?>
             </tr>
@@ -709,7 +712,6 @@ function getStatusClass($status)
           <tbody>
             <?php foreach ($unfilteredContainers as $container) : ?>
               <tr>
-                <td><?php echo isset($container['id']) ? substr($container['id'], 0, 8) : 'N/A'; ?></td>
                 <td><?php echo $container['booking_number']; ?></td>
                 <td><?php echo $container['vessel_name']; ?></td>
                 <td><?php echo $container['voyage_number']; ?></td>
@@ -762,9 +764,7 @@ function getStatusClass($status)
       $.fn.dataTable.ext.type.search.string = function(data) {
         if (!data) return '';
         return normalizeVietnamese(data.toString().toLowerCase());
-      };
-
-      // Initialize DataTable with individual column search
+      }; // Initialize DataTable with individual column search
       var table = $('#containersTable').DataTable({
         "language": {
           "search": "Tìm kiếm nhanh:",
@@ -779,7 +779,11 @@ function getStatusClass($status)
           "smart": true,
           "caseInsensitive": true,
           "regex": false
-        }
+        },
+        // Set default order to updated_at column (index 13) in descending order (latest first)
+        "order": [
+          [13, "desc"]
+        ]
       });
       var tableAll = $('#containersTableAll').DataTable({
         "language": table.settings()[0].oLanguage,
@@ -788,7 +792,11 @@ function getStatusClass($status)
           "smart": true,
           "caseInsensitive": true,
           "regex": false
-        }
+        },
+        // Set default order to updated_at column (index 13) in descending order (latest first)
+        "order": [
+          [13, "desc"]
+        ]
       });
 
       // Apply column search on each input field in the header
@@ -817,11 +825,9 @@ function getStatusClass($status)
         let dd = String(today.getDate()).padStart(2, '0');
         let mm = String(today.getMonth() + 1).padStart(2, '0');
         let yyyy = today.getFullYear();
-        let dateStr = yyyy + mm + dd;
-
-        // Define column headers for Excel
+        let dateStr = yyyy + mm + dd; // Define column headers for Excel
         let headers = [
-          'ID', 'SỐ BKG', 'TÊN TÀU', 'SỐ CHUYẾN', 'HÃNG TÀU',
+          'SỐ BKG', 'TÊN TÀU', 'SỐ CHUYẾN', 'HÃNG TÀU',
           'SỐ LƯỢNG', 'POD', 'CUSTOMER', 'ETD', 'DELAY DATE', 'SALES',
           'PIC', 'TRẠNG THÁI', 'NGÀY TẠO', 'NGÀY CẬP NHẬT'
         ];

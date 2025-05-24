@@ -1,4 +1,6 @@
 <?php
+// Set default timezone for all helper functions
+date_default_timezone_set('Asia/Bangkok'); // Set timezone to UTC+7
 
 function saveDataToJson($data, $directory, $fileName)
 {
@@ -306,10 +308,9 @@ function saveBookingData($bookingData) {
   
   // Add new booking to the array
   $bookings[] = $bookingData;
-  
-  // Save data back to the file
+    // Save data back to the file
   if (file_put_contents($filePath, json_encode($bookings, JSON_PRETTY_PRINT))) {
-    return ['status' => 'success', 'data' => $bookingData];
+    return ['status' => 'success', 'data' => $bookingData, 'bookingId' => $bookingData['id']];
   } else {
     return ['status' => 'fail', 'message' => 'Failed to save booking data'];
   }

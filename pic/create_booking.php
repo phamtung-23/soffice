@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Bangkok'); // Set timezone to UTC+7
 
 // Check if the user is logged in; if not, redirect to login
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pic') {
@@ -130,13 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($hasAttachment) {
       $bookingData['attachment'] = $attachmentPath;
       $bookingData['attachment_file_id'] = $attachmentFileId;
-    }
-
-    // Save booking data
+    }    // Save booking data
     $saveResult = saveBookingData($bookingData);
 
     if ($saveResult['status'] === 'success') {
       $successMessage = 'Đã tạo booking thành công với số: ' . $bookingNumber;
+      $createdBookingId = $saveResult['bookingId'];
 
       // Send Telegram notification to Sales if delay date is entered
       if (!empty($delayDate) && !empty($salesId)) {
@@ -394,10 +394,18 @@ if ($picUsersResult['status'] === 'success') {
     .btn-cancel {
       background-color: #f44336;
       margin-right: 10px;
-    }
-
-    .btn-cancel:hover {
+    }    .btn-cancel:hover {
       background-color: #d32f2f;
+    }
+    
+    .btn-duplicate {
+      background-color: #ff9800;
+      color: white;
+      margin-left: 10px;
+    }
+    
+    .btn-duplicate:hover {
+      background-color: #e68a00;
     }
 
     .alert {
@@ -560,11 +568,16 @@ if ($picUsersResult['status'] === 'success') {
     </div>
 
     <div class="content">
-      <h2 class="booking-title">Tạo Booking Container Mới</h2>
-
-      <?php if ($successMessage): ?>
+      <h2 class="booking-title">Tạo Booking Container Mới</h2>      <?php if ($successMessage): ?>
         <div class="alert alert-success">
           <?php echo $successMessage; ?>
+          <?php
+          // Extract booking ID from the saveResult for duplication
+          if (isset($saveResult['bookingId'])) {
+            $createdBookingId = $saveResult['bookingId'];
+            echo '<div style="margin-top: 10px;"><a href="create_booking.php?duplicate_id=' . $createdBookingId . '&year=' . date('Y') . '" class="btn btn-duplicate" style="font-size: 14px; padding: 5px 10px;">Duplicate Booking</a></div>';
+          }
+          ?>
         </div>
       <?php endif; ?>
 
@@ -670,7 +683,7 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-row">
           <div class="form-col">
             <div class="form-group">
-              <label for="customer">Khách hàng (Customer) <span style="color: red;">*</span></label>
+              <label for="customer">Khách hàng (Customer)</label>
               <input type="text" id="customer" name="customer" placeholder="Nhập tên khách hàng" value="<?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['customer']) : ''; ?>">
             </div>
           </div>
@@ -715,11 +728,11 @@ if ($picUsersResult['status'] === 'success') {
         <div class="form-group">
           <label for="notes">Ghi Chú</label>
           <textarea id="notes" name="notes"><?php echo isset($duplicateData) ? htmlspecialchars($duplicateData['notes']) : ''; ?></textarea>
-        </div>
-
-        <div class="form-actions">
+        </div>        <div class="form-actions">
           <a href="index.php" class="btn btn-cancel">Hủy</a>
-          <button type="submit" class="btn">Tạo Booking</button>
+          <button type="submit" class="btn">Tạo Booking</button>          <?php if (isset($saveResult['bookingId'])): ?>
+          <a href="create_booking.php?duplicate_id=<?php echo $saveResult['bookingId']; ?>&year=<?php echo date('Y'); ?>" class="btn btn-duplicate">Duplicate This Booking</a>
+          <?php endif; ?>
         </div>
       </form>
     </div>

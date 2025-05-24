@@ -5,3 +5,9 @@
 [2025-05-15 05:08:26] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: asdf
 [2025-05-15 19:20:54] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: tesst
 [2025-05-15 19:27:47] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"tesst","value":10000000,"vat":"2","unit":"VND","contSet":"cont","incl":"on","excl":"off"}
+[2025-05-24 18:16:35] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: asdf
+[2025-05-24 18:16:54] /soffice/operator/payment-statement/create/submit_payment.php: Processing custom field: asdf
+[2025-05-24 18:18:10] /soffice/leader/payment-statement/detail/update_payment_status.php: existingData: {"name":"asdf","value":2222222,"vat":"2","unit":"VND","contSet":"cont","incl":"on","excl":"off"}
+[2025-05-24 18:18:40] /soffice/sale/payment-statement/update/update_payment_delivery.php: expense_kind: 12121
+[2025-05-24 18:18:40] /soffice/sale/payment-statement/update/update_payment_delivery.php: existingData: {"name":"asdf","value":2222222,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
+[2025-05-24 18:19:06] /soffice/director/payment-statement/detail/update_payment_status.php: existingData: {"name":"asdf","value":2222222,"unit":"VND","vat":"2","contSet":"cont","incl":"on","excl":"off","value_old":null,"unit_old":null,"vat_old":null,"is_update":false,"time_update":0}
