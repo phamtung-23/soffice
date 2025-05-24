@@ -1,7 +1,7 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Lấy thông tin từ form
-    $fullname = strtoupper($_POST['full_name']); 
+    $fullname = mb_strtoupper($_POST['full_name']); 
     $email = $_POST['email'];
     $password = $_POST['pass'];
     $confirm_password = $_POST['re_pass'];

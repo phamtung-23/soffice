@@ -1,6 +1,6 @@
 [
     {
-        "fullname": "Sale 1",
+        "fullname": "Phạm Thanh Tùng",
         "email": "sale1@gmail.com",
         "password": "$2y$10$Ii43rEY3xp.Z4voMdzcZquL91S8bxinv1DNzBu6YSGK14o3Ma2EBe",
         "phone": "6944007336",
@@ -35,7 +35,7 @@
         "role": "accountant"
     },
     {
-        "fullname": "PH\u1ea0M TH\u1eca MY",
+        "fullname": "PHẠM THỊ MY",
         "email": "logistics06@uni-global.com",
         "password": "$2y$10$qmhHOZeIG3du7GPTPk.AM.Gl2g1KMSLsJ7azchZmkNm9ek1.oYsGq",
         "phone": "6944007336",
@@ -49,7 +49,7 @@
         "role": "director"
     },
     {
-        "fullname": "PH\u1ea1M THANH T\u00f9NG",
+        "fullname": "PHạM THANH TùNG",
         "email": "pttung23082001@gmail.com",
         "password": "$2y$10$60RjVZrr6iA1UArbCc58Zes9lpm1\/FxlLt0TBAsfAlCqDYFMy4wO6",
         "phone": "34234524",
@@ -67,6 +67,13 @@
         "email": "pic2@gmail.com",
         "password": "$2y$10$xyI.jctDlebnAs1mjoGrZ.fEKBWogUbFUcFU5mjqljA25fPlh2.8.",
         "phone": "0359663439",
+        "role": "pic"
+    },
+    {
+        "fullname": "NGÔ PHAN THÙY TRÂN",
+        "email": "thuytran@gmail.com",
+        "password": "$2y$10$hjsuY548A6l6P6H6QIFusONpZ9F02ZswsetpAByVuBH\/7.oJ\/LH\/e",
+        "phone": "12121212121",
         "role": "pic"
     }
 ]
