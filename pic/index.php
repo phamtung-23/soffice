@@ -62,8 +62,18 @@ if (empty($bookingsData)) {
   $bookingsData = [];
 }
 
-// Show all bookings to PIC
-$filteredContainers = $bookingsData;
+// Filter bookings to show only those with etd_start date greater than 2 days from today
+$filteredContainers = [];
+$unfilteredContainers = $bookingsData; // Keep all bookings for toggling
+$currentDate = date('Y-m-d');
+$twoDaysFromNow = date('Y-m-d', strtotime('+2 days'));
+
+foreach ($bookingsData as $booking) {
+  // Check if etd_start exists and is greater than 2 days from now
+  if (isset($booking['etd_start']) && strtotime($booking['etd_start']) > strtotime($twoDaysFromNow)) {
+    $filteredContainers[] = $booking;
+  }
+}
 
 // Function to get status class for styling
 function getStatusClass($status)
@@ -276,6 +286,13 @@ function getStatusClass($status)
       background-color: #f8d7da;
       color: #721c24;
       border-left: 5px solid #dc3545;
+    }
+
+    .alert-info {
+      margin-top: 10px;
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border-left: 5px solid #17a2b8;
     }
 
     .action-button {
@@ -593,7 +610,18 @@ function getStatusClass($status)
     <div class="content">
       <h2>Danh sách Booking Container</h2>
 
-      <!-- Display success message if exists --> <?php if (isset($_SESSION['delete_success'])): ?>
+      <!-- Display information about filtered bookings -->
+      <div class="alert alert-info" id="filteredInfoBox">
+        <?php
+        $totalBookings = count($bookingsData);
+        $filteredBookingsCount = count($filteredContainers);
+        $excludedBookingsCount = $totalBookings - $filteredBookingsCount;
+        echo "Hiển thị {$filteredBookingsCount} booking với ngày ETD sau 2 ngày kể từ hôm nay. ({$excludedBookingsCount} booking bị ẩn do không đáp ứng điều kiện)";
+        ?>
+      </div>
+
+      <!-- Display success message if exists --> 
+      <?php if (isset($_SESSION['delete_success'])): ?>
         <div class="alert alert-success">
           <?php
                                                     echo $_SESSION['delete_success'];
@@ -628,13 +656,15 @@ function getStatusClass($status)
 
         <!-- Create New Booking Button -->
         <div class="create-button-container">
+          <!-- Toggle Filter Button -->
+          <button id="toggleFilter" class="create-button" type="button" style="background-color:#ff9800; color:white; min-width:180px; border: none;">Hiện tất cả booking</button>
           <a href="create_booking.php" class="create-button"><i class="fa-solid fa-plus"></i> Tạo Booking Mới</a>
           <button id="exportExcel" class="create-button" style="background-color:rgb(2, 47, 124);"><i class="fa-solid fa-file-export"></i> Xuất Excel</button>
         </div>
       </div>
 
-      <!-- Data Table -->
-      <div class="table-wrapper">
+      <!-- Data Table (Filtered) -->
+      <div class="table-wrapper" id="filteredTableWrapper">
         <table id="containersTable" class="display">
           <thead>
             <tr>
@@ -720,6 +750,93 @@ function getStatusClass($status)
           </tbody>
         </table>
       </div>
+
+      <!-- Data Table (Unfiltered, hidden by default) -->
+      <div class="table-wrapper" id="unfilteredTableWrapper" style="display:none;">
+        <table id="containersTableAll" class="display">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>SỐ BKG</th>
+              <th>TÊN TÀU</th>
+              <th>SỐ CHUYẾN</th>
+              <th>HÃNG TÀU</th>
+              <th>SỐ LƯỢNG</th>
+              <th>POD</th>
+              <th>CUSTOMER</th>
+              <th>ETD</th>
+              <th>DELAY DATE</th>
+              <th>SALES</th>
+              <th>PIC</th>
+              <th>TRẠNG THÁI</th>
+              <th>NGÀY TẠO</th>
+              <th>NGÀY CẬP NHẬT</th>
+              <th>THAO TÁC</th>
+            </tr>
+            <tr>
+              <?php for ($i = 0; $i < 16; $i++) : ?>
+                <th><input type="text" placeholder="Tìm kiếm" /></th>
+              <?php endfor; ?>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($unfilteredContainers as $container) : ?>
+              <tr>
+                <td><?php echo isset($container['id']) ? substr($container['id'], 0, 8) : 'N/A'; ?></td>
+                <td><?php echo $container['booking_number']; ?></td>
+                <td><?php echo $container['vessel_name']; ?></td>
+                <td><?php echo $container['voyage_number']; ?></td>
+                <td><?php echo $container['shipping_line']; ?></td>
+                <td><?php echo $container['quantity']; ?></td>
+                <td><?php echo $container['pod']; ?>
+                </td>
+                <td><?php echo htmlspecialchars($container['customer'] ?? ''); ?></td>
+                <td>
+                  <?php
+                  // Check if using new date range format or old single date format
+                  if (isset($container['etd_start']) && isset($container['etd_end']) && !empty($container['etd_end'])) {
+                    echo date("d/m/Y", strtotime($container['etd_start'])) . ' - ' .
+                      date("d/m/Y", strtotime($container['etd_end']));
+                  } else if (isset($container['etd_start'])) {
+                    // Just show the start date if end date is not provided
+                    echo date("d/m/Y", strtotime($container['etd_start'])) . ' - N/A';
+                  } else if (isset($container['etd'])) {
+                    // Fall back to single date format if still using old data
+                    echo date("d/m/Y", strtotime($container['etd']));
+                  } else {
+                    echo 'N/A';
+                  }
+                  ?>
+                </td>
+                <td><?php echo isset($container['delay_date']) && $container['delay_date'] != '' ? date("d/m/Y", strtotime($container['delay_date'])) : 'N/A'; ?></td>
+                <td><?php echo $container['sales']; ?></td>
+                <td><?php echo $container['pic']; ?></td>
+                <td>
+                  <span class="status <?php echo getStatusClass($container['status']); ?>">
+                    <?php echo ucfirst($container['status']); ?>
+                  </span>
+                </td>
+                <td><?php echo isset($container['created_at']) ? date("d/m/Y H:i", strtotime($container['created_at'])) : 'N/A'; ?></td>
+                <td><?php echo isset($container['updated_at']) ? date("d/m/Y H:i", strtotime($container['updated_at'])) : 'N/A'; ?></td>
+                <td>
+                  <button class="action-button details" onclick="handleDetails('<?php echo $container['id']; ?>')">Chi tiết</button>
+                  <button class="action-button duplicate" onclick="handleDuplicate('<?php echo $container['id']; ?>')">Nhân bản</button>
+                  <?php
+                  $canEditOrDelete = (
+                    (isset($container['pic_email']) && $container['pic_email'] === $userEmail) ||
+                    (isset($container['pic']) && $container['pic'] === $_SESSION['full_name'])
+                  );
+                  ?>
+                  <?php if ($canEditOrDelete): ?>
+                    <button class="action-button edit" onclick="handleEdit('<?php echo $container['id']; ?>')">Sửa</button>
+                    <button class="action-button delete" onclick="handleDelete('<?php echo $container['id']; ?>', '<?php echo addslashes($container['booking_number']); ?>')">Xóa</button>
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -728,7 +845,6 @@ function getStatusClass($status)
     function normalizeVietnamese(str) {
       return str.normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
     }
-
     $(document).ready(function() {
       // Extend DataTables search to normalize Vietnamese for both data and input
       $.fn.dataTable.ext.type.search.string = function(data) {
@@ -745,6 +861,21 @@ function getStatusClass($status)
           "info": "Hiển thị _START_ đến _END_ của _TOTAL_ booking",
           "infoEmpty": "Hiển thị 0 đến 0 của 0 booking",
           "infoFiltered": "(lọc từ _MAX_ booking)"
+        },
+        // Ensure search works on all data, not just visible data
+        "search": {
+          "smart": true,
+          "caseInsensitive": true,
+          "regex": false
+        }
+      });
+      var tableAll = $('#containersTableAll').DataTable({
+        "language": table.settings()[0].oLanguage,
+        "search": table.settings()[0].oPreviousSearch,
+        "search": {
+          "smart": true,
+          "caseInsensitive": true,
+          "regex": false
         }
       });
 
@@ -755,6 +886,14 @@ function getStatusClass($status)
           let searchVal = normalizeVietnamese(this.value.toLowerCase());
           if (table.column(i).search() !== searchVal) {
             table.column(i).search(searchVal).draw();
+          }
+        });
+      });
+      $('#containersTableAll thead tr:eq(1) th').each(function(i) {
+        $('input', this).on('keyup change', function() {
+          let searchVal = normalizeVietnamese(this.value.toLowerCase());
+          if (tableAll.column(i).search() !== searchVal) {
+            tableAll.column(i).search(searchVal).draw();
           }
         });
       });
@@ -845,6 +984,23 @@ function getStatusClass($status)
           title: 'Xuất Excel thành công',
           text: 'Dữ liệu đã được xuất thành công với ' + allData.length + ' dòng!'
         });
+      });
+
+      // Toggle filter button logic
+      let filterOn = true;
+      $('#toggleFilter').on('click', function() {
+        filterOn = !filterOn;
+        if (filterOn) {
+          $('#filteredTableWrapper').show();
+          $('#unfilteredTableWrapper').hide();
+          $("#filteredInfoBox").show();
+          $(this).text('Hiện tất cả booking');
+        } else {
+          $('#filteredTableWrapper').hide();
+          $('#unfilteredTableWrapper').show();
+          $("#filteredInfoBox").hide();
+          $(this).text('Chỉ hiện booking ETD > 2 ngày');
+        }
       });
     });
 

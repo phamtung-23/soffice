@@ -152,3 +152,41 @@ Response Code: 200
 Response: {"status":"success","message":"Message sent successfully"}
 ------------------------------------
 
+[2025-05-21 15:51:19] TELEGRAM NOTIFICATION SENT
+Booking Number: 041FX01689
+Recipient: Sale 2 (sale2@gmail.com)
+Telegram ID: 6944007336
+Message: **THÔNG BÁO DELAY BOOKING**
+
+📦 Số Booking: 041FX01689
+🚢 Tên Tàu: INTERASIA ADVANCE
+🔢 Số Chuyến: 15
+📆 Ngày Delay: 23/09/2025
+🧳 Số Container: 1*40HC
+📝 Ghi chú: okok
+
+👤 Người cập nhật: PIC 1
+⏱️ Thời gian cập nhật: 21/05/2025 15:51:17
+Response Code: 200
+Response: {"status":"success","message":"Message sent successfully"}
+------------------------------------
+
+[2025-05-21 15:51:38] TELEGRAM NOTIFICATION SENT
+Booking Number: 041FX01689
+Recipient: Sale 2 (sale2@gmail.com)
+Telegram ID: 6944007336
+Message: **THÔNG BÁO DELAY BOOKING**
+
+📦 Số Booking: 041FX01689
+🚢 Tên Tàu: INTERASIA ADVANCE
+🔢 Số Chuyến: 15
+📆 Ngày Delay: 23/09/2025
+🧳 Số Container: 1*40HC
+📝 Ghi chú: okok
+
+👤 Người cập nhật: PIC 1
+⏱️ Thời gian cập nhật: 21/05/2025 15:51:36
+Response Code: 200
+Response: {"status":"success","message":"Message sent successfully"}
+------------------------------------
+
